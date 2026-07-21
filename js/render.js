@@ -173,9 +173,12 @@ function paintBoard() {
       const pulsing = pulse.has(r + ',' + c);
 
       if (isStorehouse(r, c)) {
-        // Empty storehouse shows the 3D plate; otherwise the held piece.
+        // The plate is always shown; a held piece sits ON it (both visible).
         setContent(idx, 'store:' + (state.reserve || 'plate'),
-          state.reserve ? sprite(state.reserve) : SPRITES.plate);
+          state.reserve
+            ? `<div class="sh-plate">${SPRITES.plate}</div>` +
+              `<div class="sh-item">${sprite(state.reserve)}</div>`
+            : SPRITES.plate);
         cls += ' storehouse';
         cell.title = state.reserve ? NAMES[state.reserve] : 'Storehouse — tap to store/swap';
       } else if (isActive(r, c) && state.current) {

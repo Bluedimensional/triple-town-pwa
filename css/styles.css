@@ -199,8 +199,20 @@ body {
 .cell:active { transform: scale(0.94); }
 
 /* The storehouse: top-left corner square — just the plate on the field, no
-   dark backing. */
+   dark backing. A held piece sits ON the plate (both visible). */
 .cell.storehouse { background: transparent; }
+.cell.storehouse .sh-plate,
+.cell.storehouse .sh-item {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cell.storehouse .sh-plate svg { width: 86%; height: 86%; }
+.cell.storehouse .sh-item svg { width: 62%; height: 62%; transform: translateY(-16%); }
+/* The piece on the plate doesn't cast its ground shadow onto the plate. */
+.cell.storehouse .sh-item .pc-shadow { display: none; }
 
 /* Only the SPRITE animates; the tile underneath stays static. */
 .cell.pulsing { z-index: 5; }

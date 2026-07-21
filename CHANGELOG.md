@@ -3,6 +3,15 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.9.1] - 2026-07-21 (v24)
+
+### Changed
+- **Stored piece sits on the plate:** the storehouse now shows the plate *and*
+  the held piece resting on it (both visible), instead of hiding the plate.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v24`.
+
 ## [0.9.0] - 2026-07-21 (v23)
 
 ### Added
