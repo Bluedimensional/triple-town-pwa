@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.3.2] - 2026-07-21
+
+### Changed
+- **Bears stand on the path:** a bear's tile now shows the tan dirt surface
+  (fused with adjacent path, or its own rounded patch in the open) instead of the
+  dark field. Other objects still sit on the field.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v6`.
+
 ## [0.3.1] - 2026-07-21
 
 ### Changed

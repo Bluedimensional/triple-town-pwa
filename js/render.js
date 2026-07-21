@@ -48,19 +48,20 @@ function isActive(r, c) {
     state.activePos.r === r && state.activePos.c === c;
 }
 
-// A cell counts as "path" (light dirt) when it's an empty, non-storehouse tile.
-function isPathCell(r, c) {
+// A cell shows the light dirt "path" surface when it's empty, or when a bear is
+// standing on it (bears always sit on the path, never on the dark field).
+function isPathSurface(r, c) {
   return r >= 0 && r < state.size && c >= 0 && c < state.size &&
-    !isStorehouse(r, c) && state.board[r][c] === null;
+    !isStorehouse(r, c) && (state.board[r][c] === null || state.board[r][c] === 'bear');
 }
 
 // Round only the corners where a path cell is exposed on both meeting sides, so
 // adjacent path tiles fuse into one continuous shape with rounded end-caps.
 function pathRadius(r, c) {
-  const up = isPathCell(r - 1, c);
-  const down = isPathCell(r + 1, c);
-  const left = isPathCell(r, c - 1);
-  const right = isPathCell(r, c + 1);
+  const up = isPathSurface(r - 1, c);
+  const down = isPathSurface(r + 1, c);
+  const left = isPathSurface(r, c - 1);
+  const right = isPathSurface(r, c + 1);
   const R = '46%';
   const tl = (!up && !left) ? R : '0';
   const tr = (!up && !right) ? R : '0';
@@ -104,7 +105,13 @@ function paintBoard() {
         const type = state.board[r][c];
         cell.innerHTML = sprite(type);
         if (type) {
-          cls += ' filled';
+          if (type === 'bear') {
+            // Bears stand on the dirt path (tan), fused with adjacent path.
+            cls += ' path';
+            cell.style.borderRadius = pathRadius(r, c);
+          } else {
+            cls += ' filled';
+          }
           // A group member pulses along, but never gets the white border.
           if (pulsing) cls += ' pulsing';
           if (state.lastCreated &&
