@@ -1,5 +1,7 @@
 # Triple Town PWA
 
+**▶ Play / install:** https://bluedimensional.github.io/triple-town-pwa/
+
 An installable **Progressive Web App** clone of *Triple Town* (Spry Fox) — classic
 endless mode. Merge three connected tiles to grow the build chain, deal with bears,
 and rack up the highest score. Runs full-screen from a phone home-screen icon,
@@ -86,5 +88,7 @@ Playable end to end: placement, cascading merges, full build chain, bears +
 tombstone chain, storehouse, store + coins, score/best, game over, offline
 caching, and localStorage persistence. See `CHANGELOG.md`.
 
+Deployed to GitHub Pages (HTTPS) — see the play link at the top.
+
 **Deferred (backlog):** ninja bears, crystal (wildcard), imperial bot,
-rock/mountain chain, custom image sprites, GitHub Pages deploy.
+rock/mountain chain, custom image sprites.

@@ -7,6 +7,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
 Initial playable build — the full v1 scope in one pass.
 
+### Deployed
+- Published to GitHub Pages over HTTPS:
+  https://bluedimensional.github.io/triple-town-pwa/ (source: `main` / root).
+  Verified live: service worker registers and controls the page (offline-ready),
+  manifest loads as `standalone`, all shell assets return 200.
+
 ### Added
 - **PWA scaffold:** `manifest.json` (standalone display, theme colors), `sw.js`
   service worker (cache-first offline shell), generated home-screen icons
