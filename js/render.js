@@ -7,6 +7,7 @@
 import { state, isStorehouse } from './state.js';
 import { ASSETS, NAMES, STORE_ITEMS } from './config.js';
 import { priceOf } from './store.js';
+import { previewMergeGroup } from './match.js';
 
 const el = {};
 
@@ -49,12 +50,24 @@ function isActive(r, c) {
     state.activePos.r === r && state.activePos.c === c;
 }
 
+// Which cells should pulse: the whole would-merge group if placing completes a
+// combo, otherwise just the active cell on its own.
+function pulseKeys() {
+  if (state.over || !state.activePos || !state.current) return new Set();
+  const group = previewMergeGroup();
+  const keys = new Set([state.activePos.r + ',' + state.activePos.c]);
+  for (const [r, c] of group) keys.add(r + ',' + c);
+  return keys;
+}
+
 function paintBoard() {
   const cells = el.board.children;
+  const pulse = pulseKeys();
   for (let r = 0; r < state.size; r++) {
     for (let c = 0; c < state.size; c++) {
       const cell = cells[r * state.size + c];
       let cls = 'cell';
+      const pulsing = pulse.has(r + ',' + c);
 
       if (isStorehouse(r, c)) {
         // Top-left storehouse: shows the reserved piece, or a ring when empty.
@@ -64,15 +77,18 @@ function paintBoard() {
         else cls += ' empty-store';
         cell.title = state.reserve ? NAMES[state.reserve] : 'Storehouse — tap to store/swap';
       } else if (isActive(r, c) && state.current) {
-        // The piece waiting to be placed: pulsing, white border.
+        // The piece waiting to be placed: sits on a path tile, pulsing.
         cell.textContent = tileContent(state.current);
-        cls += ' path active tile-' + state.current;
+        cls += ' path tile-' + state.current;
+        if (pulsing) cls += ' pulsing';
         cell.title = NAMES[state.current] + ' — tap any tile to place';
       } else {
         const type = state.board[r][c];
         cell.textContent = tileContent(type);
         // Empty tiles read as a light "path"; filled tiles blend into the field.
         cls += type ? ' filled tile-' + type : ' path';
+        // A filled tile that's part of the pending merge pulses with the piece.
+        if (type && pulsing) cls += ' pulsing';
         if (type && state.lastCreated &&
             state.lastCreated.r === r && state.lastCreated.c === c) {
           cls += ' pop';

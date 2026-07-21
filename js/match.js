@@ -32,6 +32,37 @@ export function floodFill(r, c, type) {
   return group;
 }
 
+// Preview: the group of tiles that would merge if the current piece were
+// placed at its active position right now. Treats the active cell as if it
+// already held `current`, then flood-fills same-type board tiles from it.
+// Returns the full group (including the active cell) when it reaches the merge
+// threshold, or [] when placing wouldn't trigger a merge.
+export function previewMergeGroup() {
+  if (!state.current || !state.activePos) return [];
+  const { r, c } = state.activePos;
+  const type = state.current;
+  const rule = MERGE[type];
+  if (!rule) return []; // e.g. bears never merge
+
+  const seen = new Set([r + ',' + c]);
+  const group = [[r, c]];
+  const stack = [[r, c]];
+  while (stack.length) {
+    const [cr, cc] = stack.pop();
+    for (const [dr, dc] of DIRS) {
+      const nr = cr + dr;
+      const nc = cc + dc;
+      const key = nr + ',' + nc;
+      if (inBounds(nr, nc) && !seen.has(key) && state.board[nr][nc] === type) {
+        seen.add(key);
+        group.push([nr, nc]);
+        stack.push([nr, nc]);
+      }
+    }
+  }
+  return group.length >= rule.need ? group : [];
+}
+
 // Resolve merges starting at (r,c), cascading as long as the newly created
 // tile keeps forming a large-enough group. Returns points earned this cascade.
 export function resolveMerges(r, c) {

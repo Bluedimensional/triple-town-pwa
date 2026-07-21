@@ -3,6 +3,17 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.2.1] - 2026-07-21
+
+### Added
+- **Merge preview:** when the waiting piece would complete a group of 3+
+  (orthogonally connected, same type), every tile in that group pulses together
+  with the white border — showing the merge before you place. If placing
+  wouldn't combo, only the waiting piece pulses.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v3` so devices fetch the new build.
+
 ## [0.2.0] - 2026-07-21
 
 Reworked look and feel and the placement interaction to match the real game

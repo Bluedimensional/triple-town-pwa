@@ -154,9 +154,10 @@ body {
     rgba(0,0,0,0.16);
 }
 
-/* The piece waiting to be placed: light border + pulse. */
-.cell.active {
-  background: var(--path);
+/* The piece(s) about to merge: white border + synchronized pulse.
+   Applies to the waiting piece and, when placing would complete a combo,
+   every tile in that group so they pulse together. */
+.cell.pulsing {
   box-shadow: 0 0 0 3px #fff, 0 0 10px 2px rgba(255,255,255,0.5);
   z-index: 5;
   animation: pulse 800ms ease-in-out infinite;
