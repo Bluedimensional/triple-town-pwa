@@ -26,16 +26,13 @@ function emptyNeighbors(r, c) {
   return out;
 }
 
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
-// Move every bear once. Bears that get trapped turn into tombstones and may
-// merge. Processed in random order so movement isn't biased top-left.
+// Move every bear once, matching Triple Town's rules:
+//  - each bear shuffles one square in a random cardinal direction if it can;
+//  - bears take turns in a fixed order — leftmost column first, top-to-bottom,
+//    then the next column — so movement is predictable (not random order);
+//  - a bear with nowhere to move is trapped and turns into a tombstone, which
+//    can then start a tombstone-chain merge.
+// Snapshotting the starting positions guarantees each bear moves at most once.
 export function moveBears() {
   const bears = [];
   for (let r = 0; r < state.size; r++) {
@@ -43,10 +40,11 @@ export function moveBears() {
       if (state.board[r][c] === 'bear') bears.push([r, c]);
     }
   }
-  shuffle(bears);
+  // Column-major order: sort by column, then row.
+  bears.sort((a, b) => (a[1] - b[1]) || (a[0] - b[0]));
 
   for (const [r, c] of bears) {
-    if (state.board[r][c] !== 'bear') continue; // may have been overwritten
+    if (state.board[r][c] !== 'bear') continue; // already moved/overwritten
     const spots = emptyNeighbors(r, c);
     if (spots.length > 0) {
       const [nr, nc] = spots[Math.floor(Math.random() * spots.length)];

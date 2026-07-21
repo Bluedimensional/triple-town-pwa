@@ -3,6 +3,22 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.3.1] - 2026-07-21
+
+### Changed
+- **Pulse feel:** the waiting piece now grows less (scale 1.15 vs 1.30, −50%) and
+  slower (1.15s vs 0.8s, ~30% slower). Only the sprite scales now — the tile and
+  the white border underneath stay static.
+- **Bear movement (canonical):** bears now take turns in Triple Town's fixed
+  order — leftmost column first, top-to-bottom, then the next column — instead of
+  a random order, so their wandering is predictable and trappable. Each still
+  moves one square in a random cardinal direction, never jumps, and turns into a
+  tombstone only when it has no tile to move to. (Confirmed against the
+  Triple Town Wiki and Spry Fox support.)
+
+### Migration
+- Service-worker cache bumped to `tripletown-v5`.
+
 ## [0.3.0] - 2026-07-21
 
 ### Added

@@ -155,19 +155,18 @@ body {
     rgba(0,0,0,0.16);
 }
 
-/* Group members pulse (scale) in sync — but no border. */
-.cell.pulsing {
-  z-index: 5;
-  animation: pulse 800ms ease-in-out infinite;
-}
-/* The white border is ONLY ever on the one new piece. */
+/* Group members pulse in sync — but no border. Only the SPRITE scales; the
+   tile (path/field) underneath stays static. */
+.cell.pulsing { z-index: 5; }
+.cell.pulsing svg { animation: pulse 1150ms ease-in-out infinite; }
+/* The white border is ONLY ever on the one new piece, and it stays static. */
 .cell.lead {
   z-index: 6;
   box-shadow: 0 0 0 3px #fff, 0 0 10px 2px rgba(255,255,255,0.55);
 }
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.3); }
+  50%      { transform: scale(1.15); }
 }
 
 .cell.pop { animation: pop 0.22s ease; }
