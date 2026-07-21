@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#4a7c2f" />
+  <title>Triple Town</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-180.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Triple Town" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header id="hud">
+      <div class="stat">
+        <span class="stat-label">Score</span>
+        <span id="score" class="stat-value">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Best</span>
+        <span id="best" class="stat-value">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Coins</span>
+        <span id="coins" class="stat-value">0</span>
+      </div>
+    </header>
+
+    <section id="tray">
+      <button id="reserve-slot" class="tile-slot reserve" title="Storehouse (tap to swap)"></button>
+      <div class="hand-wrap">
+        <span class="hand-label">Next</span>
+        <div id="hand-tile" class="tile-slot"></div>
+      </div>
+      <button id="new-game" class="text-btn" title="New game">New</button>
+    </section>
+
+    <main id="board-wrap">
+      <div id="board" role="grid" aria-label="game board"></div>
+    </main>
+
+    <section id="store">
+      <span class="store-label">Store</span>
+      <div id="store-items"></div>
+    </section>
+
+    <div id="gameover" class="overlay">
+      <div class="overlay-card">
+        <h1>Game Over</h1>
+        <p>Final score</p>
+        <p id="final-score" class="final">0</p>
+        <button id="play-again" class="primary-btn">Play again</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

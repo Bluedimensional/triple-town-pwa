@@ -1,0 +1,73 @@
+// config.js — tunable constants, chains, scoring, and the swappable asset map.
+// Everything here is data-only so game logic never hard-codes a tile type.
+
+export const BOARD_SIZE = 6;
+
+// Build chain and tombstone chain, for reference / ordering.
+export const BUILD_CHAIN = [
+  'grass', 'bush', 'tree', 'hut', 'house', 'mansion',
+  'castle', 'floatingCastle', 'tripleCastle',
+];
+export const TOMB_CHAIN = ['tombstone', 'church', 'cathedral', 'treasury'];
+
+// Merge rules: type -> { next tier, how many connected are needed }.
+// Standard merges need 3; Floating Castle -> Triple Castle intentionally needs 4.
+export const MERGE = {
+  grass:          { next: 'bush',           need: 3 },
+  bush:           { next: 'tree',           need: 3 },
+  tree:           { next: 'hut',            need: 3 },
+  hut:            { next: 'house',          need: 3 },
+  house:          { next: 'mansion',        need: 3 },
+  mansion:        { next: 'castle',         need: 3 },
+  castle:         { next: 'floatingCastle', need: 3 },
+  floatingCastle: { next: 'tripleCastle',   need: 4 },
+  // Tombstone chain (the bear payoff).
+  tombstone:      { next: 'church',         need: 3 },
+  church:         { next: 'cathedral',      need: 3 },
+  cathedral:      { next: 'treasury',       need: 3 },
+};
+
+// Placement / creation points (proposed starter table — tune by feel).
+export const POINTS = {
+  grass: 5, bush: 20, tree: 50, hut: 100, house: 300, mansion: 800,
+  castle: 2000, floatingCastle: 5000, tripleCastle: 12000,
+  tombstone: 10, church: 500, cathedral: 2000, treasury: 8000,
+  bear: 0,
+};
+
+// Coins awarded when a merge produces this tier (in-game pretend coins only).
+export const COINS = {
+  bush: 1, tree: 2, hut: 4, house: 8, mansion: 16,
+  castle: 40, floatingCastle: 100, tripleCastle: 300,
+  church: 10, cathedral: 40, treasury: 150,
+};
+
+// Store: which build-chain tiles are for sale, base price, and price growth
+// per purchase of that tile (prices rise as the scope specifies).
+export const STORE_ITEMS = ['grass', 'bush', 'tree', 'hut'];
+export const STORE_BASE_PRICE = { grass: 3, bush: 12, tree: 40, hut: 120 };
+export const STORE_PRICE_GROWTH = 1.6;
+
+// Spawn weights for ordinary pieces (bears handled separately, below).
+export const SPAWN_WEIGHTS = { grass: 62, bush: 12, tree: 3 };
+
+// Bear spawn chance ramps up over the game.
+export const BEAR_BASE_CHANCE = 0.06;
+export const BEAR_CHANCE_PER_TURN = 0.0006;
+export const BEAR_MAX_CHANCE = 0.18;
+
+// Swappable asset map: tile type -> glyph. Swap these for <img> paths later
+// (see render.js) without touching any game logic.
+export const ASSETS = {
+  grass: '🌱', bush: '🌿', tree: '🌳', hut: '🛖', house: '🏠',
+  mansion: '🏘️', castle: '🏰', floatingCastle: '🏯', tripleCastle: '💎',
+  bear: '🐻', tombstone: '🪦', church: '⛪', cathedral: '🕌', treasury: '💰',
+};
+
+// Human-readable names for the UI.
+export const NAMES = {
+  grass: 'Grass', bush: 'Bush', tree: 'Tree', hut: 'Hut', house: 'House',
+  mansion: 'Mansion', castle: 'Castle', floatingCastle: 'Floating Castle',
+  tripleCastle: 'Triple Castle', bear: 'Bear', tombstone: 'Tombstone',
+  church: 'Church', cathedral: 'Cathedral', treasury: 'Treasury',
+};
