@@ -3,6 +3,23 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.3.0] - 2026-07-21
+
+### Added
+- **Custom SVG sprites** (`js/sprites.js`) replacing emoji for every tile —
+  round spotted bush, geometric angry bear, skull tombstone, grass tufts, brick
+  hut, and building/tomb-chain art. Still a swappable asset map: edit one file
+  to reskin, no logic changes.
+
+### Changed
+- **Continuous path:** empty "path" tiles now fuse into one shape with rounded
+  end-caps (corners rounded per-neighbour), instead of separate rounded blocks.
+- **Merge-preview border:** the white border now appears on the *new piece only*.
+  Other tiles in the pending merge still pulse in sync, but never get a border.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v4` (adds `js/sprites.js`).
+
 ## [0.2.1] - 2026-07-21
 
 ### Added

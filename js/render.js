@@ -1,11 +1,11 @@
 // render.js — draw the board, storehouse, store, and HUD from state.
 //
-// Uses glyphs from the swappable ASSETS map. To move to image sprites later,
-// change tileContent() to emit an <img> (or a background-image) and nothing
-// else in the game needs to change.
+// Tiles are drawn from the SVG sprite map (js/sprites.js). To change the art,
+// edit sprites.js — nothing here or in the game logic assumes how a tile looks.
 
 import { state, isStorehouse } from './state.js';
-import { ASSETS, NAMES, STORE_ITEMS } from './config.js';
+import { NAMES, STORE_ITEMS } from './config.js';
+import { SPRITES } from './sprites.js';
 import { priceOf } from './store.js';
 import { previewMergeGroup } from './match.js';
 
@@ -21,8 +21,8 @@ export function cacheDom() {
   el.finalScore = document.getElementById('final-score');
 }
 
-function tileContent(type) {
-  return type ? (ASSETS[type] || '?') : '';
+function sprite(type) {
+  return type ? (SPRITES[type] || '') : '';
 }
 
 // Build the 6x6 grid once; cells are updated in place afterward.
@@ -35,10 +35,8 @@ export function buildBoard(onCellTap) {
       cell.className = 'cell';
       cell.dataset.r = r;
       cell.dataset.c = c;
-      const label = isStorehouse(r, c)
-        ? 'storehouse'
-        : `row ${r + 1} column ${c + 1}`;
-      cell.setAttribute('aria-label', label);
+      cell.setAttribute('aria-label',
+        isStorehouse(r, c) ? 'storehouse' : `row ${r + 1} column ${c + 1}`);
       cell.addEventListener('click', () => onCellTap(r, c));
       el.board.appendChild(cell);
     }
@@ -50,13 +48,33 @@ function isActive(r, c) {
     state.activePos.r === r && state.activePos.c === c;
 }
 
-// Which cells should pulse: the whole would-merge group if placing completes a
-// combo, otherwise just the active cell on its own.
+// A cell counts as "path" (light dirt) when it's an empty, non-storehouse tile.
+function isPathCell(r, c) {
+  return r >= 0 && r < state.size && c >= 0 && c < state.size &&
+    !isStorehouse(r, c) && state.board[r][c] === null;
+}
+
+// Round only the corners where a path cell is exposed on both meeting sides, so
+// adjacent path tiles fuse into one continuous shape with rounded end-caps.
+function pathRadius(r, c) {
+  const up = isPathCell(r - 1, c);
+  const down = isPathCell(r + 1, c);
+  const left = isPathCell(r, c - 1);
+  const right = isPathCell(r, c + 1);
+  const R = '46%';
+  const tl = (!up && !left) ? R : '0';
+  const tr = (!up && !right) ? R : '0';
+  const br = (!down && !right) ? R : '0';
+  const bl = (!down && !left) ? R : '0';
+  return `${tl} ${tr} ${br} ${bl}`;
+}
+
+// The tiles that pulse: the whole would-merge group if placing completes a
+// combo, otherwise just the active piece.
 function pulseKeys() {
   if (state.over || !state.activePos || !state.current) return new Set();
-  const group = previewMergeGroup();
   const keys = new Set([state.activePos.r + ',' + state.activePos.c]);
-  for (const [r, c] of group) keys.add(r + ',' + c);
+  for (const [r, c] of previewMergeGroup()) keys.add(r + ',' + c);
   return keys;
 }
 
@@ -67,31 +85,33 @@ function paintBoard() {
     for (let c = 0; c < state.size; c++) {
       const cell = cells[r * state.size + c];
       let cls = 'cell';
+      cell.style.borderRadius = '';
       const pulsing = pulse.has(r + ',' + c);
 
       if (isStorehouse(r, c)) {
-        // Top-left storehouse: shows the reserved piece, or a ring when empty.
-        cell.textContent = tileContent(state.reserve);
+        cell.innerHTML = sprite(state.reserve);
         cls += ' storehouse';
-        if (state.reserve) cls += ' filled tile-' + state.reserve;
-        else cls += ' empty-store';
+        cls += state.reserve ? ' filled' : ' empty-store';
         cell.title = state.reserve ? NAMES[state.reserve] : 'Storehouse — tap to store/swap';
       } else if (isActive(r, c) && state.current) {
-        // The piece waiting to be placed: sits on a path tile, pulsing.
-        cell.textContent = tileContent(state.current);
-        cls += ' path tile-' + state.current;
-        if (pulsing) cls += ' pulsing';
+        // The waiting piece: a rounded blob on the path. White border + pulse
+        // live ONLY on this tile.
+        cell.innerHTML = sprite(state.current);
+        cls += ' path pulsing lead';
+        cell.style.borderRadius = '32%';
         cell.title = NAMES[state.current] + ' — tap any tile to place';
       } else {
         const type = state.board[r][c];
-        cell.textContent = tileContent(type);
-        // Empty tiles read as a light "path"; filled tiles blend into the field.
-        cls += type ? ' filled tile-' + type : ' path';
-        // A filled tile that's part of the pending merge pulses with the piece.
-        if (type && pulsing) cls += ' pulsing';
-        if (type && state.lastCreated &&
-            state.lastCreated.r === r && state.lastCreated.c === c) {
-          cls += ' pop';
+        cell.innerHTML = sprite(type);
+        if (type) {
+          cls += ' filled';
+          // A group member pulses along, but never gets the white border.
+          if (pulsing) cls += ' pulsing';
+          if (state.lastCreated &&
+              state.lastCreated.r === r && state.lastCreated.c === c) cls += ' pop';
+        } else {
+          cls += ' path';
+          cell.style.borderRadius = pathRadius(r, c);
         }
         cell.title = type ? NAMES[type] : '';
       }
@@ -114,7 +134,7 @@ function paintStore(onBuy) {
     btn.className = 'store-item';
     btn.disabled = state.over || state.coins < price;
     btn.innerHTML =
-      `<span class="store-glyph">${ASSETS[type]}</span>` +
+      `<span class="store-glyph">${sprite(type)}</span>` +
       `<span class="store-price">🪙 ${price}</span>`;
     btn.title = `Buy ${NAMES[type]} for ${price} coins`;
     btn.addEventListener('click', () => onBuy(type));
@@ -131,12 +151,10 @@ function paintOverlay() {
   }
 }
 
-// Redraw everything. Handlers are passed through so render stays presentation-only.
 export function render({ onBuy }) {
   paintBoard();
   paintHud();
   paintStore(onBuy);
   paintOverlay();
-  // Consume the one-shot pop marker so it doesn't re-animate next frame.
-  state.lastCreated = null;
+  state.lastCreated = null; // consume the one-shot pop marker
 }

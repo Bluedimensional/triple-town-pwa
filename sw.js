@@ -2,7 +2,7 @@
 //
 // Bump CACHE version whenever shipped files change so clients pick up the update.
 
-const CACHE = 'tripletown-v3';
+const CACHE = 'tripletown-v4';
 
 const SHELL = [
   '.',
@@ -19,6 +19,7 @@ const SHELL = [
   'js/persistence.js',
   'js/game.js',
   'js/render.js',
+  'js/sprites.js',
   'assets/icons/icon-192.png',
   'assets/icons/icon-512.png',
   'assets/icons/icon-180.png',

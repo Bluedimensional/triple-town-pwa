@@ -71,9 +71,9 @@ assets/
 ## Conventions
 
 - **Vanilla HTML + CSS + JS, ES modules, no framework, no build step.**
-- **Swappable asset map:** tiles render from `ASSETS` in `js/config.js`
-  (emoji placeholders today). To move to image sprites, change `tileContent()`
-  in `js/render.js` — no game logic changes.
+- **Swappable asset map:** tiles render from hand-drawn SVG sprites in
+  `js/sprites.js` (one string per tile). Reskin by editing that file — no game
+  logic changes. (`ASSETS` in `js/config.js` keeps emoji as an alt/fallback.)
 - **Data-driven rules:** chains, scoring, spawn weights, and store prices all
   live in `js/config.js`. Tune there; logic never hard-codes a tile type.
 
