@@ -65,7 +65,9 @@ export function buildBoard(onCellTap) {
       cell.dataset.c = c;
       cell.setAttribute('aria-label',
         isStorehouse(r, c) ? 'storehouse' : `row ${r + 1} column ${c + 1}`);
-      cell.addEventListener('click', () => onCellTap(r, c));
+      // Respond on press (pointerdown), not click — click fires on release after
+      // a tap-disambiguation delay, which is the "tiny delay" that felt laggy.
+      cell.addEventListener('pointerdown', (e) => { if (e.button === 0) onCellTap(r, c); });
       el.board.appendChild(cell);
       el.cells.push(cell);
     }
@@ -92,7 +94,12 @@ function buildPathShape() {
       if (isPathCell(r, c)) d += `M${c} ${r}h1v1h-1z`;
     }
   }
-  if (el.pathShape) el.pathShape.setAttribute('d', d);
+  // Only touch the DOM (and re-run the displacement filter) when the shape
+  // actually changed — avoids needless filter re-rasterization.
+  if (el.pathShape && d !== el.lastPathD) {
+    el.pathShape.setAttribute('d', d);
+    el.lastPathD = d;
+  }
 }
 
 // Point a pulsing group member toward the active piece (unit vector in --lx/--ly);
@@ -191,7 +198,7 @@ function paintStore(onBuy) {
       `<span class="store-glyph">${sprite(type)}</span>` +
       `<span class="store-price">🪙 ${price}</span>`;
     btn.title = `Buy ${NAMES[type]} for ${price} coins`;
-    btn.addEventListener('click', () => onBuy(type));
+    btn.addEventListener('pointerdown', (e) => { if (e.button === 0 && !btn.disabled) onBuy(type); });
     el.store.appendChild(btn);
   }
 }

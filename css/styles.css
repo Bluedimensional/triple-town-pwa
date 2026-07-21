@@ -53,6 +53,7 @@ body {
     env(safe-area-inset-left);
   user-select: none;
   -webkit-user-select: none;
+  touch-action: manipulation;   /* no double-tap zoom delay on taps */
 }
 
 #app {

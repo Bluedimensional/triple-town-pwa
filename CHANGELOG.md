@@ -3,6 +3,19 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.7.2] - 2026-07-21
+
+### Changed
+- **Snappier input:** tiles and store buttons now act on `pointerdown` (press)
+  instead of `click` (release, after a tap-disambiguation delay) — removes the
+  small lag between tapping and the piece landing. Added `touch-action:
+  manipulation` (no double-tap-zoom delay) and skip re-rasterizing the path
+  filter when the path shape hasn't changed. (Measured JS per placement ~1.6ms,
+  so the felt delay was input latency, not rendering.)
+
+### Migration
+- Service-worker cache bumped to `tripletown-v15`.
+
 ## [0.7.1] - 2026-07-21
 
 ### Fixed
