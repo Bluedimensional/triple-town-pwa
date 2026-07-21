@@ -3,6 +3,20 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.4.0] - 2026-07-21
+
+### Changed
+- **Dark outline on every sprite** for contrast against the field (a stacked
+  8-direction drop-shadow, so it traces any silhouette).
+- **Grass** redrawn as a low, wide patch of grass (was upright blades).
+- **Tree** redrawn with two overlapping leaf canopies (lower olive + upper
+  bright) and a trunk (was a single canopy).
+- **Bear** redrawn: taller head with a bigger forehead, four legs (was two),
+  and **blinking eyes** (CSS-animated).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v7`.
+
 ## [0.3.2] - 2026-07-21
 
 ### Changed

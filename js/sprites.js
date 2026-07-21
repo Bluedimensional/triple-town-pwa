@@ -12,15 +12,19 @@ const svg = (inner) =>
 
 // --- plants -------------------------------------------------------------
 
+// A low, wide patch of grass (a flat clump, not upright blades).
 const grass = svg(`
-  <ellipse cx="50" cy="82" rx="27" ry="7" fill="#2f5a1a" opacity="0.5"/>
-  <g stroke="#245018" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
-    <path d="M50 84 Q36 60 30 50 Q44 62 50 84Z" fill="#4b8a28"/>
-    <path d="M50 84 Q64 60 70 50 Q56 62 50 84Z" fill="#57a02f"/>
-    <path d="M50 85 Q28 66 24 58 Q42 66 50 85Z" fill="#437f24"/>
-    <path d="M50 85 Q72 66 76 58 Q58 66 50 85Z" fill="#5fa834"/>
-    <path d="M50 86 Q49 56 50 42 Q53 60 50 86Z" fill="#64b238"/>
-  </g>`);
+  <ellipse cx="50" cy="74" rx="31" ry="8" fill="#2f5a1a" opacity="0.45"/>
+  <path d="M17 73 Q15 57 29 55 Q33 45 43 51 Q50 43 58 51 Q68 45 72 55 Q85 57 83 73 Z"
+        fill="#4d8d28" stroke="#234d13" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M20 66 Q26 60 33 63 Q40 58 47 63 Q54 58 61 63 Q68 59 78 65"
+        fill="none" stroke="#3a7020" stroke-width="2.4" stroke-linecap="round"/>
+  <g stroke="#356b1c" stroke-width="2.6" stroke-linecap="round" fill="none">
+    <path d="M31 65 Q30 55 33 49"/><path d="M43 67 Q42 54 45 46"/>
+    <path d="M54 66 Q54 53 57 47"/><path d="M65 65 Q65 55 69 51"/></g>
+  <g stroke="#67b53a" stroke-width="2.3" stroke-linecap="round" fill="none">
+    <path d="M37 66 Q37 57 39 51"/><path d="M49 67 Q50 55 52 49"/>
+    <path d="M60 66 Q61 56 63 50"/></g>`);
 
 const bush = svg(`
   <defs><radialGradient id="bushG" cx="40%" cy="32%" r="72%">
@@ -33,16 +37,19 @@ const bush = svg(`
     <circle cx="57" cy="61" r="7"/><circle cx="39" cy="62" r="5.5"/>
     <circle cx="50" cy="52" r="5"/><circle cx="68" cy="55" r="4.5"/></g>`);
 
+// Two overlapping sets of leaves (a lower olive canopy + upper bright canopy).
 const tree = svg(`
-  <defs><radialGradient id="treeG" cx="42%" cy="30%" r="72%">
-    <stop offset="0%" stop-color="#7cc047"/><stop offset="62%" stop-color="#498327"/>
-    <stop offset="100%" stop-color="#356a1d"/></radialGradient></defs>
-  <rect x="44" y="60" width="12" height="30" rx="4" fill="#7a4a22" stroke="#452a12" stroke-width="3"/>
-  <circle cx="50" cy="44" r="31" fill="#274c14"/>
-  <circle cx="50" cy="42" r="29" fill="url(#treeG)"/>
-  <g fill="#3b7a1f" opacity="0.6">
-    <circle cx="38" cy="38" r="6"/><circle cx="60" cy="34" r="5"/>
-    <circle cx="56" cy="52" r="6"/><circle cx="42" cy="52" r="5"/></g>`);
+  <defs>
+    <radialGradient id="treeBack" cx="42%" cy="34%" r="72%">
+      <stop offset="0%" stop-color="#9cbb42"/><stop offset="100%" stop-color="#6d8d27"/></radialGradient>
+    <radialGradient id="treeFront" cx="42%" cy="30%" r="74%">
+      <stop offset="0%" stop-color="#7cc047"/><stop offset="100%" stop-color="#3f7a22"/></radialGradient>
+  </defs>
+  <rect x="45" y="62" width="11" height="27" rx="4" fill="#7a4a22" stroke="#452a12" stroke-width="3"/>
+  <circle cx="45" cy="50" r="23" fill="url(#treeBack)" stroke="#3a5a16" stroke-width="3"/>
+  <g fill="#6d8d27" opacity="0.6"><circle cx="38" cy="46" r="4.5"/><circle cx="47" cy="58" r="4"/></g>
+  <circle cx="58" cy="38" r="18" fill="url(#treeFront)" stroke="#2f5e18" stroke-width="3"/>
+  <g fill="#3f7a22" opacity="0.55"><circle cx="52" cy="35" r="4"/><circle cx="63" cy="44" r="4.5"/><circle cx="64" cy="34" r="3.5"/></g>`);
 
 // --- buildings ----------------------------------------------------------
 
@@ -103,19 +110,22 @@ const tripleCastle = svg(`
 
 // --- bears & tombs ------------------------------------------------------
 
+// Taller head with a big forehead, four legs, and blinking eyes (the .bear-eye
+// class is animated in CSS).
 const bear = svg(`
-  <circle cx="31" cy="30" r="12" fill="#6f4a24" stroke="#3d2712" stroke-width="3"/>
-  <circle cx="69" cy="30" r="12" fill="#6f4a24" stroke="#3d2712" stroke-width="3"/>
-  <rect x="31" y="79" width="12" height="10" rx="3" fill="#5c3c1e" stroke="#3d2712" stroke-width="3"/>
-  <rect x="57" y="79" width="12" height="10" rx="3" fill="#5c3c1e" stroke="#3d2712" stroke-width="3"/>
-  <rect x="24" y="26" width="52" height="57" rx="15" fill="#a06a34" stroke="#3d2712" stroke-width="3.5"/>
-  <ellipse cx="50" cy="63" rx="16" ry="12" fill="#d8b483"/>
-  <path d="M33 45 L47 50" stroke="#3d2712" stroke-width="3" stroke-linecap="round"/>
-  <path d="M67 45 L53 50" stroke="#3d2712" stroke-width="3" stroke-linecap="round"/>
-  <circle cx="40" cy="53" r="4" fill="#b5361f"/>
-  <circle cx="60" cy="53" r="4" fill="#b5361f"/>
-  <ellipse cx="50" cy="59" rx="4.5" ry="3.2" fill="#3a2410"/>
-  <path d="M50 62 Q50 67 45 67 M50 62 Q50 67 55 67" stroke="#3a2410" stroke-width="2.5" fill="none" stroke-linecap="round"/>`);
+  <circle cx="31" cy="25" r="11" fill="#6f4a24" stroke="#3d2712" stroke-width="3"/>
+  <circle cx="69" cy="25" r="11" fill="#6f4a24" stroke="#3d2712" stroke-width="3"/>
+  <g fill="#5c3c1e" stroke="#3d2712" stroke-width="3">
+    <rect x="28" y="82" width="9" height="11" rx="3"/><rect x="40" y="82" width="9" height="11" rx="3"/>
+    <rect x="51" y="82" width="9" height="11" rx="3"/><rect x="63" y="82" width="9" height="11" rx="3"/></g>
+  <rect x="25" y="19" width="50" height="67" rx="16" fill="#a06a34" stroke="#3d2712" stroke-width="3.5"/>
+  <ellipse cx="50" cy="70" rx="15" ry="11" fill="#d8b483"/>
+  <path d="M34 51 L45 55" stroke="#3d2712" stroke-width="3" stroke-linecap="round"/>
+  <path d="M66 51 L55 55" stroke="#3d2712" stroke-width="3" stroke-linecap="round"/>
+  <circle class="bear-eye" cx="41" cy="60" r="4" fill="#b5361f"/>
+  <circle class="bear-eye" cx="59" cy="60" r="4" fill="#b5361f"/>
+  <ellipse cx="50" cy="66" rx="4.2" ry="3" fill="#3a2410"/>
+  <path d="M50 69 Q50 73 46 73 M50 69 Q50 73 54 73" stroke="#3a2410" stroke-width="2.4" fill="none" stroke-linecap="round"/>`);
 
 const tombstone = svg(`
   <ellipse cx="50" cy="85" rx="27" ry="7" fill="#3f6a24"/>

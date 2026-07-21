@@ -15,6 +15,15 @@
   --store-brown: #8a5a2b;
   --gap: 3px;
   --radius: 12px;
+  /* A dark outline traced around every sprite silhouette (8 offset copies) plus
+     a soft ground shadow — gives contrast against the field. */
+  --outline: #16260f;
+  --piece-outline:
+    drop-shadow(1px 0 0 var(--outline))  drop-shadow(-1px 0 0 var(--outline))
+    drop-shadow(0 1px 0 var(--outline))  drop-shadow(0 -1px 0 var(--outline))
+    drop-shadow(1px 1px 0 var(--outline)) drop-shadow(-1px 1px 0 var(--outline))
+    drop-shadow(1px -1px 0 var(--outline)) drop-shadow(-1px -1px 0 var(--outline))
+    drop-shadow(0 2px 1.5px rgba(0,0,0,0.32));
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -135,7 +144,7 @@ body {
   width: 86%;
   height: 86%;
   display: block;
-  filter: drop-shadow(0 2px 1px rgba(0,0,0,0.28));
+  filter: var(--piece-outline);
 }
 /* Empty, placeable tiles form a continuous light dirt path (corners rounded
    per-neighbour in render.js). */
@@ -167,6 +176,17 @@ body {
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
   50%      { transform: scale(1.15); }
+}
+
+/* Bears blink: eyes briefly squeeze shut. */
+.bear-eye {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: blink 4.2s ease-in-out infinite;
+}
+@keyframes blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  96%           { transform: scaleY(0.1); }
 }
 
 .cell.pop { animation: pop 0.22s ease; }
@@ -208,7 +228,7 @@ body {
 }
 .store-item:disabled { opacity: 0.4; }
 .store-glyph { font-size: 24px; line-height: 1; }
-.store-glyph svg { width: 30px; height: 30px; display: block; }
+.store-glyph svg { width: 30px; height: 30px; display: block; filter: var(--piece-outline); }
 .store-price { font-variant-numeric: tabular-nums; font-weight: 600; }
 
 /* ---- Game over overlay ---- */
