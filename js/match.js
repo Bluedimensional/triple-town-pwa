@@ -63,6 +63,28 @@ export function previewMergeGroup() {
   return group.length >= rule.need ? group : [];
 }
 
+// Place a crystal (wildcard) at (r,c): it becomes whichever type completes the
+// highest-value merge with its neighbours, then that merge resolves (and
+// cascades). If no type completes a match, the crystal turns into a rock.
+// Returns the resulting type at (r,c).
+export function crystalResolve(r, c) {
+  let best = null, bestPts = -1;
+  for (const type in MERGE) {
+    state.board[r][c] = type;                 // pretend the crystal is this type
+    if (floodFill(r, c, type).length >= MERGE[type].need) {
+      const pts = POINTS[MERGE[type].next] || 0;
+      if (pts > bestPts) { bestPts = pts; best = type; }
+    }
+  }
+  if (best) {
+    state.board[r][c] = best;
+    resolveMerges(r, c);
+    return state.board[r][c];
+  }
+  state.board[r][c] = 'rock';                 // couldn't complete anything
+  return 'rock';
+}
+
 // Resolve merges starting at (r,c), cascading as long as the newly created
 // tile keeps forming a large-enough group. Returns points earned this cascade.
 export function resolveMerges(r, c) {

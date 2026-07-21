@@ -2,11 +2,11 @@
 
 import { state, resetGame, isStorehouse } from './state.js';
 import {
-  SPAWN_WEIGHTS, MAX_GRASS_STREAK, POINTS,
+  SPAWN_WEIGHTS, MAX_GRASS_STREAK, CRYSTAL_CHANCE, POINTS,
   BEAR_BASE_CHANCE, BEAR_CHANCE_PER_TURN, BEAR_MAX_CHANCE,
   PREFILL_MIN, PREFILL_MAX, PREFILL_WEIGHTS, PREFILL_BEARS, PREFILL_TOMB_CHANCE,
 } from './config.js';
-import { resolveMerges } from './match.js';
+import { resolveMerges, crystalResolve } from './match.js';
 import { moveBears } from './bears.js';
 import { save } from './persistence.js';
 
@@ -45,6 +45,8 @@ function bearChance() {
 export function spawnNext({ countTurn = true } = {}) {
   if (Math.random() < bearChance()) {
     state.current = 'bear';
+  } else if (Math.random() < CRYSTAL_CHANCE) {
+    state.current = 'crystal';   // rare wildcard
   } else if (state.grassStreak >= MAX_GRASS_STREAK) {
     // Too many grass in a row — hand out a non-grass piece this time.
     const { grass, ...rest } = SPAWN_WEIGHTS;
@@ -99,8 +101,11 @@ export function placePiece(r, c) {
   // Base points for the tile you just set down (grass, bought tiles, etc.).
   state.score += POINTS[piece] || 0;
 
-  // Bears never merge; everything else can cascade.
-  if (piece !== 'bear') resolveMerges(r, c);
+  if (piece === 'crystal') {
+    crystalResolve(r, c);       // wildcard: completes the best merge, or -> rock
+  } else if (piece !== 'bear') {
+    resolveMerges(r, c);        // bears never merge; everything else can cascade
+  }
 
   // Bears already on the board react to your move.
   moveBears();

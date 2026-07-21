@@ -3,6 +3,20 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.10.0] - 2026-07-21 (v25)
+
+### Added
+- **Crystal (wildcard):** a rare spawn (~2.5%, tunable) and a store item (250
+  coins). Placed next to a group, it becomes whichever type completes the
+  **highest-value** merge (and cascades). Placed where it can't complete any
+  match, it turns into a **Rock** — an immovable, unplaceable obstacle (as in the
+  original). New crystal + rock sprites. Verified: completes best merge, picks
+  higher value, works with the tombstone chain, and fizzles to rock; all
+  regression tests pass.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v25`.
+
 ## [0.9.1] - 2026-07-21 (v24)
 
 ### Changed

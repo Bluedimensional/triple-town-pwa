@@ -187,7 +187,29 @@ const plate = svg(`
   <ellipse cx="50" cy="53" rx="25" ry="12.5" fill="url(#plateWell)" stroke="#3f2610" stroke-width="2"/>
   <path d="M32 47 Q42 42 55 44" fill="none" stroke="#d69a58" stroke-width="3" stroke-linecap="round" opacity="0.55"/>`);
 
+// --- crystal (wildcard) & rock ------------------------------------------
+
+// A faceted blue gem (the wildcard piece).
+const crystal = svg(`
+  <polygon points="50,10 71,38 61,84 39,84 29,38"
+           fill="#8fcdf0" stroke="#255a80" stroke-width="3" stroke-linejoin="round"/>
+  <polygon points="50,10 71,38 50,46 29,38" fill="#c4e9fc"/>
+  <polygon points="29,38 50,46 39,84" fill="#86c3ea"/>
+  <polygon points="71,38 50,46 61,84" fill="#5a9bd0"/>
+  <polygon points="50,46 61,84 39,84" fill="#74b6e4"/>
+  <polygon points="50,15 61,36 50,43 42,36" fill="#eafaff" opacity="0.75"/>
+  <line x1="50" y1="46" x2="50" y2="82" stroke="#3f78a0" stroke-width="1.6" opacity="0.5"/>`,
+  { cy: 90, rx: 18, ry: 5 });
+
+// A gray boulder (what a crystal becomes when it can't complete a match).
+const rock = svg(`
+  <path d="M20 74 Q14 58 25 50 Q33 40 48 42 Q64 40 74 51 Q84 60 79 74 Q50 82 20 74 Z"
+        fill="#8f8f8f" stroke="#474747" stroke-width="3" stroke-linejoin="round"/>
+  <ellipse cx="41" cy="53" rx="10" ry="6" fill="#a9a9a9" opacity="0.65"/>
+  <path d="M30 62 Q42 57 55 60 Q64 62 70 58" fill="none" stroke="#6c6c6c" stroke-width="2.4" stroke-linecap="round"/>`,
+  { cy: 80, rx: 27, ry: 6 });
+
 export const SPRITES = {
   grass, bush, tree, hut, house, mansion, castle, floatingCastle, tripleCastle,
-  bear, tombstone, church, cathedral, treasury, plate,
+  bear, tombstone, church, cathedral, treasury, plate, crystal, rock,
 };
