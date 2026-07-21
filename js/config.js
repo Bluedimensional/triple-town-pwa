@@ -3,7 +3,11 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v16';
+export const VERSION = 'v17';
+
+// Organic path uses an SVG turbulence/displacement filter. It's cheap on desktop
+// GPUs but slow to rasterize on iOS. Off = plain (fast) path, for perf testing.
+export const ORGANIC_PATH = false;
 
 export const BOARD_SIZE = 6;
 

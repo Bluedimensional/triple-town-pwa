@@ -3,6 +3,18 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.7.4] - 2026-07-21 (v17)
+
+### Changed
+- **Speed test:** the organic-path SVG turbulence/displacement filter (added
+  after v10) is now behind an `ORGANIC_PATH` flag, set OFF. The path renders as a
+  plain (fast) shape. iOS rasterizes that filter slowly on every placement, so
+  this isolates whether it's the cause of the phone lag. If taps are smooth here,
+  the organic look will be rebuilt without a runtime filter.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v17`.
+
 ## [0.7.3] - 2026-07-21 (v16)
 
 ### Added

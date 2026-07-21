@@ -4,7 +4,7 @@
 // edit sprites.js — nothing here or in the game logic assumes how a tile looks.
 
 import { state, isStorehouse } from './state.js';
-import { NAMES, STORE_ITEMS } from './config.js';
+import { NAMES, STORE_ITEMS, ORGANIC_PATH } from './config.js';
 import { SPRITES } from './sprites.js';
 import { priceOf } from './store.js';
 import { previewMergeGroup } from './match.js';
@@ -48,7 +48,7 @@ export function buildBoard(onCellTap) {
            <feMerge><feMergeNode in="bd"/><feMergeNode in="disp"/></feMerge>
          </filter>
        </defs>
-       <path id="path-shape" d="" filter="url(#pathFx)"/>
+       <path id="path-shape" d=""${ORGANIC_PATH ? ' filter="url(#pathFx)"' : ''}/>
      </svg>`;
   const svgEl = new DOMParser().parseFromString(svgStr, 'image/svg+xml').documentElement;
   el.board.insertBefore(document.importNode(svgEl, true), el.board.firstChild);
