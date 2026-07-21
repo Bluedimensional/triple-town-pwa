@@ -3,6 +3,19 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.7.1] - 2026-07-21
+
+### Fixed
+- **Bear trapping** now keys off the whole connected bear-group: a bear only
+  turns into a tombstone when its group is *completely enclosed* (no open tile
+  touching the group anywhere). A bear merely blocked this turn by a neighbouring
+  bear whose group still touches open space now just waits instead of wrongly
+  turning to stone. Two enclosed bears become two tombstones (a church still
+  needs three).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v14`.
+
 ## [0.7.0] - 2026-07-21
 
 ### Added
