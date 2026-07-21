@@ -125,18 +125,32 @@ body {
 }
 #board {
   --size: 6;
+  position: relative;          /* anchors the path layer */
   /* Fill the width, but never taller than the space left after HUD/toolbar/store. */
   width: min(100%, calc(100dvh - 240px));
   aspect-ratio: 1 / 1;
   display: grid;
   grid-template-columns: repeat(var(--size), 1fr);
   grid-template-rows: repeat(var(--size), 1fr);
-  gap: 0;                       /* no gap so path tiles fuse into one shape */
+  gap: 0;
   padding: 0;
 }
+/* The organic tan path shape, drawn behind the tiles. */
+#path-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: visible;           /* let the wobbly edges spill past cell bounds */
+  pointer-events: none;
+}
+#path-shape { fill: var(--path); }
 .cell {
   border: none;
-  background: transparent;      /* filled tiles blend into the field */
+  background: transparent;      /* the path shape is drawn by #path-layer */
+  position: relative;
+  z-index: 1;                   /* tiles sit above the path layer */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -149,10 +163,6 @@ body {
   height: 86%;
   display: block;
 }
-/* Empty, placeable tiles form a continuous light dirt path (corners rounded
-   per-neighbour in render.js). */
-.cell.path { background: var(--path); }
-.cell.filled { background: transparent; }
 .cell:active { transform: scale(0.94); }
 
 /* The storehouse: top-left corner square — just the plate on the field, no
@@ -170,6 +180,8 @@ body {
 /* The white halo is ONLY ever on the one new piece, hugging the sprite. */
 .cell.lead { z-index: 6; }
 .cell.lead svg { filter: var(--piece-outline-white); }
+/* A new piece with the white border has no ground shadow. */
+.cell.lead .pc-shadow { display: none; }
 @keyframes leanPulse {
   0%, 100% { transform: translate(0, 0) scale(1); }
   50%      { transform: translate(calc(var(--lx, 0) * 5px), calc(var(--ly, 0) * 5px)) scale(1.1); }

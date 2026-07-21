@@ -3,6 +3,26 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.7.0] - 2026-07-21
+
+### Added
+- **Organic path** — the path is now a single tan shape (union of path tiles)
+  rendered behind the tiles with a turbulence/displacement SVG filter, so single
+  spaces read as natural blobs and edges wobble organically instead of being
+  square. One filter on one element (static; recomputed only on placement). A
+  dark border traces the whole outline. Replaces the per-cell square tiles.
+- **No shadow on the new piece** — the active (white-bordered) piece hides its
+  ground shadow while highlighted.
+
+### Notes
+- Border color darkened to `#2c4116` (the requested `#495e31` was nearly
+  identical to the field color, so it was invisible).
+- Confirmed the merge-preview pulse is directional (members lean toward the new
+  piece; the new piece pulses in place).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v13`.
+
 ## [0.6.1] - 2026-07-21
 
 ### Fixed

@@ -29,6 +29,34 @@ function sprite(type) {
 export function buildBoard(onCellTap) {
   el.board.innerHTML = '';
   el.board.style.setProperty('--size', state.size);
+
+  // Organic path layer: a single tan shape (union of path tiles) rendered behind
+  // the tiles, with a turbulence/displacement filter that wobbles its edges so
+  // the path looks natural instead of made of squares. One filter, one element.
+  // Built via DOMParser so the SVG filter primitives get the right namespace.
+  const n = state.size;
+  const svgStr =
+    `<svg xmlns="http://www.w3.org/2000/svg" id="path-layer" viewBox="0 0 ${n} ${n}" aria-hidden="true">
+       <defs>
+         <filter id="pathFx" x="-12%" y="-12%" width="124%" height="124%">
+           <feTurbulence type="fractalNoise" baseFrequency="2.6 2.9" numOctaves="2" seed="11" result="noise"/>
+           <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.22"
+             xChannelSelector="R" yChannelSelector="G" result="disp"/>
+           <feMorphology in="disp" operator="dilate" radius="0.07" result="dil"/>
+           <feFlood flood-color="#2c4116" result="col"/>
+           <feComposite in="col" in2="dil" operator="in" result="bd"/>
+           <feMerge><feMergeNode in="bd"/><feMergeNode in="disp"/></feMerge>
+         </filter>
+       </defs>
+       <path id="path-shape" d="" filter="url(#pathFx)"/>
+     </svg>`;
+  const svgEl = new DOMParser().parseFromString(svgStr, 'image/svg+xml').documentElement;
+  el.board.insertBefore(document.importNode(svgEl, true), el.board.firstChild);
+  el.pathShape = el.board.querySelector('#path-shape');
+
+  // Keep the cell buttons in their own array — the board's children also include
+  // the path-layer SVG, so index math on board.children would be off by one.
+  el.cells = [];
   for (let r = 0; r < state.size; r++) {
     for (let c = 0; c < state.size; c++) {
       const cell = document.createElement('button');
@@ -39,6 +67,7 @@ export function buildBoard(onCellTap) {
         isStorehouse(r, c) ? 'storehouse' : `row ${r + 1} column ${c + 1}`);
       cell.addEventListener('click', () => onCellTap(r, c));
       el.board.appendChild(cell);
+      el.cells.push(cell);
     }
   }
 }
@@ -48,18 +77,22 @@ function isActive(r, c) {
     state.activePos.r === r && state.activePos.c === c;
 }
 
-// A dark border only where the path meets the board's outer boundary or the
-// storehouse — NOT around embedded objects (those looked like internal borders).
-function pathBorder(r, c) {
-  const w = '3px', col = 'var(--path-edge)';
-  const edge = (nr, nc) =>
-    nr < 0 || nr >= state.size || nc < 0 || nc >= state.size || isStorehouse(nr, nc);
-  const s = [];
-  if (edge(r - 1, c)) s.push('inset 0 ' + w + ' 0 ' + col);
-  if (edge(r + 1, c)) s.push('inset 0 -' + w + ' 0 ' + col);
-  if (edge(r, c - 1)) s.push('inset ' + w + ' 0 0 ' + col);
-  if (edge(r, c + 1)) s.push('inset -' + w + ' 0 0 ' + col);
-  return s.join(', ');
+// A cell carries the tan path surface when it's empty (incl. the active preview)
+// or has a bear standing on it.
+function isPathCell(r, c) {
+  return !isStorehouse(r, c) && (state.board[r][c] === null || state.board[r][c] === 'bear');
+}
+
+// The union of all path tiles as one SVG path `d` (each tile a 1x1 square in the
+// board's cell coordinate space). Adjacent squares merge; the filter organics it.
+function buildPathShape() {
+  let d = '';
+  for (let r = 0; r < state.size; r++) {
+    for (let c = 0; c < state.size; c++) {
+      if (isPathCell(r, c)) d += `M${c} ${r}h1v1h-1z`;
+    }
+  }
+  if (el.pathShape) el.pathShape.setAttribute('d', d);
 }
 
 // Point a pulsing group member toward the active piece (unit vector in --lx/--ly);
@@ -87,7 +120,8 @@ function pulseKeys() {
 }
 
 function paintBoard() {
-  const cells = el.board.children;
+  buildPathShape();                 // organic tan path behind the tiles
+  const cells = el.cells;
   const pulse = pulseKeys();
   const cellSize = el.board.clientWidth / state.size; // px, for the hop offset
   const moved = new Map();
@@ -96,13 +130,7 @@ function paintBoard() {
     for (let c = 0; c < state.size; c++) {
       const cell = cells[r * state.size + c];
       let cls = 'cell';
-      cell.style.borderRadius = '';
-      cell.style.boxShadow = '';   // '' lets class rules (e.g. storehouse) apply
       const pulsing = pulse.has(r + ',' + c);
-      // Give path tiles their rounding + outer border.
-      // Square path tiles with an outer border (rounded per-cell corners looked
-      // wonky around the storehouse/objects; organic edges are a later pass).
-      const dressPath = () => { cell.style.boxShadow = pathBorder(r, c); };
 
       if (isStorehouse(r, c)) {
         // Empty storehouse shows the 3D plate; otherwise the held piece.
@@ -110,11 +138,9 @@ function paintBoard() {
         cls += ' storehouse';
         cell.title = state.reserve ? NAMES[state.reserve] : 'Storehouse — tap to store/swap';
       } else if (isActive(r, c) && state.current) {
-        // The waiting piece: the tile stays part of the continuous path; the
-        // white glow + pulse live on the sprite.
+        // The waiting piece: sits on the path; white glow + pulse live on the sprite.
         cell.innerHTML = sprite(state.current);
         cls += ' path pulsing lead';
-        dressPath();
         setLean(cell, r, c);
         cell.title = NAMES[state.current] + ' — tap any tile to place';
       } else {
@@ -123,7 +149,6 @@ function paintBoard() {
         if (type) {
           if (type === 'bear') {
             cls += ' path';          // bears stand on the dirt path
-            dressPath();
             // If this bear just moved, hop it from its old cell to here.
             const m = moved.get(r + ',' + c);
             if (m) {
@@ -141,7 +166,6 @@ function paintBoard() {
               state.lastCreated.r === r && state.lastCreated.c === c) cls += ' pop';
         } else {
           cls += ' path';
-          dressPath();
         }
         cell.title = type ? NAMES[type] : '';
       }

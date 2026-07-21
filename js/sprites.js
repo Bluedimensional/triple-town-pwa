@@ -8,10 +8,11 @@
 // the renderer needs NO CSS filter for normal pieces — that keeps things fast.
 // Gradient ids are unique per sprite type so they don't collide when injected.
 
-// Soft two-layer contact shadow, drawn behind the piece.
+// Soft two-layer contact shadow, drawn behind the piece. Tagged so it can be
+// hidden on the active (white-bordered) piece.
 const shadow = (cy, rx, ry) =>
-  `<ellipse cx="50" cy="${cy}" rx="${rx}" ry="${ry}" fill="#0e1f08" opacity="0.16"/>` +
-  `<ellipse cx="50" cy="${cy}" rx="${(rx * 0.7).toFixed(1)}" ry="${(ry * 0.7).toFixed(1)}" fill="#0a1706" opacity="0.18"/>`;
+  `<ellipse class="pc-shadow" cx="50" cy="${cy}" rx="${rx}" ry="${ry}" fill="#0e1f08" opacity="0.16"/>` +
+  `<ellipse class="pc-shadow" cx="50" cy="${cy}" rx="${(rx * 0.7).toFixed(1)}" ry="${(ry * 0.7).toFixed(1)}" fill="#0a1706" opacity="0.18"/>`;
 
 const svg = (inner, sh) =>
   `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">` +
