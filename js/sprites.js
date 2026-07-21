@@ -19,20 +19,20 @@ const svg = (inner, sh) =>
 
 // --- plants -------------------------------------------------------------
 
-// A bushy patch of grass: a mound with a tufted (bumpy) top and a dark->light
-// vertical gradient, not a smooth dome.
+// A tall, bushy patch of grass: irregular spiky blade tips of varying heights,
+// with a dark->light vertical gradient.
 const grass = svg(`
   <defs><linearGradient id="grassG" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#bfe05a"/><stop offset="42%" stop-color="#5aa62f"/>
-    <stop offset="100%" stop-color="#2c6a1a"/></linearGradient></defs>
-  <path d="M14 71 Q10 53 24 51 Q25 38 33 49 Q37 37 45 49 Q49 34 56 48
-           Q60 38 67 49 Q72 38 79 51 Q92 54 86 71 Q50 79 14 71 Z"
-        fill="url(#grassG)" stroke="#1f4a12" stroke-width="3" stroke-linejoin="round"/>
-  <path d="M22 54 Q26 45 33 51 Q38 44 45 51 Q49 41 56 50 Q61 44 67 51 Q73 45 79 54"
-        fill="none" stroke="#d6ef7e" stroke-width="2.2" stroke-linecap="round" opacity="0.5"/>
-  <g stroke="#255a15" stroke-width="2.4" stroke-linecap="round" fill="none" opacity="0.75">
-    <path d="M33 66 Q32 57 34 51"/><path d="M45 68 Q44 56 46 50"/>
-    <path d="M56 67 Q56 55 57 50"/><path d="M67 66 Q67 56 68 52"/></g>`, { cy: 79, rx: 26, ry: 6.5 });
+    <stop offset="0%" stop-color="#c8e85f"/><stop offset="38%" stop-color="#5aa62f"/>
+    <stop offset="100%" stop-color="#276214"/></linearGradient></defs>
+  <path d="M15 72 L19 47 L24 27 L28 45 L33 36 L37 44 L42 21 L47 43 L51 31
+           L55 44 L60 24 L65 43 L69 34 L74 46 L79 50 L84 72 Q50 78 15 72 Z"
+        fill="url(#grassG)" stroke="#1c4410" stroke-width="2.6" stroke-linejoin="round"/>
+  <g stroke="#2a6417" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.7">
+    <path d="M31 66 L33 43"/><path d="M42 68 L43 30"/><path d="M52 66 L53 40"/>
+    <path d="M62 67 L62 36"/><path d="M71 66 L71 46"/></g>
+  <g stroke="#d9f083" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.45">
+    <path d="M24 40 L24 30"/><path d="M42 34 L42 24"/><path d="M60 36 L60 27"/></g>`, { cy: 76, rx: 27, ry: 6.5 });
 
 const bush = svg(`
   <defs><radialGradient id="bushG" cx="40%" cy="32%" r="72%">

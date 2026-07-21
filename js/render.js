@@ -48,28 +48,6 @@ function isActive(r, c) {
     state.activePos.r === r && state.activePos.c === c;
 }
 
-// A cell shows the light dirt "path" surface when it's empty, or when a bear is
-// standing on it (bears always sit on the path, never on the dark field).
-function isPathSurface(r, c) {
-  return r >= 0 && r < state.size && c >= 0 && c < state.size &&
-    !isStorehouse(r, c) && (state.board[r][c] === null || state.board[r][c] === 'bear');
-}
-
-// Round only the corners where a path cell is exposed on both meeting sides, so
-// adjacent path tiles fuse into one continuous shape with rounded end-caps.
-function pathRadius(r, c) {
-  const up = isPathSurface(r - 1, c);
-  const down = isPathSurface(r + 1, c);
-  const left = isPathSurface(r, c - 1);
-  const right = isPathSurface(r, c + 1);
-  const R = '23%';
-  const tl = (!up && !left) ? R : '0';
-  const tr = (!up && !right) ? R : '0';
-  const br = (!down && !right) ? R : '0';
-  const bl = (!down && !left) ? R : '0';
-  return `${tl} ${tr} ${br} ${bl}`;
-}
-
 // A dark border only where the path meets the board's outer boundary or the
 // storehouse — NOT around embedded objects (those looked like internal borders).
 function pathBorder(r, c) {
@@ -122,10 +100,9 @@ function paintBoard() {
       cell.style.boxShadow = '';   // '' lets class rules (e.g. storehouse) apply
       const pulsing = pulse.has(r + ',' + c);
       // Give path tiles their rounding + outer border.
-      const dressPath = () => {
-        cell.style.borderRadius = pathRadius(r, c);
-        cell.style.boxShadow = pathBorder(r, c);
-      };
+      // Square path tiles with an outer border (rounded per-cell corners looked
+      // wonky around the storehouse/objects; organic edges are a later pass).
+      const dressPath = () => { cell.style.boxShadow = pathBorder(r, c); };
 
       if (isStorehouse(r, c)) {
         // Empty storehouse shows the 3D plate; otherwise the held piece.

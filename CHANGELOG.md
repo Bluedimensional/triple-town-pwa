@@ -3,6 +3,27 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.6.1] - 2026-07-21
+
+### Fixed
+- **Wonky path edges** — removed the per-cell corner rounding that produced
+  notchy, stair-stepped edges around the storehouse/objects. Path tiles are
+  square now (clean); truly organic edges are a planned separate pass.
+
+### Changed
+- **Grass** redrawn taller with an irregular, spiky top (varied blade heights)
+  over the dark→light gradient.
+- **Field background** is now scattered darker-green spots in three sizes (one
+  large, two small and close in size, one of those fainter) instead of a perfect
+  grid of identical dots.
+
+### Notes
+- Verified regular bears move exactly one adjacent square per turn (25/25 moves
+  measured = 1 cell); no ninja bears have been added.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v12`.
+
 ## [0.6.0] - 2026-07-21
 
 ### Added
