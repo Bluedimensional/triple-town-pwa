@@ -70,16 +70,17 @@ function pathRadius(r, c) {
   return `${tl} ${tr} ${br} ${bl}`;
 }
 
-// A dark border on the path's exposed sides (edges that touch the field, an
-// object, or the board boundary). Adjacent path tiles share edges, so it traces
-// only the outer outline of the continuous path.
+// A dark border only where the path meets the board's outer boundary or the
+// storehouse — NOT around embedded objects (those looked like internal borders).
 function pathBorder(r, c) {
   const w = '3px', col = 'var(--path-edge)';
+  const edge = (nr, nc) =>
+    nr < 0 || nr >= state.size || nc < 0 || nc >= state.size || isStorehouse(nr, nc);
   const s = [];
-  if (!isPathSurface(r - 1, c)) s.push('inset 0 ' + w + ' 0 ' + col);
-  if (!isPathSurface(r + 1, c)) s.push('inset 0 -' + w + ' 0 ' + col);
-  if (!isPathSurface(r, c - 1)) s.push('inset ' + w + ' 0 0 ' + col);
-  if (!isPathSurface(r, c + 1)) s.push('inset -' + w + ' 0 0 ' + col);
+  if (edge(r - 1, c)) s.push('inset 0 ' + w + ' 0 ' + col);
+  if (edge(r + 1, c)) s.push('inset 0 -' + w + ' 0 ' + col);
+  if (edge(r, c - 1)) s.push('inset ' + w + ' 0 0 ' + col);
+  if (edge(r, c + 1)) s.push('inset -' + w + ' 0 0 ' + col);
   return s.join(', ');
 }
 
@@ -110,6 +111,9 @@ function pulseKeys() {
 function paintBoard() {
   const cells = el.board.children;
   const pulse = pulseKeys();
+  const cellSize = el.board.clientWidth / state.size; // px, for the hop offset
+  const moved = new Map();
+  for (const m of state.bearMoves) moved.set(m.r + ',' + m.c, m);
   for (let r = 0; r < state.size; r++) {
     for (let c = 0; c < state.size; c++) {
       const cell = cells[r * state.size + c];
@@ -124,9 +128,9 @@ function paintBoard() {
       };
 
       if (isStorehouse(r, c)) {
-        cell.innerHTML = sprite(state.reserve);
+        // Empty storehouse shows the 3D plate; otherwise the held piece.
+        cell.innerHTML = state.reserve ? sprite(state.reserve) : SPRITES.plate;
         cls += ' storehouse';
-        cls += state.reserve ? ' filled' : ' empty-store';
         cell.title = state.reserve ? NAMES[state.reserve] : 'Storehouse — tap to store/swap';
       } else if (isActive(r, c) && state.current) {
         // The waiting piece: the tile stays part of the continuous path; the
@@ -143,6 +147,13 @@ function paintBoard() {
           if (type === 'bear') {
             cls += ' path';          // bears stand on the dirt path
             dressPath();
+            // If this bear just moved, hop it from its old cell to here.
+            const m = moved.get(r + ',' + c);
+            if (m) {
+              cls += ' hopping';
+              cell.style.setProperty('--fx', ((m.fromC - c) * cellSize).toFixed(1) + 'px');
+              cell.style.setProperty('--fy', ((m.fromR - r) * cellSize).toFixed(1) + 'px');
+            }
           } else {
             cls += ' filled';
           }
@@ -199,4 +210,5 @@ export function render({ onBuy }) {
   paintStore(onBuy);
   paintOverlay();
   state.lastCreated = null; // consume the one-shot pop marker
+  state.bearMoves = [];     // consume the one-shot hop markers
 }

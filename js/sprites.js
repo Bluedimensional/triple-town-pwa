@@ -19,19 +19,20 @@ const svg = (inner, sh) =>
 
 // --- plants -------------------------------------------------------------
 
-// A low, wide patch of grass (a flat clump, not upright blades).
+// A bushy patch of grass: a mound with a tufted (bumpy) top and a dark->light
+// vertical gradient, not a smooth dome.
 const grass = svg(`
-  <ellipse cx="50" cy="74" rx="31" ry="8" fill="#2f5a1a" opacity="0.4"/>
-  <path d="M17 73 Q15 57 29 55 Q33 45 43 51 Q50 43 58 51 Q68 45 72 55 Q85 57 83 73 Z"
-        fill="#4d8d28" stroke="#234d13" stroke-width="3" stroke-linejoin="round"/>
-  <path d="M20 66 Q26 60 33 63 Q40 58 47 63 Q54 58 61 63 Q68 59 78 65"
-        fill="none" stroke="#3a7020" stroke-width="2.4" stroke-linecap="round"/>
-  <g stroke="#356b1c" stroke-width="2.6" stroke-linecap="round" fill="none">
-    <path d="M31 65 Q30 55 33 49"/><path d="M43 67 Q42 54 45 46"/>
-    <path d="M54 66 Q54 53 57 47"/><path d="M65 65 Q65 55 69 51"/></g>
-  <g stroke="#67b53a" stroke-width="2.3" stroke-linecap="round" fill="none">
-    <path d="M37 66 Q37 57 39 51"/><path d="M49 67 Q50 55 52 49"/>
-    <path d="M60 66 Q61 56 63 50"/></g>`, { cy: 80, rx: 25, ry: 6 });
+  <defs><linearGradient id="grassG" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#bfe05a"/><stop offset="42%" stop-color="#5aa62f"/>
+    <stop offset="100%" stop-color="#2c6a1a"/></linearGradient></defs>
+  <path d="M14 71 Q10 53 24 51 Q25 38 33 49 Q37 37 45 49 Q49 34 56 48
+           Q60 38 67 49 Q72 38 79 51 Q92 54 86 71 Q50 79 14 71 Z"
+        fill="url(#grassG)" stroke="#1f4a12" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M22 54 Q26 45 33 51 Q38 44 45 51 Q49 41 56 50 Q61 44 67 51 Q73 45 79 54"
+        fill="none" stroke="#d6ef7e" stroke-width="2.2" stroke-linecap="round" opacity="0.5"/>
+  <g stroke="#255a15" stroke-width="2.4" stroke-linecap="round" fill="none" opacity="0.75">
+    <path d="M33 66 Q32 57 34 51"/><path d="M45 68 Q44 56 46 50"/>
+    <path d="M56 67 Q56 55 57 50"/><path d="M67 66 Q67 56 68 52"/></g>`, { cy: 79, rx: 26, ry: 6.5 });
 
 const bush = svg(`
   <defs><radialGradient id="bushG" cx="40%" cy="32%" r="72%">
@@ -169,7 +170,23 @@ const treasury = svg(`
   <g fill="#f4d768" stroke="#7a5c12" stroke-width="1.5">
     <circle cx="36" cy="46" r="6"/><circle cx="50" cy="42" r="6"/><circle cx="63" cy="46" r="6"/></g>`, { cy: 89, rx: 28, ry: 6.5 });
 
+// --- storehouse ---------------------------------------------------------
+
+// A 3D wooden plate/dish (shown in the empty storehouse). Rim catches light on
+// top; the well is recessed and darker; a thickness band sits under the rim.
+const plate = svg(`
+  <defs>
+    <linearGradient id="plateRim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#b9803f"/><stop offset="100%" stop-color="#7c4c1f"/></linearGradient>
+    <radialGradient id="plateWell" cx="50%" cy="38%" r="65%">
+      <stop offset="0%" stop-color="#6d4620"/><stop offset="100%" stop-color="#472a12"/></radialGradient>
+  </defs>
+  <ellipse cx="50" cy="60" rx="40" ry="22" fill="#563619"/>
+  <ellipse cx="50" cy="54" rx="40" ry="22" fill="url(#plateRim)" stroke="#37200d" stroke-width="3"/>
+  <ellipse cx="50" cy="53" rx="25" ry="12.5" fill="url(#plateWell)" stroke="#3f2610" stroke-width="2"/>
+  <path d="M32 47 Q42 42 55 44" fill="none" stroke="#d69a58" stroke-width="3" stroke-linecap="round" opacity="0.55"/>`);
+
 export const SPRITES = {
   grass, bush, tree, hut, house, mansion, castle, floatingCastle, tripleCastle,
-  bear, tombstone, church, cathedral, treasury,
+  bear, tombstone, church, cathedral, treasury, plate,
 };

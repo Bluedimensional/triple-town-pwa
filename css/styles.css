@@ -149,17 +149,9 @@ body {
 .cell.filled { background: transparent; }
 .cell:active { transform: scale(0.94); }
 
-/* The storehouse: top-left corner square. */
-.cell.storehouse {
-  background: rgba(0,0,0,0.16);
-  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.12);
-  border-radius: 10px;
-}
-.cell.storehouse.empty-store {
-  background:
-    radial-gradient(ellipse 56% 40% at 50% 52%, transparent 42%, var(--store-brown) 44%, var(--store-brown) 60%, transparent 62%),
-    rgba(0,0,0,0.16);
-}
+/* The storehouse: top-left corner square — just the plate on the field, no
+   dark backing. */
+.cell.storehouse { background: transparent; }
 
 /* Only the SPRITE animates; the tile underneath stays static. Group members
    lean toward the new piece (--lx/--ly, set per-cell in render.js) — "we want
@@ -175,6 +167,21 @@ body {
 @keyframes leanPulse {
   0%, 100% { transform: translate(0, 0) scale(1); }
   50%      { transform: translate(calc(var(--lx, 0) * 5px), calc(var(--ly, 0) * 5px)) scale(1.1); }
+}
+
+/* Bears hop to their new tile — three little hops, each covering a third of the
+   way, instead of teleporting. --fx/--fy (set in render.js) is the old cell's
+   offset from the new one, in px. */
+.cell.hopping { z-index: 4; }
+.cell.hopping svg { animation: hopMove 620ms ease-in-out; }
+@keyframes hopMove {
+  0%    { transform: translate(var(--fx), var(--fy)); }
+  16.6% { transform: translate(calc(var(--fx) * 0.833), calc(var(--fy) * 0.833 - 8px)); }
+  33.3% { transform: translate(calc(var(--fx) * 0.667), calc(var(--fy) * 0.667)); }
+  50%   { transform: translate(calc(var(--fx) * 0.5),   calc(var(--fy) * 0.5   - 8px)); }
+  66.6% { transform: translate(calc(var(--fx) * 0.333), calc(var(--fy) * 0.333)); }
+  83.3% { transform: translate(calc(var(--fx) * 0.167), calc(var(--fy) * 0.167 - 8px)); }
+  100%  { transform: translate(0, 0); }
 }
 
 /* Bears blink: eyes briefly squeeze shut. */

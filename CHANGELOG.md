@@ -3,6 +3,25 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.6.0] - 2026-07-21
+
+### Added
+- **Bears hop to their new tile** — three little hops (each covering a third of
+  the way) instead of teleporting. Each turn's moves are recorded and animated.
+
+### Changed
+- **Storehouse is now a 3D plate** (a wooden dish with a lit rim and recessed
+  well) instead of a plain ring, and the dark backing square is gone.
+- **Grass redrawn** as a bushy, tufted mound with a dark→light gradient (no more
+  smooth "UFO").
+
+### Fixed
+- **Path internal borders removed** — the dark border no longer boxes every
+  embedded object; it traces only the path's outer edge (boundary + storehouse).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v11`.
+
 ## [0.5.0] - 2026-07-21
 
 ### Performance

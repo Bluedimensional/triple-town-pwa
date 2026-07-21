@@ -43,6 +43,7 @@ export function moveBears() {
   // Column-major order: sort by column, then row.
   bears.sort((a, b) => (a[1] - b[1]) || (a[0] - b[0]));
 
+  state.bearMoves = [];
   for (const [r, c] of bears) {
     if (state.board[r][c] !== 'bear') continue; // already moved/overwritten
     const spots = emptyNeighbors(r, c);
@@ -50,6 +51,7 @@ export function moveBears() {
       const [nr, nc] = spots[Math.floor(Math.random() * spots.length)];
       state.board[r][c] = null;
       state.board[nr][nc] = 'bear';
+      state.bearMoves.push({ r: nr, c: nc, fromR: r, fromC: c });
     } else {
       // Trapped: becomes a tombstone, which can start a merge cascade.
       state.board[r][c] = 'tombstone';

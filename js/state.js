@@ -15,6 +15,7 @@ export const state = {
   storeBought: {},  // tile type -> times purchased (drives rising prices)
   over: false,
   lastCreated: null, // {r,c} of the most recent merge result, for the pop animation
+  bearMoves: [],     // this turn's bear moves [{r,c,fromR,fromC}], for the hop animation
 };
 
 // The storehouse occupies board cell (0,0); it is swap-only and never a real
@@ -44,5 +45,6 @@ export function resetGame() {
   state.storeBought = {};
   state.over = false;
   state.lastCreated = null;
+  state.bearMoves = [];
   state.best = best;
 }
