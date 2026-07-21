@@ -213,3 +213,23 @@ export const SPRITES = {
   grass, bush, tree, hut, house, mansion, castle, floatingCastle, tripleCastle,
   bear, tombstone, church, cathedral, treasury, plate, crystal, rock,
 };
+
+// --- "super" variants (made by matching 4+) ----------------------------------
+// A super piece is its regular sprite plus a small decoration — the regular
+// sprites above are NOT modified. Plants get red berries (per the original);
+// everything else gets a gold-star "super" badge (placeholder until real art).
+const SUPER_BERRIES =
+  '<g stroke="#7c1616" stroke-width="1.1">' +
+  '<circle cx="63" cy="30" r="5.4" fill="#e23b3b"/>' +
+  '<circle cx="73" cy="36" r="4.8" fill="#d33030"/>' +
+  '<circle cx="60" cy="40" r="4.4" fill="#ec4a4a"/></g>';
+const SUPER_STAR =
+  '<path d="M73 11 l2.7 5.6 6.2 .8 -4.6 4.3 1.2 6.1 -5.5-3-5.5 3 1.2-6.1-4.6-4.3 6.2-.8 z" ' +
+  'fill="#ffd84a" stroke="#a9790f" stroke-width="1"/>';
+const SUPER_BASES = ['bush', 'tree', 'hut', 'house', 'mansion', 'castle',
+  'floatingCastle', 'tripleCastle', 'church', 'cathedral', 'treasury'];
+const PLANT_SUPERS = new Set(['bush', 'tree']);
+for (const base of SUPER_BASES) {
+  const decor = PLANT_SUPERS.has(base) ? SUPER_BERRIES : SUPER_STAR;
+  SPRITES[base + 'Super'] = SPRITES[base].replace('</svg>', decor + '</svg>');
+}

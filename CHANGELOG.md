@@ -3,6 +3,23 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.11.0] - 2026-07-21 (v26)
+
+### Added
+- **Super (enhanced) pieces:** matching MORE than the minimum (4+ for the usual
+  3-chains, 5+ for Floating Castle) now yields a **super** version of the result,
+  worth **double points**. Super pieces group and merge with regular ones (a
+  super bush combines with two regular bushes). Super bush/tree show red berries;
+  other supers get a gold-star badge (placeholder until real art). Regular pieces
+  are unchanged. Verified with 7 super tests + all regressions.
+
+### Notes
+- Super-piece art beyond the berry-plants is a placeholder — needs the real
+  enhanced-piece images to match each one exactly.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v26`.
+
 ## [0.10.0] - 2026-07-21 (v25)
 
 ### Added
