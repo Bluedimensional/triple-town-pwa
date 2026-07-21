@@ -25,6 +25,31 @@ function sprite(type) {
   return type ? (SPRITES[type] || '') : '';
 }
 
+// Cobblestone path texture: base #75774a with bricks randomly shaded #777b4a or
+// #7c804d, each with a faint #737746 border. Bricks are 20% smaller than the
+// base layout and only lightly rounded (brick-like, not pill-like).
+function cobblePattern() {
+  const fills = ['#777b4a', '#7c804d'];
+  // [x, y, width, height] in cell units (before the 20% shrink).
+  const specs = [
+    [0.06, 0.05, 0.40, 0.22], [0.56, 0.03, 0.28, 0.19], [0.95, 0.07, 0.34, 0.21],
+    [0.20, 0.34, 0.46, 0.22], [0.76, 0.35, 0.30, 0.20], [1.14, 0.36, 0.18, 0.17],
+    [0.04, 0.63, 0.26, 0.19], [0.40, 0.64, 0.40, 0.20], [0.90, 0.62, 0.36, 0.22],
+    [0.44, 0.88, 0.24, 0.16], [0.96, 0.90, 0.22, 0.15],
+  ];
+  let bricks = '';
+  for (const [x, y, w, h] of specs) {
+    const nw = (w * 0.8).toFixed(3), nh = (h * 0.8).toFixed(3);   // 20% smaller
+    const nx = (x + w * 0.1).toFixed(3), ny = (y + h * 0.1).toFixed(3); // re-centre
+    const fill = fills[Math.floor(Math.random() * fills.length)];
+    bricks += `<rect x="${nx}" y="${ny}" width="${nw}" height="${nh}" rx="0.045" fill="${fill}"/>`;
+  }
+  return `<pattern id="cobble" patternUnits="userSpaceOnUse" width="1.37" height="1.03">`
+    + `<rect width="1.37" height="1.03" fill="#75774a"/>`
+    + `<g stroke="#737746" stroke-width="0.012">${bricks}</g>`
+    + `</pattern>`;
+}
+
 // Build the 6x6 grid once; cells are updated in place afterward.
 export function buildBoard(onCellTap) {
   el.board.innerHTML = '';
@@ -38,22 +63,7 @@ export function buildBoard(onCellTap) {
   const svgStr =
     `<svg xmlns="http://www.w3.org/2000/svg" id="path-layer" viewBox="0 0 ${n} ${n}" aria-hidden="true">
        <defs>
-         <pattern id="cobble" patternUnits="userSpaceOnUse" width="1.37" height="1.03">
-           <rect width="1.37" height="1.03" fill="#959063"/>
-           <g fill="#a9a06e">
-             <rect x="0.06" y="0.05" width="0.40" height="0.22" rx="0.09"/>
-             <rect x="0.56" y="0.03" width="0.28" height="0.19" rx="0.08"/>
-             <rect x="0.95" y="0.07" width="0.34" height="0.21" rx="0.09"/>
-             <rect x="0.20" y="0.34" width="0.46" height="0.22" rx="0.09"/>
-             <rect x="0.76" y="0.35" width="0.30" height="0.20" rx="0.08"/>
-             <rect x="1.14" y="0.36" width="0.18" height="0.17" rx="0.06"/>
-             <rect x="0.04" y="0.63" width="0.26" height="0.19" rx="0.08"/>
-             <rect x="0.40" y="0.64" width="0.40" height="0.20" rx="0.09"/>
-             <rect x="0.90" y="0.62" width="0.36" height="0.22" rx="0.09"/>
-             <circle cx="0.50" cy="0.93" r="0.075"/>
-             <circle cx="1.02" cy="0.95" r="0.065"/>
-           </g>
-         </pattern>
+         ${cobblePattern()}
          <filter id="pathFx" x="-12%" y="-12%" width="124%" height="124%">
            <feTurbulence type="fractalNoise" baseFrequency="2.6 2.9" numOctaves="1" seed="11" result="noise"/>
            <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.22"
@@ -64,7 +74,7 @@ export function buildBoard(onCellTap) {
            <feMerge><feMergeNode in="bd"/><feMergeNode in="disp"/></feMerge>
          </filter>
        </defs>
-       <path id="path-shape" d="" fill="url(#cobble) #959063"${ORGANIC_PATH ? ' filter="url(#pathFx)"' : ''}/>
+       <path id="path-shape" d="" fill="url(#cobble) #75774a"${ORGANIC_PATH ? ' filter="url(#pathFx)"' : ''}/>
      </svg>`;
   const svgEl = new DOMParser().parseFromString(svgStr, 'image/svg+xml').documentElement;
   el.board.insertBefore(document.importNode(svgEl, true), el.board.firstChild);

@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.8.1] - 2026-07-21 (v19)
+
+### Changed
+- **Cobblestone texture tuned to spec:** base `#75774a`; bricks randomly shaded
+  `#777b4a` / `#7c804d` with a faint `#737746` border; bricks 20% smaller and
+  less rounded (brick-like, not pill-like).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v19`.
+
 ## [0.8.0] - 2026-07-21 (v18)
 
 ### Added
