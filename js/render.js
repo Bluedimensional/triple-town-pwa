@@ -62,7 +62,7 @@ function pathRadius(r, c) {
   const down = isPathSurface(r + 1, c);
   const left = isPathSurface(r, c - 1);
   const right = isPathSurface(r, c + 1);
-  const R = '46%';
+  const R = '23%';
   const tl = (!up && !left) ? R : '0';
   const tr = (!up && !right) ? R : '0';
   const br = (!down && !right) ? R : '0';
@@ -95,11 +95,11 @@ function paintBoard() {
         cls += state.reserve ? ' filled' : ' empty-store';
         cell.title = state.reserve ? NAMES[state.reserve] : 'Storehouse — tap to store/swap';
       } else if (isActive(r, c) && state.current) {
-        // The waiting piece: a rounded blob on the path. White border + pulse
-        // live ONLY on this tile.
+        // The waiting piece: the tile stays part of the continuous path (rounds
+        // only where the path ends); the white glow + pulse live on the sprite.
         cell.innerHTML = sprite(state.current);
         cls += ' path pulsing lead';
-        cell.style.borderRadius = '32%';
+        cell.style.borderRadius = pathRadius(r, c);
         cell.title = NAMES[state.current] + ' — tap any tile to place';
       } else {
         const type = state.board[r][c];

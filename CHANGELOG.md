@@ -3,6 +3,23 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.4.1] - 2026-07-21
+
+### Changed
+- **White highlight hugs the piece, not the tile:** the active piece's white
+  glow now traces the sprite silhouette (via a white outline filter) instead of
+  drawing a border around the whole square tile.
+- **Active tile joins the path:** the waiting piece's tile now uses the same
+  path-rounding as everything else (rounds only where the path ends) instead of
+  a fixed rounded square.
+- **Subtler corners:** path corner radius halved (46% → 23%).
+- **Layout:** the HUD/board/store stack is now vertically centered as a compact
+  block, removing the large dead space between the toolbar and the board on
+  taller screens; board sizing accounts for available height.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v8`.
+
 ## [0.4.0] - 2026-07-21
 
 ### Changed
