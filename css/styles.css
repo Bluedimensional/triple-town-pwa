@@ -1,16 +1,19 @@
-/* styles.css — mobile-first, full-screen standalone layout. */
+/* styles.css — mobile-first, full-screen standalone layout.
+   Dark grassy field with light "path" tiles, like the real game. */
 
 :root {
-  --bg: #a8d878;
-  --bg-deep: #8bc061;
-  --panel: #f4f9ec;
-  --panel-line: #c7dea5;
-  --ink: #2f4a1c;
-  --ink-soft: #5c7a3f;
-  --accent: #4a7c2f;
-  --cell: #dff0c6;
-  --cell-line: #b9d894;
-  --gap: 6px;
+  --field: #46632f;          /* grass field base */
+  --field-dot: rgba(0,0,0,0.10);
+  --field-line: rgba(0,0,0,0.20);
+  --path: #cac287;           /* light tan placeable tile */
+  --path-line: #b3aa6e;
+  --panel: rgba(28, 40, 18, 0.62);
+  --panel-line: rgba(255,255,255,0.10);
+  --ink: #f4f9ec;
+  --ink-soft: #c7d6ad;
+  --accent: #6ba03a;
+  --store-brown: #8a5a2b;
+  --gap: 3px;
   --radius: 12px;
 }
 
@@ -26,8 +29,10 @@ html, body {
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: var(--ink);
-  background: linear-gradient(160deg, var(--bg) 0%, var(--bg-deep) 100%);
-  /* Respect notches / home indicator in standalone mode. */
+  /* Dark dotted grass field. */
+  background-color: var(--field);
+  background-image: radial-gradient(var(--field-dot) 1.4px, transparent 1.5px);
+  background-size: 16px 16px;
   padding:
     env(safe-area-inset-top)
     env(safe-area-inset-right)
@@ -43,7 +48,7 @@ body {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   padding: 10px;
 }
 
@@ -75,57 +80,27 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* ---- Tray: storehouse + next piece + new game ---- */
-#tray {
+/* ---- Toolbar ---- */
+#toolbar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: var(--panel);
-  border: 1px solid var(--panel-line);
-  border-radius: var(--radius);
-  padding: 8px 12px;
+  gap: 10px;
 }
-.hand-wrap { display: flex; align-items: center; gap: 8px; margin-left: auto; }
-.hand-label, .store-label {
-  font-size: 12px;
+.hint {
+  flex: 1;
+  font-size: 11px;
+  line-height: 1.25;
   color: var(--ink-soft);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
-.tile-slot {
-  width: 52px;
-  height: 52px;
-  border-radius: 10px;
-  background: var(--cell);
-  border: 2px solid var(--cell-line);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 30px;
-  line-height: 1;
-  padding: 0;
-}
-.tile-slot.reserve {
-  border-style: dashed;
-  cursor: pointer;
-}
-.tile-slot.reserve::after {
-  content: "storehouse";
-  position: absolute;
-  font-size: 9px;
-  color: var(--ink-soft);
-  transform: translateY(34px);
-  letter-spacing: 0.04em;
-}
-.tile-slot.reserve.filled::after { content: ""; }
 .text-btn {
   background: var(--accent);
   color: #fff;
   border: none;
   border-radius: 10px;
-  padding: 8px 12px;
+  padding: 8px 14px;
   font-weight: 700;
   font-size: 14px;
+  flex-shrink: 0;
 }
 
 /* ---- Board ---- */
@@ -144,28 +119,54 @@ body {
   grid-template-columns: repeat(var(--size), 1fr);
   grid-template-rows: repeat(var(--size), 1fr);
   gap: var(--gap);
-  background: var(--bg-deep);
   padding: var(--gap);
-  border-radius: 16px;
-  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.25);
+  border-radius: 14px;
 }
 .cell {
-  background: var(--cell);
-  border: 1px solid var(--cell-line);
-  border-radius: 10px;
+  border: none;
+  background: transparent;      /* filled tiles blend into the field */
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(20px, 7vw, 38px);
+  font-size: clamp(22px, 8vw, 42px);
   line-height: 1;
   padding: 0;
   cursor: pointer;
-  transition: transform 0.08s ease, background 0.12s ease;
+  transition: transform 0.08s ease;
 }
-.cell.filled { background: #eef7dd; }
+/* Empty, placeable tiles look like a light dirt path. */
+.cell.path {
+  background: var(--path);
+  box-shadow: inset 0 0 0 1px var(--path-line);
+}
+.cell.filled { background: transparent; }
 .cell:active { transform: scale(0.94); }
-.cell.pop { animation: pop 0.22s ease; }
 
+/* The storehouse: top-left corner square. */
+.cell.storehouse {
+  background: rgba(0,0,0,0.16);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.12);
+}
+.cell.storehouse.empty-store {
+  background:
+    radial-gradient(ellipse 58% 42% at 50% 52%, transparent 44%, var(--store-brown) 46%, var(--store-brown) 62%, transparent 64%),
+    rgba(0,0,0,0.16);
+}
+
+/* The piece waiting to be placed: light border + pulse. */
+.cell.active {
+  background: var(--path);
+  box-shadow: 0 0 0 3px #fff, 0 0 10px 2px rgba(255,255,255,0.5);
+  z-index: 5;
+  animation: pulse 800ms ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.3); }
+}
+
+.cell.pop { animation: pop 0.22s ease; }
 @keyframes pop {
   0%   { transform: scale(0.4); }
   60%  { transform: scale(1.18); }
@@ -182,11 +183,17 @@ body {
   align-items: center;
   gap: 10px;
 }
+.store-label {
+  font-size: 12px;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
 #store-items { display: flex; gap: 8px; flex: 1; }
 .store-item {
   flex: 1;
-  background: var(--cell);
-  border: 1px solid var(--cell-line);
+  background: rgba(255,255,255,0.10);
+  border: 1px solid var(--panel-line);
   border-radius: 10px;
   padding: 6px 4px;
   display: flex;
@@ -194,8 +201,9 @@ body {
   align-items: center;
   gap: 2px;
   font-size: 12px;
+  color: var(--ink);
 }
-.store-item:disabled { opacity: 0.42; }
+.store-item:disabled { opacity: 0.4; }
 .store-glyph { font-size: 24px; line-height: 1; }
 .store-price { font-variant-numeric: tabular-nums; font-weight: 600; }
 
@@ -203,7 +211,7 @@ body {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(30, 45, 15, 0.72);
+  background: rgba(20, 30, 10, 0.78);
   display: none;
   align-items: center;
   justify-content: center;
@@ -211,15 +219,16 @@ body {
 }
 .overlay.show { display: flex; }
 .overlay-card {
-  background: var(--panel);
+  background: #f4f9ec;
+  color: #2f4a1c;
   border-radius: 18px;
   padding: 28px 34px;
   text-align: center;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
 }
 .overlay-card h1 { margin: 0 0 4px; color: var(--accent); }
-.overlay-card p { margin: 2px 0; color: var(--ink-soft); }
-.final { font-size: 40px !important; font-weight: 800; color: var(--ink) !important; }
+.overlay-card p { margin: 2px 0; color: #5c7a3f; }
+.final { font-size: 40px !important; font-weight: 800; color: #2f4a1c !important; }
 .primary-btn {
   margin-top: 16px;
   background: var(--accent);

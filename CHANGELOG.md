@@ -3,6 +3,34 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.2.0] - 2026-07-21
+
+Reworked look and feel and the placement interaction to match the real game
+(from play-testing feedback on iPhone Safari).
+
+### Added
+- **Pre-filled boards:** a new game now scatters a random starting layout
+  (grass/bush/tree, a bear, sometimes a tombstone), different every time —
+  no more blank opening board.
+- **On-board active piece:** the piece to place now appears *on the board* in a
+  tile adjacent to your last placement, pulsing (scale 1→1.3, 0.8s) with a white
+  border. Tap any tile to place it. Replaces the old "Next" tray slot.
+- **Storehouse is the top-left board square** (a brown ring when empty): tap to
+  store the active piece / swap it back. It never matches and bears can't enter it.
+
+### Changed
+- **Field visuals:** dark dotted-grass background; empty tiles render as light
+  "path" tiles and turn into plain field when filled — like the real game.
+- **Sprites:** grass is now a leafy tuft (🌿), bush a round shrub (🌳), tree
+  taller (🌲) — a clearer size progression. HUD/store restyled for the dark field.
+
+### Fixed
+- Blank-board opening on first launch (now pre-filled).
+
+### Migration
+- Save format bumped to `v2` and service-worker cache to `tripletown-v2`, so
+  installed devices pick up the new build and start a fresh (pre-filled) game.
+
 ## [0.1.0] - 2026-07-21
 
 Initial playable build — the full v1 scope in one pass.

@@ -4,7 +4,7 @@
 
 import { state, emptyBoard } from './state.js';
 
-const KEY = 'tripletown.save.v1';
+const KEY = 'tripletown.save.v2';
 const BEST_KEY = 'tripletown.best.v1';
 
 export function save() {
@@ -12,6 +12,7 @@ export function save() {
     const data = {
       board: state.board,
       current: state.current,
+      activePos: state.activePos,
       reserve: state.reserve,
       score: state.score,
       coins: state.coins,
@@ -38,6 +39,7 @@ export function load() {
 
     state.board = data.board;
     state.current = data.current ?? null;
+    state.activePos = data.activePos ?? null;
     state.reserve = data.reserve ?? null;
     state.score = data.score || 0;
     state.coins = data.coins || 0;

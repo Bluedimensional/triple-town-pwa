@@ -4,7 +4,7 @@
 // empty tile. A bear with nowhere to go becomes a tombstone — which can then
 // trigger a tombstone-chain merge.
 
-import { state } from './state.js';
+import { state, isStorehouse } from './state.js';
 import { resolveMerges } from './match.js';
 
 const DIRS = [[-1, 0], [1, 0], [0, -1], [0, 1]];
@@ -18,7 +18,10 @@ function emptyNeighbors(r, c) {
   for (const [dr, dc] of DIRS) {
     const nr = r + dr;
     const nc = c + dc;
-    if (inBounds(nr, nc) && state.board[nr][nc] === null) out.push([nr, nc]);
+    // Bears can't wander into the storehouse cell.
+    if (inBounds(nr, nc) && !isStorehouse(nr, nc) && state.board[nr][nc] === null) {
+      out.push([nr, nc]);
+    }
   }
   return out;
 }

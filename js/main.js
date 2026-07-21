@@ -1,6 +1,6 @@
 // main.js — bootstrap: wire input, kick off the game, register the service worker.
 
-import { state } from './state.js';
+import { state, isStorehouse } from './state.js';
 import { placePiece, newGame } from './game.js';
 import { swapReserve } from './storehouse.js';
 import { buyItem } from './store.js';
@@ -11,14 +11,16 @@ function draw() {
   render({ onBuy });
 }
 
+// A tap on the storehouse swaps; a tap on any other tile places the piece.
 function onCellTap(r, c) {
+  if (state.over) return;
+  if (isStorehouse(r, c)) {
+    swapReserve();
+    save();
+    draw();
+    return;
+  }
   if (placePiece(r, c)) draw();
-}
-
-function onReserveTap() {
-  swapReserve();
-  save();
-  draw();
 }
 
 function onBuy(type) {
@@ -39,13 +41,11 @@ function boot() {
   buildBoard(onCellTap);
 
   const restored = load();
-  if (!restored || state.current === null) {
-    // Fresh start (or a save with no piece in hand somehow).
-    if (!restored) newGame();
-    else if (state.current === null && !state.over) newGame();
+  // Start fresh if there's no valid in-progress game to resume.
+  if (!restored || state.current === null || state.activePos === null) {
+    if (!state.over) newGame();
   }
 
-  document.getElementById('reserve-slot').addEventListener('click', onReserveTap);
   document.getElementById('new-game').addEventListener('click', onNewGame);
   document.getElementById('play-again').addEventListener('click', () => { newGame(); draw(); });
 

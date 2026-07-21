@@ -9,7 +9,9 @@ works offline, installs straight from the browser. No App Store, no build step.
 
 ## What it is
 
-- **6×6 board.** Each turn you're handed a piece to place on any empty tile.
+- **6×6 board that opens pre-filled** with a random layout, different every game.
+- **Each turn** a piece appears on the board (pulsing, white border) next to your
+  last move — tap any tile to place it.
 - **Match 3+ connected** (orthogonally) of the same type and they merge into the
   next tier at the tile you placed. Merges cascade.
 - **Build chain:** grass → bush → tree → hut → house → mansion → castle →

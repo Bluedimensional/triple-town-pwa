@@ -56,10 +56,22 @@ export const BEAR_BASE_CHANCE = 0.06;
 export const BEAR_CHANCE_PER_TURN = 0.0006;
 export const BEAR_MAX_CHANCE = 0.18;
 
+// A new game starts partially filled (like the real game), different each time.
+export const PREFILL_MIN = 6;                        // fewest scattered plants
+export const PREFILL_MAX = 11;                       // most scattered plants
+export const PREFILL_WEIGHTS = { grass: 52, bush: 26, tree: 10 };
+export const PREFILL_BEARS = 1;                      // bears to scatter in
+export const PREFILL_TOMB_CHANCE = 0.5;              // chance of a lone tombstone
+
+// The storehouse is the top-left board square (0,0): swap-only, never matches.
+export const STOREHOUSE_R = 0;
+export const STOREHOUSE_C = 0;
+
 // Swappable asset map: tile type -> glyph. Swap these for <img> paths later
-// (see render.js) without touching any game logic.
+// (see render.js) without touching any game logic. Grass is a leafy tuft,
+// bush a round shrub, tree taller — a readable size progression.
 export const ASSETS = {
-  grass: '🌱', bush: '🌿', tree: '🌳', hut: '🛖', house: '🏠',
+  grass: '🌿', bush: '🌳', tree: '🌲', hut: '🛖', house: '🏠',
   mansion: '🏘️', castle: '🏰', floatingCastle: '🏯', tripleCastle: '💎',
   bear: '🐻', tombstone: '🪦', church: '⛪', cathedral: '🕌', treasury: '💰',
 };
