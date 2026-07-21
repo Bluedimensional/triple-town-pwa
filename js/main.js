@@ -56,13 +56,22 @@ function boot() {
 }
 
 function registerServiceWorker() {
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(() => {
-        // Offline support just won't be available; game still runs.
-      });
+  if (!('serviceWorker' in navigator)) return;
+  // If a worker is already controlling this page, a controllerchange means a new
+  // version took over — reload once so the new files are in use immediately.
+  if (navigator.serviceWorker.controller) {
+    let reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (reloaded) return;
+      reloaded = true;
+      window.location.reload();
     });
   }
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {
+      // Offline support just won't be available; game still runs.
+    });
+  });
 }
 
 document.addEventListener('DOMContentLoaded', boot);

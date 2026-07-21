@@ -3,6 +3,19 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.8.2] - 2026-07-21 (v20)
+
+### Changed
+- **Updates apply on refresh:** the service worker is now **network-first**
+  (fetch the latest when online; fall back to cache only when offline), instead
+  of cache-first (which served stale files until a second refresh). Added an
+  auto-reload when a new worker takes control, so a new build loads promptly.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v20`. (This is the last update that
+  may need the old two-refresh / re-add dance; after landing on v20, online
+  refreshes should show the newest build.)
+
 ## [0.8.1] - 2026-07-21 (v19)
 
 ### Changed

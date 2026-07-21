@@ -2,7 +2,7 @@
 //
 // Bump CACHE version whenever shipped files change so clients pick up the update.
 
-const CACHE = 'tripletown-v19';
+const CACHE = 'tripletown-v20';
 
 const SHELL = [
   '.',
@@ -43,24 +43,22 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Cache-first for our own assets; network fallback for everything else.
+// Network-first: always fetch the latest when online (so a refresh shows the
+// newest build), and fall back to the cache only when offline.
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
 
   event.respondWith(
-    caches.match(req).then((cached) => {
-      if (cached) return cached;
-      return fetch(req)
-        .then((res) => {
-          // Runtime-cache same-origin GETs so subsequent loads work offline.
-          if (res && res.ok && new URL(req.url).origin === self.location.origin) {
-            const copy = res.clone();
-            caches.open(CACHE).then((cache) => cache.put(req, copy));
-          }
-          return res;
-        })
-        .catch(() => cached);
-    })
+    fetch(req)
+      .then((res) => {
+        // Refresh the cache with the latest same-origin responses.
+        if (res && res.ok && new URL(req.url).origin === self.location.origin) {
+          const copy = res.clone();
+          caches.open(CACHE).then((cache) => cache.put(req, copy));
+        }
+        return res;
+      })
+      .catch(() => caches.match(req)) // offline — serve the cached copy
   );
 });
