@@ -5,8 +5,8 @@
   --field: #46632f;          /* grass field base */
   --field-dot: rgba(0,0,0,0.10);
   --field-line: rgba(0,0,0,0.20);
-  --path: #cac287;           /* light tan placeable tile */
-  --path-line: #b3aa6e;
+  --path: #959063;           /* placeable dirt tile */
+  --path-edge: #495e31;      /* dark border around the path's outer sides */
   --panel: rgba(28, 40, 18, 0.62);
   --panel-line: rgba(255,255,255,0.10);
   --ink: #f4f9ec;
@@ -17,25 +17,11 @@
   --radius: 12px;
   /* A dark outline traced around every sprite silhouette (8 offset copies) plus
      a soft ground shadow — gives contrast against the field. */
-  --outline: #16260f;
-  /* Soft contact shadow beneath every piece (like the original art). */
-  --ground-shadow:
-    drop-shadow(0 3px 2px rgba(0,0,0,0.4))
-    drop-shadow(0 6px 6px rgba(0,0,0,0.22));
-  --piece-outline:
-    drop-shadow(1px 0 0 var(--outline))  drop-shadow(-1px 0 0 var(--outline))
-    drop-shadow(0 1px 0 var(--outline))  drop-shadow(0 -1px 0 var(--outline))
-    drop-shadow(1px 1px 0 var(--outline)) drop-shadow(-1px 1px 0 var(--outline))
-    drop-shadow(1px -1px 0 var(--outline)) drop-shadow(-1px -1px 0 var(--outline))
-    var(--ground-shadow);
-  /* White halo that hugs the ACTIVE piece's silhouette (not its tile). */
+  /* Outline + shadow are baked into the sprites (js/sprites.js) so normal
+     pieces need NO CSS filter — that keeps rendering fast. Only the active
+     piece gets a lightweight white halo (a single element). */
   --piece-outline-white:
-    drop-shadow(2px 0 0 #fff)  drop-shadow(-2px 0 0 #fff)
-    drop-shadow(0 2px 0 #fff)  drop-shadow(0 -2px 0 #fff)
-    drop-shadow(1.5px 1.5px 0 #fff) drop-shadow(-1.5px 1.5px 0 #fff)
-    drop-shadow(1.5px -1.5px 0 #fff) drop-shadow(-1.5px -1.5px 0 #fff)
-    drop-shadow(0 0 5px rgba(255,255,255,0.85))
-    var(--ground-shadow);
+    drop-shadow(0 0 2px #fff) drop-shadow(0 0 2px #fff) drop-shadow(0 0 5px rgba(255,255,255,0.9));
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -156,7 +142,6 @@ body {
   width: 86%;
   height: 86%;
   display: block;
-  filter: var(--piece-outline);
 }
 /* Empty, placeable tiles form a continuous light dirt path (corners rounded
    per-neighbour in render.js). */
@@ -176,17 +161,20 @@ body {
     rgba(0,0,0,0.16);
 }
 
-/* Group members pulse in sync — but no border. Only the SPRITE scales; the
-   tile (path/field) underneath stays static. */
+/* Only the SPRITE animates; the tile underneath stays static. Group members
+   lean toward the new piece (--lx/--ly, set per-cell in render.js) — "we want
+   to merge with THAT one" — while the new piece itself just scales. */
 .cell.pulsing { z-index: 5; }
-.cell.pulsing svg { animation: pulse 1150ms ease-in-out infinite; }
-/* The white halo is ONLY ever on the one new piece — and it hugs the sprite
-   itself, not the tile underneath. */
+.cell.pulsing svg {
+  animation: leanPulse 560ms ease-in-out infinite;
+  will-change: transform;
+}
+/* The white halo is ONLY ever on the one new piece, hugging the sprite. */
 .cell.lead { z-index: 6; }
 .cell.lead svg { filter: var(--piece-outline-white); }
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.15); }
+@keyframes leanPulse {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(calc(var(--lx, 0) * 5px), calc(var(--ly, 0) * 5px)) scale(1.1); }
 }
 
 /* Bears blink: eyes briefly squeeze shut. */
@@ -239,7 +227,7 @@ body {
 }
 .store-item:disabled { opacity: 0.4; }
 .store-glyph { font-size: 24px; line-height: 1; }
-.store-glyph svg { width: 30px; height: 30px; display: block; filter: var(--piece-outline); }
+.store-glyph svg { width: 30px; height: 30px; display: block; }
 .store-price { font-variant-numeric: tabular-nums; font-weight: 600; }
 
 /* ---- Game over overlay ---- */

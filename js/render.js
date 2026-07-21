@@ -70,6 +70,34 @@ function pathRadius(r, c) {
   return `${tl} ${tr} ${br} ${bl}`;
 }
 
+// A dark border on the path's exposed sides (edges that touch the field, an
+// object, or the board boundary). Adjacent path tiles share edges, so it traces
+// only the outer outline of the continuous path.
+function pathBorder(r, c) {
+  const w = '3px', col = 'var(--path-edge)';
+  const s = [];
+  if (!isPathSurface(r - 1, c)) s.push('inset 0 ' + w + ' 0 ' + col);
+  if (!isPathSurface(r + 1, c)) s.push('inset 0 -' + w + ' 0 ' + col);
+  if (!isPathSurface(r, c - 1)) s.push('inset ' + w + ' 0 0 ' + col);
+  if (!isPathSurface(r, c + 1)) s.push('inset -' + w + ' 0 0 ' + col);
+  return s.join(', ');
+}
+
+// Point a pulsing group member toward the active piece (unit vector in --lx/--ly);
+// the active piece itself gets 0 so it pulses in place.
+function setLean(cell, r, c) {
+  let lx = 0, ly = 0;
+  if (state.activePos && !(state.activePos.r === r && state.activePos.c === c)) {
+    const dx = state.activePos.c - c;
+    const dy = state.activePos.r - r;
+    const len = Math.hypot(dx, dy) || 1;
+    lx = (dx / len).toFixed(3);
+    ly = (dy / len).toFixed(3);
+  }
+  cell.style.setProperty('--lx', lx);
+  cell.style.setProperty('--ly', ly);
+}
+
 // The tiles that pulse: the whole would-merge group if placing completes a
 // combo, otherwise just the active piece.
 function pulseKeys() {
@@ -87,7 +115,13 @@ function paintBoard() {
       const cell = cells[r * state.size + c];
       let cls = 'cell';
       cell.style.borderRadius = '';
+      cell.style.boxShadow = '';   // '' lets class rules (e.g. storehouse) apply
       const pulsing = pulse.has(r + ',' + c);
+      // Give path tiles their rounding + outer border.
+      const dressPath = () => {
+        cell.style.borderRadius = pathRadius(r, c);
+        cell.style.boxShadow = pathBorder(r, c);
+      };
 
       if (isStorehouse(r, c)) {
         cell.innerHTML = sprite(state.reserve);
@@ -95,30 +129,31 @@ function paintBoard() {
         cls += state.reserve ? ' filled' : ' empty-store';
         cell.title = state.reserve ? NAMES[state.reserve] : 'Storehouse — tap to store/swap';
       } else if (isActive(r, c) && state.current) {
-        // The waiting piece: the tile stays part of the continuous path (rounds
-        // only where the path ends); the white glow + pulse live on the sprite.
+        // The waiting piece: the tile stays part of the continuous path; the
+        // white glow + pulse live on the sprite.
         cell.innerHTML = sprite(state.current);
         cls += ' path pulsing lead';
-        cell.style.borderRadius = pathRadius(r, c);
+        dressPath();
+        setLean(cell, r, c);
         cell.title = NAMES[state.current] + ' — tap any tile to place';
       } else {
         const type = state.board[r][c];
         cell.innerHTML = sprite(type);
         if (type) {
           if (type === 'bear') {
-            // Bears stand on the dirt path (tan), fused with adjacent path.
-            cls += ' path';
-            cell.style.borderRadius = pathRadius(r, c);
+            cls += ' path';          // bears stand on the dirt path
+            dressPath();
           } else {
             cls += ' filled';
           }
-          // A group member pulses along, but never gets the white border.
-          if (pulsing) cls += ' pulsing';
+          // A group member pulses along (leaning toward the new piece), but
+          // never gets the white border.
+          if (pulsing) { cls += ' pulsing'; setLean(cell, r, c); }
           if (state.lastCreated &&
               state.lastCreated.r === r && state.lastCreated.c === c) cls += ' pop';
         } else {
           cls += ' path';
-          cell.style.borderRadius = pathRadius(r, c);
+          dressPath();
         }
         cell.title = type ? NAMES[type] : '';
       }

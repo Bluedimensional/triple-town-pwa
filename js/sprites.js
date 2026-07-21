@@ -4,17 +4,24 @@
 // contained SVG string on a 0..100 canvas. To swap in different art, replace
 // a string here; nothing in the game logic depends on how a tile looks.
 //
-// Gradient ids are unique per sprite type so multiple sprites on the page
-// don't collide when injected into the document.
+// Outline (dark strokes) and the ground shadow are baked into each sprite, so
+// the renderer needs NO CSS filter for normal pieces — that keeps things fast.
+// Gradient ids are unique per sprite type so they don't collide when injected.
 
-const svg = (inner) =>
-  `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">${inner}</svg>`;
+// Soft two-layer contact shadow, drawn behind the piece.
+const shadow = (cy, rx, ry) =>
+  `<ellipse cx="50" cy="${cy}" rx="${rx}" ry="${ry}" fill="#0e1f08" opacity="0.16"/>` +
+  `<ellipse cx="50" cy="${cy}" rx="${(rx * 0.7).toFixed(1)}" ry="${(ry * 0.7).toFixed(1)}" fill="#0a1706" opacity="0.18"/>`;
+
+const svg = (inner, sh) =>
+  `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">` +
+  `${sh ? shadow(sh.cy, sh.rx, sh.ry) : ''}${inner}</svg>`;
 
 // --- plants -------------------------------------------------------------
 
 // A low, wide patch of grass (a flat clump, not upright blades).
 const grass = svg(`
-  <ellipse cx="50" cy="74" rx="31" ry="8" fill="#2f5a1a" opacity="0.45"/>
+  <ellipse cx="50" cy="74" rx="31" ry="8" fill="#2f5a1a" opacity="0.4"/>
   <path d="M17 73 Q15 57 29 55 Q33 45 43 51 Q50 43 58 51 Q68 45 72 55 Q85 57 83 73 Z"
         fill="#4d8d28" stroke="#234d13" stroke-width="3" stroke-linejoin="round"/>
   <path d="M20 66 Q26 60 33 63 Q40 58 47 63 Q54 58 61 63 Q68 59 78 65"
@@ -24,7 +31,7 @@ const grass = svg(`
     <path d="M54 66 Q54 53 57 47"/><path d="M65 65 Q65 55 69 51"/></g>
   <g stroke="#67b53a" stroke-width="2.3" stroke-linecap="round" fill="none">
     <path d="M37 66 Q37 57 39 51"/><path d="M49 67 Q50 55 52 49"/>
-    <path d="M60 66 Q61 56 63 50"/></g>`);
+    <path d="M60 66 Q61 56 63 50"/></g>`, { cy: 80, rx: 25, ry: 6 });
 
 const bush = svg(`
   <defs><radialGradient id="bushG" cx="40%" cy="32%" r="72%">
@@ -35,7 +42,7 @@ const bush = svg(`
   <g fill="#3b7a1f" opacity="0.65">
     <circle cx="37" cy="45" r="6.5"/><circle cx="61" cy="41" r="5"/>
     <circle cx="57" cy="61" r="7"/><circle cx="39" cy="62" r="5.5"/>
-    <circle cx="50" cy="52" r="5"/><circle cx="68" cy="55" r="4.5"/></g>`);
+    <circle cx="50" cy="52" r="5"/><circle cx="68" cy="55" r="4.5"/></g>`, { cy: 85, rx: 30, ry: 7 });
 
 // Two overlapping sets of leaves (a lower olive canopy + upper bright canopy).
 const tree = svg(`
@@ -49,7 +56,7 @@ const tree = svg(`
   <circle cx="45" cy="50" r="23" fill="url(#treeBack)" stroke="#3a5a16" stroke-width="3"/>
   <g fill="#6d8d27" opacity="0.6"><circle cx="38" cy="46" r="4.5"/><circle cx="47" cy="58" r="4"/></g>
   <circle cx="58" cy="38" r="18" fill="url(#treeFront)" stroke="#2f5e18" stroke-width="3"/>
-  <g fill="#3f7a22" opacity="0.55"><circle cx="52" cy="35" r="4"/><circle cx="63" cy="44" r="4.5"/><circle cx="64" cy="34" r="3.5"/></g>`);
+  <g fill="#3f7a22" opacity="0.55"><circle cx="52" cy="35" r="4"/><circle cx="63" cy="44" r="4.5"/><circle cx="64" cy="34" r="3.5"/></g>`, { cy: 89, rx: 19, ry: 5.5 });
 
 // --- buildings ----------------------------------------------------------
 
@@ -61,14 +68,14 @@ const hut = svg(`
     <line x1="60" y1="63" x2="60" y2="74"/><line x1="45" y1="74" x2="45" y2="86"/></g>
   <path d="M23 54 L50 24 L77 54 Z" fill="#c98a3e" stroke="#45200f" stroke-width="3" stroke-linejoin="round"/>
   <path d="M50 30 L68 50 L32 50 Z" fill="#db9f52" opacity="0.6"/>
-  <path d="M44 86 L44 70 Q50 64 56 70 L56 86 Z" fill="#2a1610"/>`);
+  <path d="M44 86 L44 70 Q50 64 56 70 L56 86 Z" fill="#2a1610"/>`, { cy: 89, rx: 22, ry: 5.5 });
 
 const house = svg(`
   <rect x="26" y="52" width="48" height="34" fill="#ecdcaa" stroke="#463516" stroke-width="3"/>
   <path d="M20 54 L50 26 L80 54 Z" fill="#b5462e" stroke="#45200f" stroke-width="3" stroke-linejoin="round"/>
   <rect x="44" y="66" width="13" height="20" fill="#6a4423" stroke="#463516" stroke-width="2"/>
   <rect x="31" y="60" width="10" height="10" fill="#8fc0d8" stroke="#463516" stroke-width="2"/>
-  <rect x="59" y="60" width="10" height="10" fill="#8fc0d8" stroke="#463516" stroke-width="2"/>`);
+  <rect x="59" y="60" width="10" height="10" fill="#8fc0d8" stroke="#463516" stroke-width="2"/>`, { cy: 89, rx: 26, ry: 6 });
 
 const mansion = svg(`
   <rect x="20" y="50" width="60" height="36" fill="#ecdcaa" stroke="#463516" stroke-width="3"/>
@@ -77,7 +84,7 @@ const mansion = svg(`
   <rect x="44" y="66" width="13" height="20" fill="#6a4423" stroke="#463516" stroke-width="2"/>
   <g fill="#8fc0d8" stroke="#463516" stroke-width="2">
     <rect x="26" y="58" width="9" height="9"/><rect x="65" y="58" width="9" height="9"/>
-    <rect x="26" y="72" width="9" height="9"/><rect x="65" y="72" width="9" height="9"/></g>`);
+    <rect x="26" y="72" width="9" height="9"/><rect x="65" y="72" width="9" height="9"/></g>`, { cy: 89, rx: 32, ry: 6.5 });
 
 const castle = svg(`
   <rect x="24" y="40" width="52" height="46" fill="#c9c4b0" stroke="#4a463a" stroke-width="3"/>
@@ -86,7 +93,7 @@ const castle = svg(`
     <rect x="65" y="30" width="11" height="14"/></g>
   <rect x="42" y="62" width="16" height="24" fill="#5a5346"/>
   <path d="M42 62 Q50 54 58 62" fill="#5a5346"/>
-  <g fill="#9a9484"><rect x="30" y="50" width="8" height="8"/><rect x="62" y="50" width="8" height="8"/></g>`);
+  <g fill="#9a9484"><rect x="30" y="50" width="8" height="8"/><rect x="62" y="50" width="8" height="8"/></g>`, { cy: 89, rx: 28, ry: 6.5 });
 
 const floatingCastle = svg(`
   <ellipse cx="50" cy="80" rx="34" ry="12" fill="#eef4f8"/>
@@ -106,7 +113,7 @@ const tripleCastle = svg(`
   <g fill="url(#tcG)" stroke="#7a5c12" stroke-width="3">
     <rect x="22" y="34" width="12" height="12"/><rect x="44" y="34" width="12" height="12"/>
     <rect x="66" y="34" width="12" height="12"/></g>
-  <rect x="42" y="64" width="16" height="24" fill="#7a5c12"/>`);
+  <rect x="42" y="64" width="16" height="24" fill="#7a5c12"/>`, { cy: 91, rx: 30, ry: 6.5 });
 
 // --- bears & tombs ------------------------------------------------------
 
@@ -125,7 +132,7 @@ const bear = svg(`
   <circle class="bear-eye" cx="41" cy="60" r="4" fill="#b5361f"/>
   <circle class="bear-eye" cx="59" cy="60" r="4" fill="#b5361f"/>
   <ellipse cx="50" cy="66" rx="4.2" ry="3" fill="#3a2410"/>
-  <path d="M50 69 Q50 73 46 73 M50 69 Q50 73 54 73" stroke="#3a2410" stroke-width="2.4" fill="none" stroke-linecap="round"/>`);
+  <path d="M50 69 Q50 73 46 73 M50 69 Q50 73 54 73" stroke="#3a2410" stroke-width="2.4" fill="none" stroke-linecap="round"/>`, { cy: 92, rx: 23, ry: 5.5 });
 
 const tombstone = svg(`
   <ellipse cx="50" cy="85" rx="27" ry="7" fill="#3f6a24"/>
@@ -134,7 +141,7 @@ const tombstone = svg(`
   <circle cx="46" cy="48" r="2.6" fill="#5a5a5a"/><circle cx="54" cy="48" r="2.6" fill="#5a5a5a"/>
   <path d="M47 55 L53 55 L51 61 L49 61 Z" fill="#5a5a5a"/>
   <g stroke="#8f8f8f" stroke-width="4" stroke-linecap="round">
-    <line x1="41" y1="66" x2="59" y2="72"/><line x1="59" y1="66" x2="41" y2="72"/></g>`);
+    <line x1="41" y1="66" x2="59" y2="72"/><line x1="59" y1="66" x2="41" y2="72"/></g>`, { cy: 89, rx: 24, ry: 5.5 });
 
 // --- tomb chain ---------------------------------------------------------
 
@@ -144,7 +151,7 @@ const church = svg(`
   <rect x="47" y="12" width="6" height="18" fill="#caa02c"/>
   <rect x="42" y="17" width="16" height="6" fill="#caa02c"/>
   <path d="M43 86 L43 62 Q50 54 57 62 L57 86 Z" fill="#5a4632"/>
-  <circle cx="50" cy="52" r="5" fill="#8fbcd8" stroke="#4a4636" stroke-width="2"/>`);
+  <circle cx="50" cy="52" r="5" fill="#8fbcd8" stroke="#4a4636" stroke-width="2"/>`, { cy: 89, rx: 24, ry: 5.5 });
 
 const cathedral = svg(`
   <rect x="24" y="46" width="52" height="40" fill="#e4ddc6" stroke="#4a4636" stroke-width="3"/>
@@ -152,16 +159,15 @@ const cathedral = svg(`
   <path d="M56 46 L66 22 L76 46 Z" fill="#6f4f78" stroke="#3a2f42" stroke-width="2.5" stroke-linejoin="round"/>
   <rect x="31" y="14" width="5" height="9" fill="#caa02c"/><rect x="63" y="14" width="5" height="9" fill="#caa02c"/>
   <path d="M42 86 L42 60 Q50 52 58 60 L58 86 Z" fill="#5a4632"/>
-  <circle cx="50" cy="40" r="7" fill="#8fbcd8" stroke="#4a4636" stroke-width="2"/>`);
+  <circle cx="50" cy="40" r="7" fill="#8fbcd8" stroke="#4a4636" stroke-width="2"/>`, { cy: 89, rx: 28, ry: 6.5 });
 
 const treasury = svg(`
-  <ellipse cx="50" cy="84" rx="30" ry="7" fill="#2f5a1a" opacity="0.4"/>
   <rect x="26" y="52" width="48" height="34" rx="4" fill="#7a5324" stroke="#3f2c12" stroke-width="3"/>
   <path d="M26 52 Q50 34 74 52 Z" fill="#8a5f2b" stroke="#3f2c12" stroke-width="3"/>
   <rect x="24" y="60" width="52" height="7" fill="#caa02c" stroke="#7a5c12" stroke-width="2"/>
   <rect x="46" y="60" width="8" height="14" fill="#e8c14a" stroke="#7a5c12" stroke-width="2"/>
   <g fill="#f4d768" stroke="#7a5c12" stroke-width="1.5">
-    <circle cx="36" cy="46" r="6"/><circle cx="50" cy="42" r="6"/><circle cx="63" cy="46" r="6"/></g>`);
+    <circle cx="36" cy="46" r="6"/><circle cx="50" cy="42" r="6"/><circle cx="63" cy="46" r="6"/></g>`, { cy: 89, rx: 28, ry: 6.5 });
 
 export const SPRITES = {
   grass, bush, tree, hut, house, mansion, castle, floatingCastle, tripleCastle,

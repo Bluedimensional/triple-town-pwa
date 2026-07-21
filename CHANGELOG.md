@@ -3,6 +3,28 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.5.0] - 2026-07-21
+
+### Performance
+- **Removed the per-sprite CSS filters** (they stacked 10+ drop-shadows on every
+  one of ~35 tiles and re-rasterized on every blink/pulse and on zoom — the cause
+  of the jank and zoom/devtools lag). Outline (strokes) and the soft ground
+  shadow are now **baked into each SVG**, so normal pieces use no filter at all.
+  Only the single active piece keeps a lightweight white-halo filter.
+
+### Changed
+- **Pulse ~2× faster** (0.56s) and **directional:** each group member now leans
+  *toward* the new piece ("we want to merge with THAT one") instead of scaling
+  evenly; the new piece itself pulses in place. Only the sprite animates.
+- **Path recolored** to `#959063` with a **dark `#495e31` border** traced around
+  its outer edges.
+
+### Known / next
+- Organic wavy path edges are not in yet (needs a path-shape layer) — deferred.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v10`.
+
 ## [0.4.2] - 2026-07-21
 
 ### Changed
