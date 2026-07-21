@@ -3,6 +3,18 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.8.4] - 2026-07-21 (v22)
+
+### Fixed
+- **Leftover grave when bears merge into a church:** trapped bears were turned to
+  tombstones one at a time with a merge resolved after each, so a group of 4+
+  merged 3 into a church and left the extra as a stray grave. Now all trapped
+  bears become tombstones first, then merges resolve — the whole group collapses
+  into one church (verified for 2/3/4/5 enclosed bears).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v22`.
+
 ## [0.8.3] - 2026-07-21 (v21)
 
 ### Changed

@@ -71,10 +71,14 @@ function fullyTrappedBears() {
 export function moveBears() {
   state.bearMoves = [];
 
-  // 1) Tombstone only the fully-enclosed groups.
-  for (const [r, c] of fullyTrappedBears()) {
-    state.board[r][c] = 'tombstone';
-    resolveMerges(r, c);
+  // 1) Turn every fully-enclosed bear into a tombstone FIRST, then resolve
+  //    merges — so a whole connected group of tombstones collapses into one
+  //    church at once. (Resolving after each tombstone let 3 merge early and
+  //    left a stray grave when a group had 4+ bears.)
+  const trapped = fullyTrappedBears();
+  for (const [r, c] of trapped) state.board[r][c] = 'tombstone';
+  for (const [r, c] of trapped) {
+    if (state.board[r][c] === 'tombstone') resolveMerges(r, c);
   }
 
   // 2) Move the remaining bears (those whose group had room), column-major.
