@@ -1,6 +1,10 @@
 // config.js — tunable constants, chains, scoring, and the swappable asset map.
 // Everything here is data-only so game logic never hard-codes a tile type.
 
+// Shown above the board so it's always clear which build is being tested.
+// Keep in sync with the service-worker CACHE name in sw.js.
+export const VERSION = 'v16';
+
 export const BOARD_SIZE = 6;
 
 // Build chain and tombstone chain, for reference / ordering.

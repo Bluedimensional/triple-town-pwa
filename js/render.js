@@ -39,7 +39,7 @@ export function buildBoard(onCellTap) {
     `<svg xmlns="http://www.w3.org/2000/svg" id="path-layer" viewBox="0 0 ${n} ${n}" aria-hidden="true">
        <defs>
          <filter id="pathFx" x="-12%" y="-12%" width="124%" height="124%">
-           <feTurbulence type="fractalNoise" baseFrequency="2.6 2.9" numOctaves="2" seed="11" result="noise"/>
+           <feTurbulence type="fractalNoise" baseFrequency="2.6 2.9" numOctaves="1" seed="11" result="noise"/>
            <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.22"
              xChannelSelector="R" yChannelSelector="G" result="disp"/>
            <feMorphology in="disp" operator="dilate" radius="0.07" result="dil"/>
@@ -57,6 +57,7 @@ export function buildBoard(onCellTap) {
   // Keep the cell buttons in their own array — the board's children also include
   // the path-layer SVG, so index math on board.children would be off by one.
   el.cells = [];
+  el.cellKeys = [];   // last sprite content per cell, to skip needless re-parses
   for (let r = 0; r < state.size; r++) {
     for (let c = 0; c < state.size; c++) {
       const cell = document.createElement('button');
@@ -133,26 +134,33 @@ function paintBoard() {
   const cellSize = el.board.clientWidth / state.size; // px, for the hop offset
   const moved = new Map();
   for (const m of state.bearMoves) moved.set(m.r + ',' + m.c, m);
+  // Only rewrite a cell's sprite (an SVG parse) when its content actually
+  // changes — most cells are unchanged each placement.
+  const setContent = (idx, key, html) => {
+    if (el.cellKeys[idx] !== key) { cells[idx].innerHTML = html; el.cellKeys[idx] = key; }
+  };
   for (let r = 0; r < state.size; r++) {
     for (let c = 0; c < state.size; c++) {
-      const cell = cells[r * state.size + c];
+      const idx = r * state.size + c;
+      const cell = cells[idx];
       let cls = 'cell';
       const pulsing = pulse.has(r + ',' + c);
 
       if (isStorehouse(r, c)) {
         // Empty storehouse shows the 3D plate; otherwise the held piece.
-        cell.innerHTML = state.reserve ? sprite(state.reserve) : SPRITES.plate;
+        setContent(idx, 'store:' + (state.reserve || 'plate'),
+          state.reserve ? sprite(state.reserve) : SPRITES.plate);
         cls += ' storehouse';
         cell.title = state.reserve ? NAMES[state.reserve] : 'Storehouse — tap to store/swap';
       } else if (isActive(r, c) && state.current) {
         // The waiting piece: sits on the path; white glow + pulse live on the sprite.
-        cell.innerHTML = sprite(state.current);
+        setContent(idx, 'active:' + state.current, sprite(state.current));
         cls += ' path pulsing lead';
         setLean(cell, r, c);
         cell.title = NAMES[state.current] + ' — tap any tile to place';
       } else {
         const type = state.board[r][c];
-        cell.innerHTML = sprite(type);
+        setContent(idx, 'tile:' + (type || ''), sprite(type));
         if (type) {
           if (type === 'bear') {
             cls += ' path';          // bears stand on the dirt path

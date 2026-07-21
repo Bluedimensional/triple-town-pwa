@@ -1,6 +1,7 @@
 // main.js — bootstrap: wire input, kick off the game, register the service worker.
 
 import { state, isStorehouse } from './state.js';
+import { VERSION } from './config.js';
 import { placePiece, newGame } from './game.js';
 import { swapReserve } from './storehouse.js';
 import { buyItem } from './store.js';
@@ -38,6 +39,7 @@ function onNewGame() {
 
 function boot() {
   cacheDom();
+  document.getElementById('version').textContent = VERSION;
   buildBoard(onCellTap);
 
   const restored = load();

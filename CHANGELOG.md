@@ -3,6 +3,21 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.7.3] - 2026-07-21 (v16)
+
+### Added
+- **Version badge** above the board (shows the build, e.g. `v16`) so it's always
+  clear which version is being tested. Kept in sync with the SW cache name.
+
+### Changed
+- **Mobile performance:** only rewrite a tile's sprite when its content actually
+  changes (was re-parsing all 36 cell SVGs every placement) — render JS ~1.6ms →
+  ~0.86ms; the win is larger on phones. Lightened the path filter
+  (turbulence `numOctaves` 2 → 1), which iOS rasterizes slowly.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v16`.
+
 ## [0.7.2] - 2026-07-21
 
 ### Changed
