@@ -3,6 +3,19 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.8.3] - 2026-07-21 (v21)
+
+### Changed
+- **Merge preview animation reworked:** ready-to-merge neighbours no longer
+  scale toward the new piece — they now **thrust/slide** toward it (~20% of a
+  tile, same size) at their current rate. The **new piece still pulses (scales)
+  but at half speed** (560ms → 1120ms), so neighbours slide faster than it pulses.
+- **Merge slide-in** (absorbed tiles flying into the merge point) **50% slower**
+  (170ms → 340ms).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v21`.
+
 ## [0.8.2] - 2026-07-21 (v20)
 
 ### Changed

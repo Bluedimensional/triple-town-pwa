@@ -180,22 +180,33 @@ body {
    dark backing. */
 .cell.storehouse { background: transparent; }
 
-/* Only the SPRITE animates; the tile underneath stays static. Group members
-   lean toward the new piece (--lx/--ly, set per-cell in render.js) — "we want
-   to merge with THAT one" — while the new piece itself just scales. */
+/* Only the SPRITE animates; the tile underneath stays static. */
 .cell.pulsing { z-index: 5; }
-.cell.pulsing svg {
-  animation: leanPulse 560ms ease-in-out infinite;
+.cell.lead { z-index: 6; }
+
+/* The new piece pulses (scales) in place — slowed to half speed. */
+.cell.lead svg {
+  filter: var(--piece-outline-white);
+  animation: pulseScale 1120ms ease-in-out infinite;
   will-change: transform;
 }
-/* The white halo is ONLY ever on the one new piece, hugging the sprite. */
-.cell.lead { z-index: 6; }
-.cell.lead svg { filter: var(--piece-outline-white); }
 /* A new piece with the white border has no ground shadow. */
 .cell.lead .pc-shadow { display: none; }
-@keyframes leanPulse {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50%      { transform: translate(calc(var(--lx, 0) * 5px), calc(var(--ly, 0) * 5px)) scale(1.1); }
+@keyframes pulseScale {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.1); }
+}
+
+/* Ready-to-merge neighbours don't scale — they thrust (slide) toward the new
+   piece by ~20% of a tile and back, at the (unchanged) faster rate.
+   --lx/--ly is the unit direction toward the new piece (set in render.js). */
+.cell.pulsing:not(.lead) svg {
+  animation: slideThrust 560ms ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes slideThrust {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(calc(var(--lx, 0) * 22%), calc(var(--ly, 0) * 22%)); }
 }
 
 /* Bears hop to their new tile — three little hops, each covering a third of the
@@ -232,7 +243,7 @@ body {
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  animation: mergeSlide 170ms ease-in forwards;
+  animation: mergeSlide 340ms ease-in forwards;
 }
 .merge-slider svg { width: 86%; height: 86%; }
 @keyframes mergeSlide {

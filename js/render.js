@@ -263,7 +263,7 @@ function renderMergeSlides() {
     slider.innerHTML = sprite(s.type);
     const done = () => slider.remove();
     slider.addEventListener('animationend', done);
-    setTimeout(done, 260); // fallback if animationend doesn't fire (e.g. bg tab)
+    setTimeout(done, 480); // fallback if animationend doesn't fire (e.g. bg tab)
     el.board.appendChild(slider);
   }
   state.mergeSlides = [];
