@@ -18,19 +18,24 @@
   /* A dark outline traced around every sprite silhouette (8 offset copies) plus
      a soft ground shadow — gives contrast against the field. */
   --outline: #16260f;
+  /* Soft contact shadow beneath every piece (like the original art). */
+  --ground-shadow:
+    drop-shadow(0 3px 2px rgba(0,0,0,0.4))
+    drop-shadow(0 6px 6px rgba(0,0,0,0.22));
   --piece-outline:
     drop-shadow(1px 0 0 var(--outline))  drop-shadow(-1px 0 0 var(--outline))
     drop-shadow(0 1px 0 var(--outline))  drop-shadow(0 -1px 0 var(--outline))
     drop-shadow(1px 1px 0 var(--outline)) drop-shadow(-1px 1px 0 var(--outline))
     drop-shadow(1px -1px 0 var(--outline)) drop-shadow(-1px -1px 0 var(--outline))
-    drop-shadow(0 2px 1.5px rgba(0,0,0,0.32));
+    var(--ground-shadow);
   /* White halo that hugs the ACTIVE piece's silhouette (not its tile). */
   --piece-outline-white:
     drop-shadow(2px 0 0 #fff)  drop-shadow(-2px 0 0 #fff)
     drop-shadow(0 2px 0 #fff)  drop-shadow(0 -2px 0 #fff)
     drop-shadow(1.5px 1.5px 0 #fff) drop-shadow(-1.5px 1.5px 0 #fff)
     drop-shadow(1.5px -1.5px 0 #fff) drop-shadow(-1.5px -1.5px 0 #fff)
-    drop-shadow(0 0 5px rgba(255,255,255,0.85));
+    drop-shadow(0 0 5px rgba(255,255,255,0.85))
+    var(--ground-shadow);
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }

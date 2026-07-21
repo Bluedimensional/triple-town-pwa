@@ -3,6 +3,15 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.4.2] - 2026-07-21
+
+### Changed
+- **Soft ground shadow** under every piece (a layered contact shadow), matching
+  the original art's grounded look. Applies to placed pieces and the active piece.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v9`.
+
 ## [0.4.1] - 2026-07-21
 
 ### Changed
