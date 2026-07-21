@@ -35,8 +35,12 @@
 
     <section id="toolbar">
       <span id="version" class="version" title="build version"></span>
-      <span class="hint">Tap a tile to place the glowing piece · tap the corner square to store</span>
-      <button id="new-game" class="text-btn" title="New game">New</button>
+      <span class="hint">Tap to place · corner = store</span>
+      <div id="new-controls">
+        <span class="new-label">New</span>
+        <button class="size-btn" data-size="6" title="New 6×6 game">6×6</button>
+        <button class="size-btn" data-size="8" title="New 8×8 game">8×8</button>
+      </div>
     </section>
 
     <main id="board-wrap">
@@ -53,7 +57,10 @@
         <h1>Game Over</h1>
         <p>Final score</p>
         <p id="final-score" class="final">0</p>
-        <button id="play-again" class="primary-btn">Play again</button>
+        <div class="again-row">
+          <button class="size-btn primary" data-size="6">New 6×6</button>
+          <button class="size-btn primary" data-size="8">New 8×8</button>
+        </div>
       </div>
     </div>
   </div>

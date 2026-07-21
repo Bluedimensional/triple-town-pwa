@@ -3,6 +3,18 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.9.0] - 2026-07-21 (v23)
+
+### Added
+- **Board size choice:** start a new game as **6×6 or 8×8** via size buttons in
+  the toolbar (and on the game-over screen). The chosen size persists across
+  reloads; prefill scatter and bears scale with the board area. Verified: switch
+  both directions rebuilds the grid + path layer, merges work on 8×8, and reload
+  restores the size.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v23`.
+
 ## [0.8.4] - 2026-07-21 (v22)
 
 ### Fixed

@@ -3,7 +3,8 @@
 import { BOARD_SIZE, STOREHOUSE_R, STOREHOUSE_C } from './config.js';
 
 export const state = {
-  size: BOARD_SIZE,
+  size: BOARD_SIZE,        // current board is size x size
+  pendingSize: BOARD_SIZE, // size a new game will use (the player's choice)
   board: [],        // board[r][c] = tile type string, or null when empty
   current: null,    // the piece waiting to be placed (shown pulsing on the board)
   activePos: null,  // {r,c} where the current piece is previewed, or null
@@ -28,8 +29,8 @@ export function isStorehouse(r, c) {
 
 export function emptyBoard() {
   const b = [];
-  for (let r = 0; r < BOARD_SIZE; r++) {
-    b.push(new Array(BOARD_SIZE).fill(null));
+  for (let r = 0; r < state.size; r++) {
+    b.push(new Array(state.size).fill(null));
   }
   return b;
 }

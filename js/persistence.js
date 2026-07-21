@@ -3,6 +3,7 @@
 // service worker cache for state).
 
 import { state, emptyBoard } from './state.js';
+import { BOARD_SIZE } from './config.js';
 
 const KEY = 'tripletown.save.v2';
 const BEST_KEY = 'tripletown.best.v1';
@@ -10,6 +11,8 @@ const BEST_KEY = 'tripletown.best.v1';
 export function save() {
   try {
     const data = {
+      size: state.size,
+      pendingSize: state.pendingSize,
       board: state.board,
       current: state.current,
       activePos: state.activePos,
@@ -38,6 +41,9 @@ export function load() {
     const data = JSON.parse(raw);
     if (!data || !Array.isArray(data.board)) return false;
 
+    // Board size must be restored before the board is used to build the grid.
+    state.size = data.size || data.board.length || BOARD_SIZE;
+    state.pendingSize = data.pendingSize || state.size;
     state.board = data.board;
     state.current = data.current ?? null;
     state.activePos = data.activePos ?? null;

@@ -123,12 +123,17 @@ function prefill() {
     [cells[i], cells[j]] = [cells[j], cells[i]];
   }
   let idx = 0;
-  const plants = Math.min(randInt(PREFILL_MIN, PREFILL_MAX), cells.length);
+  // Scale the scatter to the board area (6x6 is the baseline).
+  const scale = (state.size * state.size) / 36;
+  const plants = Math.min(
+    randInt(Math.round(PREFILL_MIN * scale), Math.round(PREFILL_MAX * scale)),
+    cells.length);
   for (let k = 0; k < plants && idx < cells.length; k++, idx++) {
     const [r, c] = cells[idx];
     state.board[r][c] = weightedPick(PREFILL_WEIGHTS);
   }
-  for (let b = 0; b < PREFILL_BEARS && idx < cells.length; b++, idx++) {
+  const bears = Math.max(1, Math.round(PREFILL_BEARS * scale));
+  for (let b = 0; b < bears && idx < cells.length; b++, idx++) {
     const [r, c] = cells[idx];
     state.board[r][c] = 'bear';
   }
@@ -139,9 +144,12 @@ function prefill() {
   }
 }
 
-// Start a brand-new game.
-export function newGame() {
-  resetGame();
+// Start a brand-new game. `size` (6 or 8) sets the board dimensions; omitting it
+// keeps the current/pending size.
+export function newGame(size) {
+  if (size) state.size = size;
+  state.pendingSize = state.size;
+  resetGame();      // rebuilds an empty board at state.size
   prefill();
   spawnNext();
   state.activePos = pickActivePos(null, null);

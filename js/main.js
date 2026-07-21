@@ -31,27 +31,43 @@ function onBuy(type) {
   }
 }
 
-function onNewGame() {
-  if (!state.over && !confirm('Start a new game? Current progress will be lost.')) return;
-  newGame();
+// Start a new game at the given size (6 or 8), rebuilding the grid for it.
+function onNewGame(size) {
+  const changing = size && size !== state.size;
+  if (!state.over &&
+      !confirm(`Start a new ${size}×${size} game? Current progress will be lost.`)) return;
+  newGame(size);
+  buildBoard(onCellTap);   // rebuild the DOM grid for the (possibly new) size
   draw();
+  markCurrentSize();
+}
+
+// Highlight the size button matching the current board.
+function markCurrentSize() {
+  document.querySelectorAll('#new-controls .size-btn').forEach((b) => {
+    b.classList.toggle('current', Number(b.dataset.size) === state.size);
+  });
 }
 
 function boot() {
   cacheDom();
   document.getElementById('version').textContent = VERSION;
-  buildBoard(onCellTap);
 
   const restored = load();
   // Start fresh if there's no valid in-progress game to resume.
   if (!restored || state.current === null || state.activePos === null) {
-    if (!state.over) newGame();
+    if (!state.over) newGame(state.pendingSize);
   }
 
-  document.getElementById('new-game').addEventListener('click', onNewGame);
-  document.getElementById('play-again').addEventListener('click', () => { newGame(); draw(); });
+  buildBoard(onCellTap);   // built AFTER the size is known (restored or new)
+
+  // All size buttons (toolbar + game-over) start a new game at their size.
+  document.querySelectorAll('.size-btn').forEach((btn) => {
+    btn.addEventListener('click', () => onNewGame(Number(btn.dataset.size)));
+  });
 
   draw();
+  markCurrentSize();
   registerServiceWorker();
 }
 
