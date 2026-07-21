@@ -94,6 +94,7 @@ export function placePiece(r, c) {
   if (state.board[r][c] !== null) return false; // must place on an empty tile
 
   const piece = state.current;
+  const scoreBefore = state.score;
   state.board[r][c] = piece;
   state.lastCreated = { r, c };
   state.mergeSlides = [];   // collected during this turn's merges, for the animation
@@ -106,6 +107,9 @@ export function placePiece(r, c) {
   } else if (piece !== 'bear') {
     resolveMerges(r, c);        // bears never merge; everything else can cascade
   }
+
+  // Points this placement earned (base + any merge), to float up from the tile.
+  state.floatPoints = { r, c, points: state.score - scoreBefore };
 
   // Bears already on the board react to your move.
   moveBears();

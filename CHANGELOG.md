@@ -3,6 +3,17 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.12.0] - 2026-07-21 (v27)
+
+### Added
+- **Floating points:** every placement pops a "+N" above the tile you placed on
+  (N = points that move earned — the piece's base points plus any merge), which
+  floats up one cell and fades over ~1s. Verified: +25 on a merge, +5 on a plain
+  placement, positioned at the placement cell.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v27`.
+
 ## [0.11.0] - 2026-07-21 (v26)
 
 ### Added

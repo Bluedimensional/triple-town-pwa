@@ -272,9 +272,30 @@ function renderMergeSlides() {
   state.mergeSlides = [];
 }
 
+// Float the points a placement earned up one cell from the tile, fading out.
+function renderPointFloat() {
+  const fp = state.floatPoints;
+  state.floatPoints = null;
+  if (!fp || fp.points <= 0) return;
+  const cellSize = el.board.clientWidth / state.size;
+  const f = document.createElement('div');
+  f.className = 'point-float';
+  f.textContent = '+' + fp.points.toLocaleString();
+  f.style.left = (fp.c * cellSize) + 'px';
+  f.style.top = (fp.r * cellSize) + 'px';
+  f.style.width = cellSize + 'px';
+  f.style.height = cellSize + 'px';
+  f.style.fontSize = (cellSize * 0.34) + 'px';
+  const done = () => f.remove();
+  f.addEventListener('animationend', done);
+  setTimeout(done, 1100);
+  el.board.appendChild(f);
+}
+
 export function render({ onBuy }) {
   paintBoard();
   renderMergeSlides();
+  renderPointFloat();
   paintHud();
   paintStore(onBuy);
   paintOverlay();
