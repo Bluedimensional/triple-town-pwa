@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v17';
+export const VERSION = 'v18';
 
 // Organic path uses an SVG turbulence/displacement filter. It's cheap on desktop
 // GPUs but slow to rasterize on iOS. Off = plain (fast) path, for perf testing.
@@ -57,7 +57,9 @@ export const STORE_BASE_PRICE = { grass: 3, bush: 12, tree: 40, hut: 120 };
 export const STORE_PRICE_GROWTH = 1.6;
 
 // Spawn weights for ordinary pieces (bears handled separately, below).
-export const SPAWN_WEIGHTS = { grass: 62, bush: 12, tree: 3 };
+export const SPAWN_WEIGHTS = { grass: 58, bush: 16, tree: 4 };
+// Never hand out more than this many grass in a row (avoids long grass streaks).
+export const MAX_GRASS_STREAK = 5;
 
 // Bear spawn chance ramps up over the game.
 export const BEAR_BASE_CHANCE = 0.06;

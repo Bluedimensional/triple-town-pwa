@@ -2,7 +2,7 @@
 
 import { state, resetGame, isStorehouse } from './state.js';
 import {
-  SPAWN_WEIGHTS, POINTS,
+  SPAWN_WEIGHTS, MAX_GRASS_STREAK, POINTS,
   BEAR_BASE_CHANCE, BEAR_CHANCE_PER_TURN, BEAR_MAX_CHANCE,
   PREFILL_MIN, PREFILL_MAX, PREFILL_WEIGHTS, PREFILL_BEARS, PREFILL_TOMB_CHANCE,
 } from './config.js';
@@ -45,9 +45,14 @@ function bearChance() {
 export function spawnNext({ countTurn = true } = {}) {
   if (Math.random() < bearChance()) {
     state.current = 'bear';
+  } else if (state.grassStreak >= MAX_GRASS_STREAK) {
+    // Too many grass in a row — hand out a non-grass piece this time.
+    const { grass, ...rest } = SPAWN_WEIGHTS;
+    state.current = weightedPick(rest);
   } else {
     state.current = weightedPick(SPAWN_WEIGHTS);
   }
+  state.grassStreak = state.current === 'grass' ? state.grassStreak + 1 : 0;
   if (countTurn) state.turns++;
 }
 
@@ -89,6 +94,7 @@ export function placePiece(r, c) {
   const piece = state.current;
   state.board[r][c] = piece;
   state.lastCreated = { r, c };
+  state.mergeSlides = [];   // collected during this turn's merges, for the animation
 
   // Base points for the tile you just set down (grass, bought tiles, etc.).
   state.score += POINTS[piece] || 0;

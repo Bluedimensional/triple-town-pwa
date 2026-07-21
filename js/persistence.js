@@ -17,6 +17,7 @@ export function save() {
       score: state.score,
       coins: state.coins,
       turns: state.turns,
+      grassStreak: state.grassStreak,
       storeBought: state.storeBought,
       over: state.over,
     };
@@ -44,6 +45,7 @@ export function load() {
     state.score = data.score || 0;
     state.coins = data.coins || 0;
     state.turns = data.turns || 0;
+    state.grassStreak = data.grassStreak || 0;
     state.storeBought = data.storeBought || {};
     state.over = !!data.over;
     state.lastCreated = null;

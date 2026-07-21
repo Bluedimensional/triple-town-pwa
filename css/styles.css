@@ -156,7 +156,7 @@ body {
   overflow: visible;           /* let the wobbly edges spill past cell bounds */
   pointer-events: none;
 }
-#path-shape { fill: var(--path); }
+/* fill (the cobble pattern) is set as an attribute on the element in render.js */
 .cell {
   border: none;
   background: transparent;      /* the path shape is drawn by #path-layer */
@@ -222,6 +222,22 @@ body {
 @keyframes blink {
   0%, 92%, 100% { transform: scaleY(1); }
   96%           { transform: scaleY(0.1); }
+}
+
+/* A tile being absorbed by a merge slides toward the merge point and fades. */
+.merge-slider {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  animation: mergeSlide 170ms ease-in forwards;
+}
+.merge-slider svg { width: 86%; height: 86%; }
+@keyframes mergeSlide {
+  0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0.45); opacity: 0; }
 }
 
 .cell.pop { animation: pop 0.22s ease; }

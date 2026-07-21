@@ -12,10 +12,12 @@ export const state = {
   best: 0,
   coins: 0,
   turns: 0,         // pieces placed so far (drives bear ramp)
+  grassStreak: 0,   // consecutive grass pieces handed out (caps long streaks)
   storeBought: {},  // tile type -> times purchased (drives rising prices)
   over: false,
   lastCreated: null, // {r,c} of the most recent merge result, for the pop animation
   bearMoves: [],     // this turn's bear moves [{r,c,fromR,fromC}], for the hop animation
+  mergeSlides: [],   // tiles absorbed by a merge this turn, for the slide-in animation
 };
 
 // The storehouse occupies board cell (0,0); it is swap-only and never a real
@@ -42,9 +44,11 @@ export function resetGame() {
   state.score = 0;
   state.coins = 0;
   state.turns = 0;
+  state.grassStreak = 0;
   state.storeBought = {};
   state.over = false;
   state.lastCreated = null;
   state.bearMoves = [];
+  state.mergeSlides = [];
   state.best = best;
 }

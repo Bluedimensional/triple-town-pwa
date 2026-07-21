@@ -75,8 +75,14 @@ export function resolveMerges(r, c) {
     const group = floodFill(r, c, type);
     if (group.length < rule.need) break;
 
-    // Collapse the whole group into the next tier at the placement point.
-    for (const [gr, gc] of group) state.board[gr][gc] = null;
+    // Collapse the whole group into the next tier at the placement point. Record
+    // each absorbed tile so the renderer can slide it toward the merge point.
+    for (const [gr, gc] of group) {
+      if (gr !== r || gc !== c) {
+        state.mergeSlides.push({ fromR: gr, fromC: gc, toR: r, toC: c, type });
+      }
+      state.board[gr][gc] = null;
+    }
     state.board[r][c] = rule.next;
     state.lastCreated = { r, c };
 

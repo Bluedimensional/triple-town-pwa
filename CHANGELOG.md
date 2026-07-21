@@ -3,6 +3,22 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.8.0] - 2026-07-21 (v18)
+
+### Added
+- **Merge slide-in animation:** tiles absorbed by a merge now slide toward the
+  merge point and fade, instead of snapping. (Recorded in `state.mergeSlides`
+  during resolveMerges; animated as overlay elements.)
+- **Cobblestone path texture:** the path is filled with a repeating brick/cobble
+  SVG pattern (like the reference), filter-free so it stays fast.
+
+### Changed
+- **No more long grass streaks:** capped consecutive grass at 5 and rebalanced
+  spawns (grass 58 / bush 16 / tree 4). Verified longest run = 5 over 3000 spawns.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v18`.
+
 ## [0.7.4] - 2026-07-21 (v17)
 
 ### Changed

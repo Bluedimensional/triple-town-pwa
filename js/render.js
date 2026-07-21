@@ -38,6 +38,22 @@ export function buildBoard(onCellTap) {
   const svgStr =
     `<svg xmlns="http://www.w3.org/2000/svg" id="path-layer" viewBox="0 0 ${n} ${n}" aria-hidden="true">
        <defs>
+         <pattern id="cobble" patternUnits="userSpaceOnUse" width="1.37" height="1.03">
+           <rect width="1.37" height="1.03" fill="#959063"/>
+           <g fill="#a9a06e">
+             <rect x="0.06" y="0.05" width="0.40" height="0.22" rx="0.09"/>
+             <rect x="0.56" y="0.03" width="0.28" height="0.19" rx="0.08"/>
+             <rect x="0.95" y="0.07" width="0.34" height="0.21" rx="0.09"/>
+             <rect x="0.20" y="0.34" width="0.46" height="0.22" rx="0.09"/>
+             <rect x="0.76" y="0.35" width="0.30" height="0.20" rx="0.08"/>
+             <rect x="1.14" y="0.36" width="0.18" height="0.17" rx="0.06"/>
+             <rect x="0.04" y="0.63" width="0.26" height="0.19" rx="0.08"/>
+             <rect x="0.40" y="0.64" width="0.40" height="0.20" rx="0.09"/>
+             <rect x="0.90" y="0.62" width="0.36" height="0.22" rx="0.09"/>
+             <circle cx="0.50" cy="0.93" r="0.075"/>
+             <circle cx="1.02" cy="0.95" r="0.065"/>
+           </g>
+         </pattern>
          <filter id="pathFx" x="-12%" y="-12%" width="124%" height="124%">
            <feTurbulence type="fractalNoise" baseFrequency="2.6 2.9" numOctaves="1" seed="11" result="noise"/>
            <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.22"
@@ -48,7 +64,7 @@ export function buildBoard(onCellTap) {
            <feMerge><feMergeNode in="bd"/><feMergeNode in="disp"/></feMerge>
          </filter>
        </defs>
-       <path id="path-shape" d=""${ORGANIC_PATH ? ' filter="url(#pathFx)"' : ''}/>
+       <path id="path-shape" d="" fill="url(#cobble) #959063"${ORGANIC_PATH ? ' filter="url(#pathFx)"' : ''}/>
      </svg>`;
   const svgEl = new DOMParser().parseFromString(svgStr, 'image/svg+xml').documentElement;
   el.board.insertBefore(document.importNode(svgEl, true), el.board.firstChild);
@@ -220,8 +236,32 @@ function paintOverlay() {
   }
 }
 
+// Slide each absorbed tile from its old cell into the merge point, then fade it
+// out — so merges flow instead of snapping.
+function renderMergeSlides() {
+  if (!state.mergeSlides.length) return;
+  const cellSize = el.board.clientWidth / state.size;
+  for (const s of state.mergeSlides) {
+    const slider = document.createElement('div');
+    slider.className = 'merge-slider';
+    slider.style.left = (s.fromC * cellSize) + 'px';
+    slider.style.top = (s.fromR * cellSize) + 'px';
+    slider.style.width = cellSize + 'px';
+    slider.style.height = cellSize + 'px';
+    slider.style.setProperty('--dx', ((s.toC - s.fromC) * cellSize).toFixed(1) + 'px');
+    slider.style.setProperty('--dy', ((s.toR - s.fromR) * cellSize).toFixed(1) + 'px');
+    slider.innerHTML = sprite(s.type);
+    const done = () => slider.remove();
+    slider.addEventListener('animationend', done);
+    setTimeout(done, 260); // fallback if animationend doesn't fire (e.g. bg tab)
+    el.board.appendChild(slider);
+  }
+  state.mergeSlides = [];
+}
+
 export function render({ onBuy }) {
   paintBoard();
+  renderMergeSlides();
   paintHud();
   paintStore(onBuy);
   paintOverlay();
