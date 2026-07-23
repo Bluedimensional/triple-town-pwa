@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.12.1] - 2026-07-22 (v28)
+
+### Added
+- **7×7 board size:** a new-game size option between 6×6 and 8×8, in both the
+  toolbar chooser and the game-over screen. Prefill scatter and bear count scale
+  with board area automatically (no logic changes needed).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v28`.
+
 ## [0.12.0] - 2026-07-21 (v27)
 
 ### Added

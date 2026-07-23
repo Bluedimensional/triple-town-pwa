@@ -31,7 +31,7 @@ function onBuy(type) {
   }
 }
 
-// Start a new game at the given size (6 or 8), rebuilding the grid for it.
+// Start a new game at the given size (6, 7, or 8), rebuilding the grid for it.
 function onNewGame(size) {
   const changing = size && size !== state.size;
   if (!state.over &&
