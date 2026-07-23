@@ -3,6 +3,27 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.14.1] - 2026-07-22 (v31)
+
+### Changed
+- **Only one bear gestures at a time, and the 5-15s cadence is now board-wide.**
+  In v30 each bear ran its own countdown, so a crowded board fidgeted constantly
+  and two bears could animate at once — measured at one gesture every ~2.8s with
+  five bears. There is now a single countdown for the whole board: one bear
+  fidgets, then nothing moves anywhere for another 5-15s. The delay is counted
+  from when a gesture *finishes*, so the still period the player sees is the
+  full 5-15s.
+- **Grass has rounded bottom corners** instead of sharp points where the outer
+  blades met the base.
+
+### Verified
+- Five bears over 100s: 10 gestures, quiet gaps of 5.5-14.3s (all inside the
+  5-15s range), and 1154 samples confirmed never more than one gesture running
+  at any moment.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v31`.
+
 ## [0.14.0] - 2026-07-22 (v30)
 
 ### Added

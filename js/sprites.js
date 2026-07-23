@@ -26,8 +26,10 @@ const grass = svg(`
   <defs><linearGradient id="grassG" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#c8e85f"/><stop offset="38%" stop-color="#5aa62f"/>
     <stop offset="100%" stop-color="#276214"/></linearGradient></defs>
-  <path d="M15 72 L19 47 L24 27 L28 45 L33 36 L37 44 L42 21 L47 43 L51 31
-           L55 44 L60 24 L65 43 L69 34 L74 46 L79 50 L84 72 Q50 78 15 72 Z"
+  <path d="M17 63 L19 47 L24 27 L28 45 L33 36 L37 44 L42 21 L47 43 L51 31
+           L55 44 L60 24 L65 43 L69 34 L74 46 L79 50 L82 63
+           C84 71 80 75.2 72 75.8 C60 77 40 77 28 75.8
+           C20 75.2 16 71 17 63 Z"
         fill="url(#grassG)" stroke="#1c4410" stroke-width="2.6" stroke-linejoin="round"/>
   <g stroke="#2a6417" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.7">
     <path d="M31 66 L33 43"/><path d="M42 68 L43 30"/><path d="M52 66 L53 40"/>
