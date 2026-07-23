@@ -101,6 +101,15 @@ export function buildBoard(onCellTap) {
   }
 }
 
+// Cells holding a settled bear — the ones that may play an idle gesture. A bear
+// that's still the waiting piece, or mid-hop, is busy and sits this one out.
+export function bearCells() {
+  return (el.cells || []).filter((c) =>
+    c.classList.contains('bear') &&
+    !c.classList.contains('lead') &&
+    !c.classList.contains('hopping'));
+}
+
 function isActive(r, c) {
   return !state.over && state.activePos &&
     state.activePos.r === r && state.activePos.c === c;
@@ -192,7 +201,7 @@ function paintBoard() {
         setContent(idx, 'tile:' + (type || ''), sprite(type));
         if (type) {
           if (type === 'bear') {
-            cls += ' path';          // bears stand on the dirt path
+            cls += ' path bear';     // bears stand on the dirt path, and fidget
             // If this bear just moved, hop it from its old cell to here.
             const m = moved.get(r + ',' + c);
             if (m) {

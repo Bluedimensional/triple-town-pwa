@@ -119,47 +119,54 @@ const tripleCastle = svg(`
 
 // --- bears & tombs ------------------------------------------------------
 
-// Bear, drawn to match the original art. The silhouette (ears + legs + body) is
-// stamped twice: once fattened in the faint outer halo colour, then again in the
-// real colours, so a thin light rim traces the whole outline. The body tapers —
-// wider at the top than the bottom — so it reads as a shape, not a rounded box.
-// `.bear-eye` is animated in CSS (blink); those elements carry no transform
-// attribute of their own, since the CSS transform would override it.
-// Mostly round, but the two curves meet at a corner on the top-outer side, so
-// each ear carries a subtle point instead of being a plain circle.
-const BEAR_EAR_L = 'M16.8 25 C16.2 17.5 18 12 20.5 9.5 C23 11.5 27 10 30.5 11.5 '
-  + 'C36.5 14 39.2 18.5 39.2 24.5 C39.2 31.5 34 33.2 28 33.2 C21 33.2 17.2 30 16.8 25 Z';
-const BEAR_EAR_R = 'M83.2 25 C83.8 17.5 82 12 79.5 9.5 C77 11.5 73 10 69.5 11.5 '
-  + 'C63.5 14 60.8 18.5 60.8 24.5 C60.8 31.5 66 33.2 72 33.2 C79 33.2 82.8 30 83.2 25 Z';
-const BEAR_BODY = 'M23 35 C23 23.5 28.5 17.5 40 17.5 L60 17.5 C71.5 17.5 77 23.5 77 35 '
-  + 'L74.2 71 C74.2 82 69.5 86.5 59.5 86.5 L40.5 86.5 C30.5 86.5 25.8 82 25.8 71 Z';
+// Bear, traced from the original art. Key points from the reference:
+//   * body is wide and squat, with a warm light->dark vertical gradient, and no
+//     seam between head and torso (one shade, so the "head" reads as oversized);
+//   * NO pale muzzle patch — the nose and mouth sit straight on the gradient;
+//   * the pale rounded shape is a BELLY, sitting on the dark "pants";
+//   * eyes are single angled almonds (socket and brow in one), not a brow line
+//     plus a socket, with a small red pupil inside;
+//   * ears are small, mostly tucked behind the head.
+// The silhouette (ears + legs + body) is stamped twice: once fattened in the
+// faint rim colour, then again in the real colours, so a thin light rim traces
+// the whole outline. `.bear-eye` is animated in CSS (blink); those elements
+// carry no transform attribute, since the CSS transform would override it.
+const BEAR_EAR_L = 'M15 22 C14.6 16 16 11.6 18 9.6 C20 11.2 23.2 10 26 11.2 '
+  + 'C30.8 13.2 33 16.8 33 21.6 C33 27.2 28.8 28.5 24 28.5 C18.4 28.5 15.4 26 15 22 Z';
+const BEAR_EAR_R = 'M85 22 C85.4 16 84 11.6 82 9.6 C80 11.2 76.8 10 74 11.2 '
+  + 'C69.2 13.2 67 16.8 67 21.6 C67 27.2 71.2 28.5 76 28.5 C81.6 28.5 84.6 26 85 22 Z';
+const BEAR_BODY = 'M19 36 C19 25 24 20 36 20 L64 20 C76 20 81 25 81 36 '
+  + 'L78 70 C78 80 73.5 84 64 84 L36 84 C26.5 84 22 80 22 70 Z';
 const BEAR_LEGS =
-  '<rect x="28" y="82" width="9" height="11" rx="3"/><rect x="40" y="82" width="9" height="11" rx="3"/>'
-  + '<rect x="51" y="82" width="9" height="11" rx="3"/><rect x="63" y="82" width="9" height="11" rx="3"/>';
+  '<rect x="27" y="79" width="10" height="12" rx="3"/><rect x="39" y="79" width="10" height="12" rx="3"/>'
+  + '<rect x="51" y="79" width="10" height="12" rx="3"/><rect x="63" y="79" width="10" height="12" rx="3"/>';
 
 const bear = svg(`
-  <defs><clipPath id="bearBodyClip"><path d="${BEAR_BODY}"/></clipPath></defs>
+  <defs>
+    <clipPath id="bearBodyClip"><path d="${BEAR_BODY}"/></clipPath>
+    <linearGradient id="bearG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e4c78d"/><stop offset="50%" stop-color="#c99c57"/>
+      <stop offset="100%" stop-color="#a87c36"/></linearGradient>
+  </defs>
   <g fill="#7b7c6a" stroke="#7b7c6a" stroke-width="3.75" stroke-linejoin="round">
     <path d="${BEAR_EAR_L}"/><path d="${BEAR_EAR_R}"/>${BEAR_LEGS}<path d="${BEAR_BODY}"/></g>
-  <g fill="#6f4a24" stroke="#3d2712" stroke-width="1.75">
+  <g fill="#7a5530" stroke="#3d2712" stroke-width="1.75">
     <path d="${BEAR_EAR_L}"/><path d="${BEAR_EAR_R}"/></g>
-  <ellipse cx="27.6" cy="18.4" rx="5.6" ry="6" fill="#4a2f16"/>
-  <ellipse cx="72.4" cy="18.4" rx="5.6" ry="6" fill="#4a2f16"/>
-  <g fill="#5c3c1e" stroke="#3d2712" stroke-width="1.75">${BEAR_LEGS}</g>
-  <path d="${BEAR_BODY}" fill="#a06a34" stroke="#3d2712" stroke-width="1.75"/>
+  <ellipse cx="23.7" cy="16.7" rx="4.5" ry="4.8" fill="#4a2f16"/>
+  <ellipse cx="76.3" cy="16.7" rx="4.5" ry="4.8" fill="#4a2f16"/>
+  <g fill="#3d2a18" stroke="#3d2712" stroke-width="1.75">${BEAR_LEGS}</g>
+  <path d="${BEAR_BODY}" fill="url(#bearG)" stroke="#3d2712" stroke-width="1.75"/>
   <g clip-path="url(#bearBodyClip)">
-    <path d="M10 60 L25 60 Q50 74 75 60 L90 60 L90 96 L10 96 Z" fill="#5d4424"/>
-    <path d="M25 60 Q50 74 75 60" fill="none" stroke="#3d2712" stroke-width="1.75"/></g>
-  <ellipse cx="50" cy="68" rx="15" ry="10.5" fill="#d8b483"/>
-  <path d="M33 46.5 L45 50.5" stroke="#3d2712" stroke-width="3" stroke-linecap="round"/>
-  <path d="M67 46.5 L55 50.5" stroke="#3d2712" stroke-width="3" stroke-linecap="round"/>
-  <ellipse class="bear-eye" cx="40" cy="55" rx="6.2" ry="4.8" fill="#33244a"/>
-  <ellipse class="bear-eye" cx="60" cy="55" rx="6.2" ry="4.8" fill="#33244a"/>
-  <circle class="bear-eye" cx="40" cy="55.4" r="2.4" fill="#e8431a"/>
-  <circle class="bear-eye" cx="60" cy="55.4" r="2.4" fill="#e8431a"/>
-  <ellipse cx="50" cy="63" rx="4.2" ry="3" fill="#3a2410"/>
-  <path d="M50 66 Q50 70 46 70 M50 66 Q50 70 54 70" stroke="#3a2410" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
-  { cy: 92, rx: 23, ry: 5.5 });
+    <path d="M10 58 L21 58 Q50 70 79 58 L90 58 L90 96 L10 96 Z" fill="#5d4424"/>
+    <path d="M21 58 Q50 70 79 58" fill="none" stroke="#3d2712" stroke-width="1.75"/>
+    <ellipse cx="50" cy="74" rx="15" ry="8.5" fill="#8a6437"/></g>
+  <path class="bear-eye" d="M29.5 40.5 Q40.5 37.3 43 48.5 Q32 51.7 29.5 40.5 Z" fill="#2c2442"/>
+  <path class="bear-eye" d="M70.5 40.5 Q59.5 37.3 57 48.5 Q68 51.7 70.5 40.5 Z" fill="#2c2442"/>
+  <circle class="bear-eye" cx="36.5" cy="44.8" r="2.6" fill="#d8451c"/>
+  <circle class="bear-eye" cx="63.5" cy="44.8" r="2.6" fill="#d8451c"/>
+  <ellipse cx="50" cy="55" rx="3.8" ry="2.7" fill="#3a2410"/>
+  <path d="M50 57.7 Q50 61.7 46 61.7 M50 57.7 Q50 61.7 54 61.7" stroke="#3a2410" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
+  { cy: 90, rx: 27, ry: 6 });
 
 const tombstone = svg(`
   <ellipse cx="50" cy="85" rx="27" ry="7" fill="#3f6a24"/>

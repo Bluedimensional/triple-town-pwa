@@ -3,6 +3,37 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.14.0] - 2026-07-22 (v30)
+
+### Added
+- **Bears fidget in place** (`js/gestures.js`), like the original: a bear
+  scratches an itch, stamps the ground, throws a small karate move, or leans
+  about. Each bear gets its own countdown, firing at a **random 5-15s** interval.
+  Scheduling is per-bear-slot rather than per-cell, because bears move tile to
+  tile on every placement and a cell-bound timer would reset before it ever
+  fired. Transform-only animations, so they stay cheap on phones.
+
+### Changed
+- **Bear redrawn from the original screenshots:**
+  - Body is wider and squatter, with a warm light-to-dark vertical gradient and
+    no seam between head and torso — one shade, so the head reads oversized.
+  - **Removed the pale muzzle patch** — the nose and mouth now sit directly on
+    the gradient. The pale rounded shape in the reference is a **belly**, which
+    now sits on the dark "pants" instead.
+  - Eyes are single angled almonds (socket and brow combined) with a small red
+    pupil, replacing the separate eyebrow-plus-socket pair.
+  - Ears are ~20% smaller and tucked further behind the head.
+  - Legs darkened to `#3d2a18`.
+
+### Verified
+- Gestures observed firing 6 times over 67s at 8.4-14.8s gaps (inside the
+  5-15s range); 233 samples over 45s confirmed never more than one gesture
+  live at a time and that every gesture class removes itself.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v30`; `js/gestures.js` added to the
+  cached shell.
+
 ## [0.13.0] - 2026-07-22 (v29)
 
 ### Changed

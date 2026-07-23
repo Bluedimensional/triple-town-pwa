@@ -6,7 +6,8 @@ import { placePiece, newGame } from './game.js';
 import { swapReserve } from './storehouse.js';
 import { buyItem } from './store.js';
 import { save, load } from './persistence.js';
-import { cacheDom, buildBoard, render } from './render.js';
+import { cacheDom, buildBoard, render, bearCells } from './render.js';
+import { startGestures } from './gestures.js';
 
 function draw() {
   render({ onBuy });
@@ -68,6 +69,7 @@ function boot() {
 
   draw();
   markCurrentSize();
+  startGestures(bearCells);   // bears fidget in place between placements
   registerServiceWorker();
 }
 
