@@ -3,6 +3,29 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.13.0] - 2026-07-22 (v29)
+
+### Changed
+- **Bear redrawn to match the original art:**
+  - Ears are slightly pointed on the top-outer side instead of plain circles.
+  - Nose and mouth moved up within the muzzle.
+  - Body tapers — wider at the top than the bottom — so it's no longer a
+    perfect rounded rectangle.
+  - Eyes now have a dark socket behind a much smaller red pupil (r 4 → 2.4).
+  - Bottom third is a darker `#5d4424`, divided by a curve that sits lower in
+    the middle and higher at the edges (the muzzle overlaps its centre, as in
+    the original).
+  - A faint `#7b7c6a` rim traces the whole silhouette (ears + legs + body),
+    drawn as a fattened stamp behind the piece.
+  - The dark outline stroke is half as thick (3.5 → 1.75).
+  - Added a dark inner ear — in the reference art but not in the written spec.
+- Verified by rendering the sprite at 64/110/320/720px and in-game, including
+  seven bears at once (the sprite's `clipPath` id repeats per instance, which
+  renders correctly).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v29`.
+
 ## [0.12.1] - 2026-07-22 (v28)
 
 ### Added
