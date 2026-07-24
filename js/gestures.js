@@ -16,8 +16,10 @@
 const GESTURES = ['lean', 'wiggle', 'scratch', 'stamp'];
 const GESTURE_CLASSES = GESTURES.map((g) => 'gesture-' + g);
 
-export const GESTURE_MIN_MS = 5000;
-export const GESTURE_MAX_MS = 15000;
+// TESTING CADENCE: sped up so gestures are easy to observe. The original
+// game's feel is ~5-15s (restore to 5000/15000 when done testing).
+export const GESTURE_MIN_MS = 2000;
+export const GESTURE_MAX_MS = 4500;
 
 const LONGEST_MS = 1500;   // longest gesture animation, for the cleanup fallback
 const TICK_MS = 400;

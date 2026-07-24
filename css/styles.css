@@ -192,8 +192,8 @@ body {
   transition: transform 0.08s ease;
 }
 .cell svg {
-  width: 86%;
-  height: 86%;
+  width: 94%;
+  height: 94%;
   display: block;
 }
 .cell:active { transform: scale(0.94); }
@@ -275,9 +275,10 @@ body {
 }
 @keyframes bearWiggle {
   0%, 100% { transform: translateX(0) rotate(0deg); }
-  20%      { transform: translateX(-5%) rotate(-4deg); }
-  45%      { transform: translateX(5%) rotate(4deg); }
-  70%      { transform: translateX(-3%) rotate(-2deg); }
+  15%      { transform: translateX(-11%) rotate(-11deg); }
+  40%      { transform: translateX(11%) rotate(11deg); }
+  65%      { transform: translateX(-8%) rotate(-8deg); }
+  85%      { transform: translateX(5%) rotate(5deg); }
 }
 /* A quick repeated hitch, like a paw working at an itch. */
 @keyframes bearScratch {

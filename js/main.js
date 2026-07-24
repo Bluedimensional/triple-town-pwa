@@ -67,6 +67,12 @@ function boot() {
     btn.addEventListener('click', () => onNewGame(Number(btn.dataset.size)));
   });
 
+  // Tapping the dark backdrop (outside the card) dismisses the game-over popup.
+  const overlay = document.getElementById('gameover');
+  overlay.addEventListener('pointerdown', (e) => {
+    if (e.target === overlay) { state.overlayDismissed = true; draw(); }
+  });
+
   draw();
   markCurrentSize();
   startGestures(bearCells);   // bears fidget in place between placements

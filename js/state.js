@@ -16,6 +16,7 @@ export const state = {
   grassStreak: 0,   // consecutive grass pieces handed out (caps long streaks)
   storeBought: {},  // tile type -> times purchased (drives rising prices)
   over: false,
+  overlayDismissed: false, // true once the player taps outside the game-over card
   lastCreated: null, // {r,c} of the most recent merge result, for the pop animation
   bearMoves: [],     // this turn's bear moves [{r,c,fromR,fromC}], for the hop animation
   mergeSlides: [],   // tiles absorbed by a merge this turn, for the slide-in animation
@@ -49,6 +50,7 @@ export function resetGame() {
   state.grassStreak = 0;
   state.storeBought = {};
   state.over = false;
+  state.overlayDismissed = false;
   state.lastCreated = null;
   state.bearMoves = [];
   state.mergeSlides = [];

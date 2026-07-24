@@ -250,7 +250,8 @@ function paintStore(onBuy) {
 }
 
 function paintOverlay() {
-  if (state.over) {
+  // Shown when the game is over, until the player taps outside the card.
+  if (state.over && !state.overlayDismissed) {
     el.finalScore.textContent = state.score.toLocaleString();
     el.overlay.classList.add('show');
   } else {

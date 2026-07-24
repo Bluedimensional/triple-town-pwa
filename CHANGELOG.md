@@ -3,6 +3,26 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.15.0] - 2026-07-22 (v32)
+
+### Changed
+- **Bears redrawn wider** so they nearly fill the tile (barely any path square
+  shows under them, matching the original). Face features widened to suit.
+- **All pieces are chunkier** — the sprite now fills 94% of its cell (was 86%).
+- **Bigger wiggle gesture** — the wiggle swing roughly doubled (±11% / ±11°,
+  was ±5% / ±4°) so it reads clearly.
+- **Game-over popup dismisses on an outside tap** — tapping the dark backdrop
+  around the card hides it (revealing the finished board); the toolbar's New
+  buttons still start a fresh game.
+
+### Testing
+- **Gesture cadence temporarily sped up to 2-4.5s** (was 5-15s) so the gestures
+  are easy to observe. This is a testing value — say the word and I'll restore
+  the original ~5-15s feel.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v32`.
+
 ## [0.14.1] - 2026-07-22 (v31)
 
 ### Changed

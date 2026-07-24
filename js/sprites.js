@@ -133,15 +133,15 @@ const tripleCastle = svg(`
 // faint rim colour, then again in the real colours, so a thin light rim traces
 // the whole outline. `.bear-eye` is animated in CSS (blink); those elements
 // carry no transform attribute, since the CSS transform would override it.
-const BEAR_EAR_L = 'M15 22 C14.6 16 16 11.6 18 9.6 C20 11.2 23.2 10 26 11.2 '
-  + 'C30.8 13.2 33 16.8 33 21.6 C33 27.2 28.8 28.5 24 28.5 C18.4 28.5 15.4 26 15 22 Z';
-const BEAR_EAR_R = 'M85 22 C85.4 16 84 11.6 82 9.6 C80 11.2 76.8 10 74 11.2 '
-  + 'C69.2 13.2 67 16.8 67 21.6 C67 27.2 71.2 28.5 76 28.5 C81.6 28.5 84.6 26 85 22 Z';
-const BEAR_BODY = 'M19 36 C19 25 24 20 36 20 L64 20 C76 20 81 25 81 36 '
-  + 'L78 70 C78 80 73.5 84 64 84 L36 84 C26.5 84 22 80 22 70 Z';
+const BEAR_EAR_L = 'M11 22 C10.6 15 12.2 10.2 14.4 8 C16.6 9.8 20.2 8.4 23.2 9.8 '
+  + 'C28.6 12 31 16 31 21.4 C31 27.6 26.4 29 21 29 C14.8 29 11.4 26.4 11 22 Z';
+const BEAR_EAR_R = 'M89 22 C89.4 15 87.8 10.2 85.6 8 C83.4 9.8 79.8 8.4 76.8 9.8 '
+  + 'C71.4 12 69 16 69 21.4 C69 27.6 73.6 29 79 29 C85.2 29 88.6 26.4 89 22 Z';
+const BEAR_BODY = 'M11 35 C11 23 16.5 16.5 30 16.5 L70 16.5 C83.5 16.5 89 23 89 35 '
+  + 'L86 71 C86 82 81 86.5 70 86.5 L30 86.5 C19 86.5 14 82 14 71 Z';
 const BEAR_LEGS =
-  '<rect x="27" y="79" width="10" height="12" rx="3"/><rect x="39" y="79" width="10" height="12" rx="3"/>'
-  + '<rect x="51" y="79" width="10" height="12" rx="3"/><rect x="63" y="79" width="10" height="12" rx="3"/>';
+  '<rect x="19" y="81" width="12" height="13" rx="3.4"/><rect x="33.5" y="81" width="12" height="13" rx="3.4"/>'
+  + '<rect x="54.5" y="81" width="12" height="13" rx="3.4"/><rect x="69" y="81" width="12" height="13" rx="3.4"/>';
 
 const bear = svg(`
   <defs>
@@ -154,18 +154,18 @@ const bear = svg(`
     <path d="${BEAR_EAR_L}"/><path d="${BEAR_EAR_R}"/>${BEAR_LEGS}<path d="${BEAR_BODY}"/></g>
   <g fill="#7a5530" stroke="#3d2712" stroke-width="1.75">
     <path d="${BEAR_EAR_L}"/><path d="${BEAR_EAR_R}"/></g>
-  <ellipse cx="23.7" cy="16.7" rx="4.5" ry="4.8" fill="#4a2f16"/>
-  <ellipse cx="76.3" cy="16.7" rx="4.5" ry="4.8" fill="#4a2f16"/>
+  <ellipse cx="20.2" cy="16.2" rx="4.6" ry="4.9" fill="#4a2f16"/>
+  <ellipse cx="79.8" cy="16.2" rx="4.6" ry="4.9" fill="#4a2f16"/>
   <g fill="#3d2a18" stroke="#3d2712" stroke-width="1.75">${BEAR_LEGS}</g>
   <path d="${BEAR_BODY}" fill="url(#bearG)" stroke="#3d2712" stroke-width="1.75"/>
   <g clip-path="url(#bearBodyClip)">
     <path d="M10 58 L21 58 Q50 70 79 58 L90 58 L90 96 L10 96 Z" fill="#5d4424"/>
     <path d="M21 58 Q50 70 79 58" fill="none" stroke="#3d2712" stroke-width="1.75"/>
     <ellipse cx="50" cy="74" rx="15" ry="8.5" fill="#8a6437"/></g>
-  <path class="bear-eye" d="M29.5 40.5 Q40.5 37.3 43 48.5 Q32 51.7 29.5 40.5 Z" fill="#2c2442"/>
-  <path class="bear-eye" d="M70.5 40.5 Q59.5 37.3 57 48.5 Q68 51.7 70.5 40.5 Z" fill="#2c2442"/>
-  <circle class="bear-eye" cx="36.5" cy="44.8" r="2.6" fill="#d8451c"/>
-  <circle class="bear-eye" cx="63.5" cy="44.8" r="2.6" fill="#d8451c"/>
+  <path class="bear-eye" d="M27 40.5 Q38.5 37.1 41 48.7 Q29.5 52.1 27 40.5 Z" fill="#2c2442"/>
+  <path class="bear-eye" d="M73 40.5 Q61.5 37.1 59 48.7 Q70.5 52.1 73 40.5 Z" fill="#2c2442"/>
+  <circle class="bear-eye" cx="34.3" cy="44.9" r="2.7" fill="#d8451c"/>
+  <circle class="bear-eye" cx="65.7" cy="44.9" r="2.7" fill="#d8451c"/>
   <ellipse cx="50" cy="55" rx="3.8" ry="2.7" fill="#3a2410"/>
   <path d="M50 57.7 Q50 61.7 46 61.7 M50 57.7 Q50 61.7 54 61.7" stroke="#3a2410" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
   { cy: 90, rx: 27, ry: 6 });
