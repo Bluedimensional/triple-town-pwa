@@ -4,10 +4,11 @@
 // edit sprites.js — nothing here or in the game logic assumes how a tile looks.
 
 import { state, isStorehouse } from './state.js';
-import { NAMES, STORE_ITEMS, ORGANIC_PATH } from './config.js';
+import { NAMES, STORE_ITEMS, ORGANIC_PATH, BOARD_SIZES } from './config.js';
 import { SPRITES } from './sprites.js';
 import { priceOf } from './store.js';
 import { previewMergeGroup } from './match.js';
+import { loadScores } from './persistence.js';
 
 const el = {};
 
@@ -19,6 +20,15 @@ export function cacheDom() {
   el.store = document.getElementById('store-items');
   el.overlay = document.getElementById('gameover');
   el.finalScore = document.getElementById('final-score');
+  el.overReason = document.getElementById('over-reason');
+  el.overLevel = document.getElementById('over-level');
+  el.goalLevel = document.getElementById('goal-level');
+  el.goalTarget = document.getElementById('goal-target');
+  el.goalTurns = document.getElementById('goal-turns');
+  el.goalFill = document.getElementById('goal-fill');
+  el.scoresModal = document.getElementById('scores-modal');
+  el.scoresCols = document.getElementById('scores-cols');
+  el.levelBanner = document.getElementById('level-banner');
 }
 
 function sprite(type) {
@@ -233,6 +243,65 @@ function paintHud() {
   el.coins.textContent = state.coins.toLocaleString();
 }
 
+// The level goal bar: current level, target, turns remaining, and a fill bar
+// showing progress toward the goal.
+function paintGoal() {
+  el.goalLevel.textContent = 'Level ' + state.level;
+  el.goalTarget.textContent = 'Goal: ' + state.goal.toLocaleString();
+  const t = Math.max(0, state.turnsLeft);
+  el.goalTurns.textContent = t + (t === 1 ? ' turn left' : ' turns left');
+  el.goalTurns.classList.toggle('low', t <= 15);
+  const pct = state.goal > 0 ? Math.min(100, Math.round((state.score / state.goal) * 100)) : 0;
+  el.goalFill.style.width = pct + '%';
+}
+
+// When a level is cleared, flash a short "Level N! Goal X" banner (one-shot).
+function renderLevelBanner() {
+  const b = state.levelUpBanner;
+  state.levelUpBanner = null;
+  if (!b) return;
+  el.levelBanner.innerHTML =
+    `<div class="lb-title">Level ${b.level}!</div>` +
+    `<div class="lb-sub">Next goal ${b.goal.toLocaleString()} · turns refilled</div>`;
+  el.levelBanner.classList.remove('show');
+  void el.levelBanner.offsetWidth;         // restart the animation
+  el.levelBanner.classList.add('show');
+  const done = () => el.levelBanner.classList.remove('show');
+  el.levelBanner.addEventListener('animationend', done, { once: true });
+  setTimeout(done, 2600);
+}
+
+// Build the high-scores modal: one column per board size, each listing its top
+// five scores with the date earned. Call openScores() to show it.
+export function openScores() {
+  const scores = loadScores();
+  el.scoresCols.innerHTML = BOARD_SIZES.map((size) => {
+    const list = scores[String(size)] || [];
+    const rows = list.length
+      ? list.map((e, i) =>
+          `<li><span class="sc-rank">${i + 1}</span>` +
+          `<span class="sc-score">${e.s.toLocaleString()}</span>` +
+          `<span class="sc-date">${formatDate(e.d)}</span></li>`).join('')
+      : '<li class="sc-empty">No scores yet</li>';
+    return `<div class="scores-col"><h2>${size}×${size}</h2><ol>${rows}</ol></div>`;
+  }).join('');
+  el.scoresModal.classList.add('show');
+}
+
+export function closeScores() {
+  el.scoresModal.classList.remove('show');
+}
+
+// 'YYYY-MM-DD' -> 'Jul 22' (short, no year to keep the row compact).
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function formatDate(iso) {
+  if (!iso) return '';
+  const [, m, d] = iso.split('-');
+  const mi = parseInt(m, 10) - 1;
+  return (MONTHS[mi] || '') + ' ' + parseInt(d, 10);
+}
+
 function paintStore(onBuy) {
   el.store.innerHTML = '';
   for (const type of STORE_ITEMS) {
@@ -253,6 +322,9 @@ function paintOverlay() {
   // Shown when the game is over, until the player taps outside the card.
   if (state.over && !state.overlayDismissed) {
     el.finalScore.textContent = state.score.toLocaleString();
+    el.overReason.textContent = state.overReason === 'turns'
+      ? 'Out of turns — final score' : 'Board full — final score';
+    el.overLevel.textContent = 'Reached level ' + state.level;
     el.overlay.classList.add('show');
   } else {
     el.overlay.classList.remove('show');
@@ -307,6 +379,8 @@ export function render({ onBuy }) {
   renderMergeSlides();
   renderPointFloat();
   paintHud();
+  paintGoal();
+  renderLevelBanner();
   paintStore(onBuy);
   paintOverlay();
   state.lastCreated = null; // consume the one-shot pop marker

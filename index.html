@@ -23,15 +23,24 @@
         <span class="stat-label">Score</span>
         <span id="score" class="stat-value">0</span>
       </div>
-      <div class="stat">
-        <span class="stat-label">Best</span>
+      <button class="stat stat-btn" id="best-stat" title="See all high scores">
+        <span class="stat-label">Best 🏆</span>
         <span id="best" class="stat-value">0</span>
-      </div>
+      </button>
       <div class="stat">
         <span class="stat-label">Coins</span>
         <span id="coins" class="stat-value">0</span>
       </div>
     </header>
+
+    <section id="goalbar">
+      <div class="goal-info">
+        <span class="goal-level" id="goal-level">Level 1</span>
+        <span class="goal-target" id="goal-target">Goal: 20,000</span>
+        <span class="goal-turns" id="goal-turns">150 turns left</span>
+      </div>
+      <div class="goal-track"><div class="goal-fill" id="goal-fill"></div></div>
+    </section>
 
     <section id="toolbar">
       <span id="version" class="version" title="build version"></span>
@@ -56,8 +65,9 @@
     <div id="gameover" class="overlay">
       <div class="overlay-card">
         <h1>Game Over</h1>
-        <p>Final score</p>
+        <p id="over-reason" class="over-reason">Final score</p>
         <p id="final-score" class="final">0</p>
+        <p id="over-level" class="over-level"></p>
         <div class="again-row">
           <button class="size-btn primary" data-size="6">New 6×6</button>
           <button class="size-btn primary" data-size="7">New 7×7</button>
@@ -65,6 +75,16 @@
         </div>
       </div>
     </div>
+
+    <div id="scores-modal" class="overlay">
+      <div class="overlay-card scores-card">
+        <h1>High Scores</h1>
+        <div id="scores-cols" class="scores-cols"></div>
+        <button id="scores-close" class="primary-btn">Close</button>
+      </div>
+    </div>
+
+    <div id="level-banner" class="level-banner"></div>
   </div>
 
   <script type="module" src="js/main.js"></script>

@@ -3,6 +3,38 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.16.0] - 2026-07-24 (v33)
+
+### Added
+- **Level / goal mode with a turn budget** (like the original's goal + "turns
+  left"). Each level grants **150 placements** to push your total score up to the
+  level's goal (level 1 = 20,000; then 45k, 80k, 125k, 180k, …). Reaching the goal
+  **clears the level** — the goal rises, the turn budget refills, and a "Level N!"
+  banner flashes. Running out of turns (or filling the board) ends the game; the
+  game-over card now says which. A goal bar above the board shows the level,
+  target, progress, and turns remaining (turns turn amber at ≤15). All values are
+  tunable in `config.js`.
+- **Per-board-size high scores.** Best is now tracked separately for 6×6, 7×7,
+  and 8×8. Tapping the **Best 🏆** stat opens a High Scores modal with the **top 5
+  for each size and the date** each was earned. The HUD's Best reflects the
+  current board size.
+
+### Changed
+- The `Best` value now comes from the per-size leaderboard rather than one shared
+  number (the legacy single best is still read as a fallback).
+
+### Verified
+- Node: goals ramp 20k/45k/80k/125k/180k; leaderboard keeps the top 5 sorted with
+  dates; per-size best is independent. Integration (DOM-free): new game inits
+  L1/20k/150; crossing the goal advances the level and refills turns; running out
+  of turns ends with reason "turns" and records the run.
+- Browser: goal bar renders and turns decrement per placement; High Scores modal
+  shows all three columns; game-over card shows the reason and level; **tapping
+  the backdrop dismisses the game-over popup** (the reported bug).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v33`.
+
 ## [0.15.0] - 2026-07-22 (v32)
 
 ### Changed

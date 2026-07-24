@@ -6,7 +6,7 @@ import { placePiece, newGame } from './game.js';
 import { swapReserve } from './storehouse.js';
 import { buyItem } from './store.js';
 import { save, load } from './persistence.js';
-import { cacheDom, buildBoard, render, bearCells } from './render.js';
+import { cacheDom, buildBoard, render, bearCells, openScores, closeScores } from './render.js';
 import { startGestures } from './gestures.js';
 
 function draw() {
@@ -72,6 +72,14 @@ function boot() {
   overlay.addEventListener('pointerdown', (e) => {
     if (e.target === overlay) { state.overlayDismissed = true; draw(); }
   });
+
+  // High-scores modal: the Best stat opens it; backdrop tap or Close hides it.
+  document.getElementById('best-stat').addEventListener('pointerdown', openScores);
+  const scoresModal = document.getElementById('scores-modal');
+  scoresModal.addEventListener('pointerdown', (e) => {
+    if (e.target === scoresModal) closeScores();
+  });
+  document.getElementById('scores-close').addEventListener('pointerdown', closeScores);
 
   draw();
   markCurrentSize();

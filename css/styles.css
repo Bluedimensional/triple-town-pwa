@@ -150,6 +150,102 @@ body {
 }
 .again-row { display: flex; gap: 10px; justify-content: center; margin-top: 16px; }
 
+/* The Best stat doubles as the "see all scores" button. */
+.stat-btn {
+  font-family: inherit;
+  color: var(--ink);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.stat-btn:active { transform: scale(0.97); }
+
+/* ---- Goal bar (level mode) ---- */
+#goalbar {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: var(--panel);
+  border: 1px solid var(--panel-line);
+  border-radius: var(--radius);
+  padding: 7px 12px;
+}
+.goal-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 12px;
+}
+.goal-level { font-weight: 700; color: var(--ink); }
+.goal-target { color: var(--ink-soft); flex: 1; text-align: center; }
+.goal-turns { color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.goal-turns.low { color: #ffce54; font-weight: 700; }
+.goal-track {
+  height: 10px;
+  background: rgba(0, 0, 0, 0.28);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.goal-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #7cc142, #a8d55a);
+  border-radius: 6px;
+  transition: width 0.35s ease;
+}
+
+/* ---- Level-up banner ---- */
+.level-banner {
+  position: fixed;
+  top: 16%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(40, 60, 22, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 12px 24px;
+  border-radius: 14px;
+  text-align: center;
+  z-index: 30;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+.level-banner.show { animation: levelBanner 2.6s ease forwards; }
+.lb-title { font-size: 24px; font-weight: 800; color: var(--accent); }
+.lb-sub { font-size: 13px; color: var(--ink-soft); margin-top: 2px; }
+@keyframes levelBanner {
+  0%       { opacity: 0; transform: translateX(-50%) translateY(-16px) scale(0.9); }
+  12%, 78% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+  100%     { opacity: 0; transform: translateX(-50%) translateY(-16px) scale(0.97); }
+}
+
+/* ---- High-scores modal ---- */
+.scores-card { min-width: min(92vw, 520px); }
+.scores-cols { display: flex; gap: 14px; margin: 16px 0; }
+.scores-col { flex: 1; }
+.scores-col h2 { margin: 0 0 8px; font-size: 16px; color: var(--accent); }
+.scores-col ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.scores-col li {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 13px;
+  color: #2f4a1c;
+}
+.sc-rank { color: #8aa06a; width: 14px; font-weight: 700; }
+.sc-score { font-weight: 700; font-variant-numeric: tabular-nums; }
+.sc-date { margin-left: auto; color: #7a8a5f; font-size: 11px; }
+.sc-empty { color: #9aa88a; font-style: italic; }
+.over-level { font-weight: 700; }
+
 /* ---- Board ---- */
 #board-wrap {
   display: flex;

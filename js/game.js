@@ -5,7 +5,9 @@ import {
   SPAWN_WEIGHTS, MAX_GRASS_STREAK, CRYSTAL_CHANCE, POINTS,
   BEAR_BASE_CHANCE, BEAR_CHANCE_PER_TURN, BEAR_MAX_CHANCE,
   PREFILL_MIN, PREFILL_MAX, PREFILL_WEIGHTS, PREFILL_BEARS, PREFILL_TOMB_CHANCE,
+  LEVEL_TURN_BUDGET, goalForLevel,
 } from './config.js';
+import { recordScore } from './persistence.js';
 import { resolveMerges, crystalResolve } from './match.js';
 import { moveBears } from './bears.js';
 import { save } from './persistence.js';
@@ -78,11 +80,28 @@ function boardFull() {
   return emptyCells().length === 0;
 }
 
+function endGame(reason) {
+  state.over = true;
+  state.overReason = reason;      // 'turns' or 'full'
+  state.activePos = null;
+  // Record the run in this board size's leaderboard and refresh the shown best.
+  state.best = recordScore(state.size, state.score);
+}
+
 function checkGameOver() {
-  if (boardFull()) {
-    state.over = true;
-    state.activePos = null;
-    if (state.score > state.best) state.best = state.score;
+  if (state.over) return;
+  if (state.turnsLeft <= 0) { endGame('turns'); return; } // ran out of turns
+  if (boardFull()) endGame('full');                       // no room left
+}
+
+// Reaching the level's goal clears it: the goal rises and the turn budget
+// refills. A `while` handles a single huge merge that blows past several goals.
+function maybeLevelUp() {
+  while (state.score >= state.goal) {
+    state.level++;
+    state.goal = goalForLevel(state.level);
+    state.turnsLeft = LEVEL_TURN_BUDGET;
+    state.levelUpBanner = { level: state.level, goal: state.goal };
   }
 }
 
@@ -110,6 +129,11 @@ export function placePiece(r, c) {
 
   // Points this placement earned (base + any merge), to float up from the tile.
   state.floatPoints = { r, c, points: state.score - scoreBefore };
+
+  // This placement spent a turn; reaching the goal clears the level (refilling
+  // turns) before we test for running out.
+  state.turnsLeft--;
+  maybeLevelUp();
 
   // Bears already on the board react to your move.
   moveBears();
@@ -159,6 +183,9 @@ export function newGame(size) {
   if (size) state.size = size;
   state.pendingSize = state.size;
   resetGame();      // rebuilds an empty board at state.size
+  state.level = 1;
+  state.goal = goalForLevel(1);
+  state.turnsLeft = LEVEL_TURN_BUDGET;
   prefill();
   spawnNext();
   state.activePos = pickActivePos(null, null);
