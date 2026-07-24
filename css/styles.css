@@ -3,6 +3,7 @@
 
 :root {
   --field: #46632f;          /* grass field base */
+  --field-dot-rgb: 20,42,14; /* field speckle colour (rgb; alpha applied per layer) */
   --field-dot: rgba(0,0,0,0.10);
   --field-line: rgba(0,0,0,0.20);
   --path: #959063;           /* placeable dirt tile */
@@ -36,16 +37,18 @@ html, body {
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: var(--ink);
-  /* Grass field: scattered darker-green spots in three sizes (one large, two
-     small and close in size, one of those fainter). Three grids at
-     incommensurate spacings read as random rather than a perfect grid. */
+  /* Field: scattered darker spots in three sizes (one large, two small and close
+     in size, one of those fainter). Three grids at incommensurate spacings read
+     as random rather than a perfect grid. Colour comes from --field / the dot rgb
+     so the theme can swap it per level (grass -> desert -> water) below. */
   background-color: var(--field);
   background-image:
-    radial-gradient(circle, rgba(20,42,14,0.16) 2.6px, transparent 3px),
-    radial-gradient(circle, rgba(20,42,14,0.15) 1.5px, transparent 1.9px),
-    radial-gradient(circle, rgba(20,42,14,0.05) 1.7px, transparent 2.1px);
+    radial-gradient(circle, rgba(var(--field-dot-rgb), 0.16) 2.6px, transparent 3px),
+    radial-gradient(circle, rgba(var(--field-dot-rgb), 0.15) 1.5px, transparent 1.9px),
+    radial-gradient(circle, rgba(var(--field-dot-rgb), 0.05) 1.7px, transparent 2.1px);
   background-size: 89px 97px, 43px 53px, 61px 67px;
   background-position: 0 0, 19px 31px, 41px 13px;
+  transition: background-color 0.6s ease;   /* smooth swap when the level theme changes */
   padding:
     env(safe-area-inset-top)
     env(safe-area-inset-right)
@@ -55,6 +58,12 @@ body {
   -webkit-user-select: none;
   touch-action: manipulation;   /* no double-tap zoom delay on taps */
 }
+
+/* Level field themes (a test): the field recolours as you level up, everything
+   else stays the same. Set on <body data-field="..."> from the current level. */
+body[data-field="grass"]  { --field: #46632f; --field-dot-rgb: 20, 42, 14; }
+body[data-field="desert"] { --field: #cdb277; --field-dot-rgb: 120, 90, 40; }
+body[data-field="water"]  { --field: #3f7fa3; --field-dot-rgb: 12, 52, 82; }
 
 #app {
   height: 100%;

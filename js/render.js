@@ -241,9 +241,17 @@ function paintHud() {
   el.coins.textContent = state.coins.toLocaleString();
 }
 
-// The level goal bar: current level, how many points to the next level, turns
-// remaining, and a fill bar showing progress within the current level. Levels are
-// milestones you pass while playing — reaching one just ticks this up.
+// Field theme per level (a test): level 1 grass, 2 desert, 3+ water. Everything
+// else stays the same — only the field background recolours (see styles.css).
+const FIELD_THEMES = ['grass', 'desert', 'water'];
+function paintTheme() {
+  const theme = FIELD_THEMES[Math.min(state.level - 1, FIELD_THEMES.length - 1)];
+  if (document.body.dataset.field !== theme) document.body.dataset.field = theme;
+}
+
+// The level goal bar: current level, how many points to the next level, and a
+// fill bar showing progress within the current level. Levels are milestones you
+// pass while playing — reaching one just ticks this up.
 function paintGoal() {
   el.goalLevel.textContent = 'Level ' + state.level;
   const toNext = Math.max(0, state.goal - state.score);
@@ -373,6 +381,7 @@ export function render({ onBuy }) {
   renderPointFloat();
   paintHud();
   paintGoal();
+  paintTheme();
   paintStore(onBuy);
   paintOverlay();
   state.lastCreated = null; // consume the one-shot pop marker

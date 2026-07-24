@@ -133,15 +133,17 @@ const tripleCastle = svg(`
 // faint rim colour, then again in the real colours, so a thin light rim traces
 // the whole outline. `.bear-eye` is animated in CSS (blink); those elements
 // carry no transform attribute, since the CSS transform would override it.
-const BEAR_EAR_L = 'M11 22 C10.6 15 12.2 10.2 14.4 8 C16.6 9.8 20.2 8.4 23.2 9.8 '
-  + 'C28.6 12 31 16 31 21.4 C31 27.6 26.4 29 21 29 C14.8 29 11.4 26.4 11 22 Z';
-const BEAR_EAR_R = 'M89 22 C89.4 15 87.8 10.2 85.6 8 C83.4 9.8 79.8 8.4 76.8 9.8 '
-  + 'C71.4 12 69 16 69 21.4 C69 27.6 73.6 29 79 29 C85.2 29 88.6 26.4 89 22 Z';
-const BEAR_BODY = 'M11 35 C11 23 16.5 16.5 30 16.5 L70 16.5 C83.5 16.5 89 23 89 35 '
-  + 'L86 71 C86 82 81 86.5 70 86.5 L30 86.5 C19 86.5 14 82 14 71 Z';
+// Width is a midpoint between the pre-v32 bear and the v32 "fat" bear — a little
+// slimmer than v32, still chunkier than the original.
+const BEAR_EAR_L = 'M13 22 C12.6 15.5 14.1 10.9 16.2 8.8 C18.3 10.5 21.7 9.2 24.6 10.5 '
+  + 'C29.7 12.6 32 16.4 32 21.6 C32 27.4 27.6 28.75 22.5 28.75 C16.6 28.75 13.4 26.2 13 22 Z';
+const BEAR_EAR_R = 'M87 22 C87.4 15.5 85.9 10.9 83.8 8.8 C81.7 10.5 78.3 9.2 75.4 10.5 '
+  + 'C70.3 12.6 68 16.4 68 21.6 C68 27.4 72.4 28.75 77.5 28.75 C83.4 28.75 86.6 26.2 87 22 Z';
+const BEAR_BODY = 'M15 35.5 C15 24 20.3 18.3 33 18.3 L67 18.3 C79.7 18.3 85 24 85 35.5 '
+  + 'L82 70.5 C82 81 77.3 85.3 67 85.3 L33 85.3 C22.8 85.3 18 81 18 70.5 Z';
 const BEAR_LEGS =
-  '<rect x="19" y="81" width="12" height="13" rx="3.4"/><rect x="33.5" y="81" width="12" height="13" rx="3.4"/>'
-  + '<rect x="54.5" y="81" width="12" height="13" rx="3.4"/><rect x="69" y="81" width="12" height="13" rx="3.4"/>';
+  '<rect x="23" y="81" width="11" height="12" rx="3.2"/><rect x="36.25" y="81" width="11" height="12" rx="3.2"/>'
+  + '<rect x="52.75" y="81" width="11" height="12" rx="3.2"/><rect x="66" y="81" width="11" height="12" rx="3.2"/>';
 
 const bear = svg(`
   <defs>
@@ -154,21 +156,21 @@ const bear = svg(`
     <path d="${BEAR_EAR_L}"/><path d="${BEAR_EAR_R}"/>${BEAR_LEGS}<path d="${BEAR_BODY}"/></g>
   <g fill="#7a5530" stroke="#3d2712" stroke-width="1.75">
     <path d="${BEAR_EAR_L}"/><path d="${BEAR_EAR_R}"/></g>
-  <ellipse cx="20.2" cy="16.2" rx="4.6" ry="4.9" fill="#4a2f16"/>
-  <ellipse cx="79.8" cy="16.2" rx="4.6" ry="4.9" fill="#4a2f16"/>
+  <ellipse cx="22" cy="16.4" rx="4.6" ry="4.9" fill="#4a2f16"/>
+  <ellipse cx="78" cy="16.4" rx="4.6" ry="4.9" fill="#4a2f16"/>
   <g fill="#3d2a18" stroke="#3d2712" stroke-width="1.75">${BEAR_LEGS}</g>
   <path d="${BEAR_BODY}" fill="url(#bearG)" stroke="#3d2712" stroke-width="1.75"/>
   <g clip-path="url(#bearBodyClip)">
     <path d="M10 58 L21 58 Q50 70 79 58 L90 58 L90 96 L10 96 Z" fill="#5d4424"/>
     <path d="M21 58 Q50 70 79 58" fill="none" stroke="#3d2712" stroke-width="1.75"/>
     <ellipse cx="50" cy="74" rx="15" ry="8.5" fill="#8a6437"/></g>
-  <path class="bear-eye" d="M27 40.5 Q38.5 37.1 41 48.7 Q29.5 52.1 27 40.5 Z" fill="#2c2442"/>
-  <path class="bear-eye" d="M73 40.5 Q61.5 37.1 59 48.7 Q70.5 52.1 73 40.5 Z" fill="#2c2442"/>
-  <circle class="bear-eye" cx="34.3" cy="44.9" r="2.7" fill="#d8451c"/>
-  <circle class="bear-eye" cx="65.7" cy="44.9" r="2.7" fill="#d8451c"/>
+  <path class="bear-eye" d="M28.25 40.5 Q39.5 37.2 42 48.6 Q30.75 51.9 28.25 40.5 Z" fill="#2c2442"/>
+  <path class="bear-eye" d="M71.75 40.5 Q60.5 37.2 58 48.6 Q69.25 51.9 71.75 40.5 Z" fill="#2c2442"/>
+  <circle class="bear-eye" cx="35.4" cy="44.85" r="2.65" fill="#d8451c"/>
+  <circle class="bear-eye" cx="64.6" cy="44.85" r="2.65" fill="#d8451c"/>
   <ellipse cx="50" cy="55" rx="3.8" ry="2.7" fill="#3a2410"/>
   <path d="M50 57.7 Q50 61.7 46 61.7 M50 57.7 Q50 61.7 54 61.7" stroke="#3a2410" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
-  { cy: 90, rx: 27, ry: 6 });
+  { cy: 90, rx: 25.5, ry: 6 });
 
 const tombstone = svg(`
   <ellipse cx="50" cy="85" rx="27" ry="7" fill="#3f6a24"/>

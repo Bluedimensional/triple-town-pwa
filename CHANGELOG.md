@@ -3,6 +3,28 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.19.0] - 2026-07-24 (v36)
+
+### Changed
+- **Bears slimmed down a touch** — width is now a midpoint between the pre-v32
+  bear and the v32 "fat" bear: less fat than v32, still chunkier than the
+  original. Ears, legs, eyes, and shadow adjusted to match.
+
+### Added
+- **Level field themes (a test):** the field background recolours as you level
+  up — **level 1 grass, level 2 desert, level 3+ water** — while everything else
+  (path, pieces, HUD) stays the same. Driven by `data-field` on `<body>` from the
+  current level; colours are CSS variables in `styles.css`, with a 0.6s fade.
+
+### Notes
+- The tan cobble path keeps its colour on every theme (only the "grass" field
+  recolours, as asked). To actually see desert/water in normal play you must
+  reach level 2 (20,000 pts) / level 3 (45,000) — say the word and I can
+  temporarily lower the thresholds so it's easy to test.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v36`.
+
 ## [0.18.0] - 2026-07-24 (v35)
 
 ### Changed
