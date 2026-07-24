@@ -194,30 +194,16 @@ body {
   border-radius: 6px;
   transition: width 0.35s ease;
 }
-
-/* ---- Level-up banner ---- */
-.level-banner {
-  position: fixed;
-  top: 16%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(40, 60, 22, 0.94);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  padding: 12px 24px;
-  border-radius: 14px;
-  text-align: center;
-  z-index: 30;
-  opacity: 0;
-  pointer-events: none;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+/* When the level ticks up, the goal bar briefly highlights (non-blocking). */
+#goalbar.leveled { animation: goalLevelFlash 1.1s ease; }
+#goalbar.leveled .goal-level { animation: goalLevelPop 1.1s ease; }
+@keyframes goalLevelFlash {
+  0%, 100% { background: var(--panel); border-color: var(--panel-line); }
+  30%      { background: rgba(124, 193, 66, 0.35); border-color: var(--accent); }
 }
-.level-banner.show { animation: levelBanner 2.6s ease forwards; }
-.lb-title { font-size: 24px; font-weight: 800; color: var(--accent); }
-.lb-sub { font-size: 13px; color: var(--ink-soft); margin-top: 2px; }
-@keyframes levelBanner {
-  0%       { opacity: 0; transform: translateX(-50%) translateY(-16px) scale(0.9); }
-  12%, 78% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
-  100%     { opacity: 0; transform: translateX(-50%) translateY(-16px) scale(0.97); }
+@keyframes goalLevelPop {
+  0%, 100% { transform: scale(1); color: var(--ink); }
+  30%      { transform: scale(1.18); color: #d7f0a8; }
 }
 
 /* ---- High-scores modal ---- */
@@ -236,13 +222,14 @@ body {
 .scores-col li {
   display: flex;
   align-items: baseline;
-  gap: 6px;
+  gap: 5px;
   font-size: 13px;
   color: #2f4a1c;
 }
-.sc-rank { color: #8aa06a; width: 14px; font-weight: 700; }
+.sc-rank { color: #8aa06a; width: 12px; font-weight: 700; flex-shrink: 0; }
+.sc-body { display: flex; flex-direction: column; line-height: 1.15; }
 .sc-score { font-weight: 700; font-variant-numeric: tabular-nums; }
-.sc-date { margin-left: auto; color: #7a8a5f; font-size: 11px; }
+.sc-meta { color: #7a8a5f; font-size: 11px; }
 .sc-empty { color: #9aa88a; font-style: italic; }
 .over-level { font-weight: 700; }
 

@@ -4,7 +4,7 @@
 // edit sprites.js — nothing here or in the game logic assumes how a tile looks.
 
 import { state, isStorehouse } from './state.js';
-import { NAMES, STORE_ITEMS, ORGANIC_PATH, BOARD_SIZES } from './config.js';
+import { NAMES, STORE_ITEMS, ORGANIC_PATH, BOARD_SIZES, goalForLevel } from './config.js';
 import { SPRITES } from './sprites.js';
 import { priceOf } from './store.js';
 import { previewMergeGroup } from './match.js';
@@ -22,13 +22,13 @@ export function cacheDom() {
   el.finalScore = document.getElementById('final-score');
   el.overReason = document.getElementById('over-reason');
   el.overLevel = document.getElementById('over-level');
+  el.goalbar = document.getElementById('goalbar');
   el.goalLevel = document.getElementById('goal-level');
   el.goalTarget = document.getElementById('goal-target');
   el.goalTurns = document.getElementById('goal-turns');
   el.goalFill = document.getElementById('goal-fill');
   el.scoresModal = document.getElementById('scores-modal');
   el.scoresCols = document.getElementById('scores-cols');
-  el.levelBanner = document.getElementById('level-banner');
 }
 
 function sprite(type) {
@@ -243,32 +243,30 @@ function paintHud() {
   el.coins.textContent = state.coins.toLocaleString();
 }
 
-// The level goal bar: current level, target, turns remaining, and a fill bar
-// showing progress toward the goal.
+// The level goal bar: current level, how many points to the next level, turns
+// remaining, and a fill bar showing progress within the current level. Levels are
+// milestones you pass while playing — reaching one just ticks this up.
 function paintGoal() {
   el.goalLevel.textContent = 'Level ' + state.level;
-  el.goalTarget.textContent = 'Goal: ' + state.goal.toLocaleString();
+  const toNext = Math.max(0, state.goal - state.score);
+  el.goalTarget.textContent = toNext.toLocaleString() + ' to level ' + (state.level + 1);
   const t = Math.max(0, state.turnsLeft);
   el.goalTurns.textContent = t + (t === 1 ? ' turn left' : ' turns left');
   el.goalTurns.classList.toggle('low', t <= 15);
-  const pct = state.goal > 0 ? Math.min(100, Math.round((state.score / state.goal) * 100)) : 0;
-  el.goalFill.style.width = pct + '%';
-}
-
-// When a level is cleared, flash a short "Level N! Goal X" banner (one-shot).
-function renderLevelBanner() {
-  const b = state.levelUpBanner;
-  state.levelUpBanner = null;
-  if (!b) return;
-  el.levelBanner.innerHTML =
-    `<div class="lb-title">Level ${b.level}!</div>` +
-    `<div class="lb-sub">Next goal ${b.goal.toLocaleString()} · turns refilled</div>`;
-  el.levelBanner.classList.remove('show');
-  void el.levelBanner.offsetWidth;         // restart the animation
-  el.levelBanner.classList.add('show');
-  const done = () => el.levelBanner.classList.remove('show');
-  el.levelBanner.addEventListener('animationend', done, { once: true });
-  setTimeout(done, 2600);
+  // Progress from the previous threshold to this level's goal (fills within-level).
+  const prevGoal = state.level > 1 ? goalForLevel(state.level - 1) : 0;
+  const span = Math.max(1, state.goal - prevGoal);
+  const into = state.score - prevGoal;
+  el.goalFill.style.width = Math.max(0, Math.min(100, Math.round((into / span) * 100))) + '%';
+  // Brief highlight when the level just advanced (non-blocking).
+  if (state.levelFlash) {
+    state.levelFlash = false;
+    el.goalbar.classList.remove('leveled');
+    void el.goalbar.offsetWidth;           // restart the animation
+    el.goalbar.classList.add('leveled');
+    el.goalbar.addEventListener('animationend',
+      () => el.goalbar.classList.remove('leveled'), { once: true });
+  }
 }
 
 // Build the high-scores modal: one column per board size, each listing its top
@@ -278,10 +276,12 @@ export function openScores() {
   el.scoresCols.innerHTML = BOARD_SIZES.map((size) => {
     const list = scores[String(size)] || [];
     const rows = list.length
-      ? list.map((e, i) =>
-          `<li><span class="sc-rank">${i + 1}</span>` +
-          `<span class="sc-score">${e.s.toLocaleString()}</span>` +
-          `<span class="sc-date">${formatDate(e.d)}</span></li>`).join('')
+      ? list.map((e, i) => {
+          const meta = [e.l ? 'Lv ' + e.l : '', formatDate(e.d)].filter(Boolean).join(' · ');
+          return `<li><span class="sc-rank">${i + 1}</span>` +
+            `<span class="sc-body"><span class="sc-score">${e.s.toLocaleString()}</span>` +
+            `<span class="sc-meta">${meta}</span></span></li>`;
+        }).join('')
       : '<li class="sc-empty">No scores yet</li>';
     return `<div class="scores-col"><h2>${size}×${size}</h2><ol>${rows}</ol></div>`;
   }).join('');
@@ -380,7 +380,6 @@ export function render({ onBuy }) {
   renderPointFloat();
   paintHud();
   paintGoal();
-  renderLevelBanner();
   paintStore(onBuy);
   paintOverlay();
   state.lastCreated = null; // consume the one-shot pop marker

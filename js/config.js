@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v33';
+export const VERSION = 'v34';
 
 // Organic path uses an SVG turbulence/displacement filter. It's cheap on desktop
 // GPUs but slow to rasterize on iOS. Off = plain (fast) path, for perf testing.
@@ -77,14 +77,15 @@ export const PREFILL_BEARS = 1;                      // bears to scatter in
 export const PREFILL_TOMB_CHANCE = 0.5;              // chance of a lone tombstone
 
 // --- Level / goal mode (like the original's goal + "turns left") --------------
-// Each level you have LEVEL_TURN_BUDGET placements to push your total score up to
-// the level's goal. Reach the goal -> the level is cleared, turns refill, and the
-// next goal is higher. Run out of turns first (or fill the board) -> game over.
-// All tunable by feel; the screenshot reference is 20,000 pts in 150 turns.
-export const LEVEL_TURN_BUDGET = 150;    // placements granted each level
-export const LEVEL_GOAL_BASE = 20000;    // level 1 target
-// Cumulative target for a given level (1-based): 20k, 45k, 75k, 110k, ...
-// Each level asks for a bit more than the last (base * level, then some).
+// You get LEVEL_TURN_BUDGET placements for the WHOLE game. Levels are score
+// milestones you pass while playing: reaching one does NOT refill turns or
+// interrupt play — the top bar just ticks up and shows how many more points the
+// next level needs. Game ends when turns run out or the board fills; your run is
+// scored by points AND the level reached. All tunable by feel.
+export const LEVEL_TURN_BUDGET = 150;    // placements for the whole game
+export const LEVEL_GOAL_BASE = 20000;    // level 2 threshold (level 1 -> 2)
+// Cumulative score threshold to reach a given level (1-based): L2=20k, L3=45k,
+// L4=80k, L5=125k, ... Each level asks for a bit more than the last.
 export function goalForLevel(level) {
   const raw = LEVEL_GOAL_BASE * level + LEVEL_GOAL_BASE * (level - 1) * (level - 1) * 0.25;
   return Math.round(raw / 5000) * 5000;   // keep goals as clean round numbers

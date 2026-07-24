@@ -35,13 +35,13 @@ function todayISO() {
   return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
 }
 
-// Insert a finished run into its board size's leaderboard; keep the top 5.
-// Returns the best score for that size afterwards.
-export function recordScore(size, score) {
+// Insert a finished run (score + level reached) into its board size's
+// leaderboard; keep the top 5 by score. Returns the best score for that size.
+export function recordScore(size, score, level) {
   const key = String(size);
   const scores = loadScores();
   const list = scores[key] || [];
-  list.push({ s: score, d: todayISO() });
+  list.push({ s: score, l: level, d: todayISO() });
   list.sort((a, b) => b.s - a.s);
   scores[key] = list.slice(0, TOP_N);
   try { localStorage.setItem(SCORES_KEY, JSON.stringify(scores)); } catch (e) { /* ignore */ }

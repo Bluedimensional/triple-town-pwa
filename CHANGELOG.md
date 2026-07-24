@@ -3,6 +3,31 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.17.0] - 2026-07-24 (v34)
+
+### Changed
+- **Reaching a level no longer interrupts play or refills turns.** Levels are now
+  score milestones you pass while playing: the top bar just ticks up to the next
+  level and shows **how many more points** it needs, and the game keeps going. The
+  turn budget (150) is now for the **whole game**, not per level. The big
+  "Level N!" banner is replaced by a brief, non-blocking highlight of the goal
+  bar. (Previous behaviour refilled turns and flashed a full banner on each goal.)
+- **Goal bar** now reads e.g. "Level 1 · 20,000 to level 2 · 150 turns left", and
+  the progress bar fills within the current level (previous threshold → next).
+- **High scores now record the level reached alongside the points.** The High
+  Scores modal shows each run as score + "Lv N" + date; rows are two lines so all
+  three board-size columns fit on a phone.
+
+### Verified
+- Node: crossing a goal advances the level and does **not** refill turns (150 →
+  149) and does not end the game; the level reached is stored in the leaderboard.
+- Browser: top bar shows "points to level N" and decrements live as you score;
+  the goal-bar level-up highlight is wired; the scores modal fits with no
+  horizontal overflow on a 357px-wide phone.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v34`.
+
 ## [0.16.0] - 2026-07-24 (v33)
 
 ### Added

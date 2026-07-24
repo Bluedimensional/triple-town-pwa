@@ -84,8 +84,9 @@ function endGame(reason) {
   state.over = true;
   state.overReason = reason;      // 'turns' or 'full'
   state.activePos = null;
-  // Record the run in this board size's leaderboard and refresh the shown best.
-  state.best = recordScore(state.size, state.score);
+  // Record the run (score + level reached) in this board size's leaderboard and
+  // refresh the shown best.
+  state.best = recordScore(state.size, state.score, state.level);
 }
 
 function checkGameOver() {
@@ -94,15 +95,18 @@ function checkGameOver() {
   if (boardFull()) endGame('full');                       // no room left
 }
 
-// Reaching the level's goal clears it: the goal rises and the turn budget
-// refills. A `while` handles a single huge merge that blows past several goals.
+// Levels are score milestones you pass through while you keep playing — reaching
+// one does NOT interrupt play or refill turns; the top bar just ticks up to the
+// next level and shows how many more points it needs. A `while` handles a single
+// huge merge that crosses several thresholds at once.
 function maybeLevelUp() {
+  let leveled = false;
   while (state.score >= state.goal) {
     state.level++;
     state.goal = goalForLevel(state.level);
-    state.turnsLeft = LEVEL_TURN_BUDGET;
-    state.levelUpBanner = { level: state.level, goal: state.goal };
+    leveled = true;
   }
+  if (leveled) state.levelFlash = true;   // brief top-bar highlight, non-blocking
 }
 
 // Place the held piece at (r,c). Returns true if the move was legal.
