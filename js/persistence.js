@@ -3,7 +3,7 @@
 // service worker cache for state).
 
 import { state, emptyBoard } from './state.js';
-import { BOARD_SIZE, LEVEL_TURN_BUDGET, goalForLevel } from './config.js';
+import { BOARD_SIZE, goalForLevel } from './config.js';
 
 const KEY = 'tripletown.save.v2';
 const BEST_KEY = 'tripletown.best.v1';        // legacy single best (pre per-mode)
@@ -62,8 +62,6 @@ export function save() {
       turns: state.turns,
       level: state.level,
       goal: state.goal,
-      turnsLeft: state.turnsLeft,
-      overReason: state.overReason,
       grassStreak: state.grassStreak,
       storeBought: state.storeBought,
       over: state.over,
@@ -101,8 +99,6 @@ export function load() {
     state.turns = data.turns || 0;
     state.level = data.level || 1;
     state.goal = data.goal || goalForLevel(state.level);
-    state.turnsLeft = data.turnsLeft ?? LEVEL_TURN_BUDGET;
-    state.overReason = data.overReason ?? null;
     state.grassStreak = data.grassStreak || 0;
     state.storeBought = data.storeBought || {};
     state.over = !!data.over;

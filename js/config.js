@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v34';
+export const VERSION = 'v35';
 
 // Organic path uses an SVG turbulence/displacement filter. It's cheap on desktop
 // GPUs but slow to rasterize on iOS. Off = plain (fast) path, for perf testing.
@@ -76,13 +76,11 @@ export const PREFILL_WEIGHTS = { grass: 52, bush: 26, tree: 10 };
 export const PREFILL_BEARS = 1;                      // bears to scatter in
 export const PREFILL_TOMB_CHANCE = 0.5;              // chance of a lone tombstone
 
-// --- Level / goal mode (like the original's goal + "turns left") --------------
-// You get LEVEL_TURN_BUDGET placements for the WHOLE game. Levels are score
-// milestones you pass while playing: reaching one does NOT refill turns or
-// interrupt play — the top bar just ticks up and shows how many more points the
-// next level needs. Game ends when turns run out or the board fills; your run is
-// scored by points AND the level reached. All tunable by feel.
-export const LEVEL_TURN_BUDGET = 150;    // placements for the whole game
+// --- Levels (score milestones) -----------------------------------------------
+// Play is perpetual — the game only ends when the board fills (classic Triple
+// Town), never on a turn cap. Levels are score milestones you pass while playing:
+// reaching one just ticks the top bar up and shows how many more points the next
+// level needs. A run is scored by points AND the level reached. Tunable by feel.
 export const LEVEL_GOAL_BASE = 20000;    // level 2 threshold (level 1 -> 2)
 // Cumulative score threshold to reach a given level (1-based): L2=20k, L3=45k,
 // L4=80k, L5=125k, ... Each level asks for a bit more than the last.

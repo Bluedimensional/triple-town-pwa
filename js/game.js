@@ -5,7 +5,7 @@ import {
   SPAWN_WEIGHTS, MAX_GRASS_STREAK, CRYSTAL_CHANCE, POINTS,
   BEAR_BASE_CHANCE, BEAR_CHANCE_PER_TURN, BEAR_MAX_CHANCE,
   PREFILL_MIN, PREFILL_MAX, PREFILL_WEIGHTS, PREFILL_BEARS, PREFILL_TOMB_CHANCE,
-  LEVEL_TURN_BUDGET, goalForLevel,
+  goalForLevel,
 } from './config.js';
 import { recordScore } from './persistence.js';
 import { resolveMerges, crystalResolve } from './match.js';
@@ -80,25 +80,25 @@ function boardFull() {
   return emptyCells().length === 0;
 }
 
-function endGame(reason) {
+function endGame() {
   state.over = true;
-  state.overReason = reason;      // 'turns' or 'full'
   state.activePos = null;
   // Record the run (score + level reached) in this board size's leaderboard and
   // refresh the shown best.
   state.best = recordScore(state.size, state.score, state.level);
 }
 
+// The game is perpetual — it only ends when the board is genuinely full (no
+// empty tile left to place on), as in classic Triple Town. There is no turn cap.
 function checkGameOver() {
   if (state.over) return;
-  if (state.turnsLeft <= 0) { endGame('turns'); return; } // ran out of turns
-  if (boardFull()) endGame('full');                       // no room left
+  if (boardFull()) endGame();
 }
 
 // Levels are score milestones you pass through while you keep playing — reaching
-// one does NOT interrupt play or refill turns; the top bar just ticks up to the
-// next level and shows how many more points it needs. A `while` handles a single
-// huge merge that crosses several thresholds at once.
+// one does NOT interrupt play; the top bar just ticks up to the next level and
+// shows how many more points it needs. A `while` handles a single huge merge
+// that crosses several thresholds at once.
 function maybeLevelUp() {
   let leveled = false;
   while (state.score >= state.goal) {
@@ -134,9 +134,7 @@ export function placePiece(r, c) {
   // Points this placement earned (base + any merge), to float up from the tile.
   state.floatPoints = { r, c, points: state.score - scoreBefore };
 
-  // This placement spent a turn; reaching the goal clears the level (refilling
-  // turns) before we test for running out.
-  state.turnsLeft--;
+  // Reaching a goal ticks the level up (no interruption, no game-over).
   maybeLevelUp();
 
   // Bears already on the board react to your move.
@@ -189,7 +187,6 @@ export function newGame(size) {
   resetGame();      // rebuilds an empty board at state.size
   state.level = 1;
   state.goal = goalForLevel(1);
-  state.turnsLeft = LEVEL_TURN_BUDGET;
   prefill();
   spawnNext();
   state.activePos = pickActivePos(null, null);

@@ -178,9 +178,7 @@ body {
   font-size: 12px;
 }
 .goal-level { font-weight: 700; color: var(--ink); }
-.goal-target { color: var(--ink-soft); flex: 1; text-align: center; }
-.goal-turns { color: var(--ink-soft); font-variant-numeric: tabular-nums; }
-.goal-turns.low { color: #ffce54; font-weight: 700; }
+.goal-target { color: var(--ink-soft); flex: 1; text-align: right; }
 .goal-track {
   height: 10px;
   background: rgba(0, 0, 0, 0.28);

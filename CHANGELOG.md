@@ -3,6 +3,31 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.18.0] - 2026-07-24 (v35)
+
+### Changed
+- **The turn limit is gone — play is now perpetual.** The game only ends when the
+  board genuinely fills (no empty tile left), as in classic Triple Town. Reaching
+  a level never ends or interrupts the game; levels are purely score milestones.
+  (This removes the v34 whole-game 150-turn cap that was ending runs early and
+  popping the game-over card mid-play — the "gets stuck" report.)
+- **Goal bar** no longer shows "turns left" — just the level and points to the
+  next level, with the progress meter.
+- Game-over card reason is now simply "No room left — final score".
+
+### Removed
+- `turnsLeft` / `overReason` state, the `LEVEL_TURN_BUDGET` config, and the
+  turns-based game-over path.
+
+### Verified
+- Node: 300 placements on a deliberately non-full board never end the game (no
+  turn cap); filling the last empty cell still ends it (board-full).
+- Browser: goal bar shows only "Level N · X to level N+1" + meter, no turns; no
+  console errors.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v35`.
+
 ## [0.17.0] - 2026-07-24 (v34)
 
 ### Changed

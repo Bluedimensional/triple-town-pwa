@@ -20,12 +20,10 @@ export function cacheDom() {
   el.store = document.getElementById('store-items');
   el.overlay = document.getElementById('gameover');
   el.finalScore = document.getElementById('final-score');
-  el.overReason = document.getElementById('over-reason');
   el.overLevel = document.getElementById('over-level');
   el.goalbar = document.getElementById('goalbar');
   el.goalLevel = document.getElementById('goal-level');
   el.goalTarget = document.getElementById('goal-target');
-  el.goalTurns = document.getElementById('goal-turns');
   el.goalFill = document.getElementById('goal-fill');
   el.scoresModal = document.getElementById('scores-modal');
   el.scoresCols = document.getElementById('scores-cols');
@@ -250,9 +248,6 @@ function paintGoal() {
   el.goalLevel.textContent = 'Level ' + state.level;
   const toNext = Math.max(0, state.goal - state.score);
   el.goalTarget.textContent = toNext.toLocaleString() + ' to level ' + (state.level + 1);
-  const t = Math.max(0, state.turnsLeft);
-  el.goalTurns.textContent = t + (t === 1 ? ' turn left' : ' turns left');
-  el.goalTurns.classList.toggle('low', t <= 15);
   // Progress from the previous threshold to this level's goal (fills within-level).
   const prevGoal = state.level > 1 ? goalForLevel(state.level - 1) : 0;
   const span = Math.max(1, state.goal - prevGoal);
@@ -322,8 +317,6 @@ function paintOverlay() {
   // Shown when the game is over, until the player taps outside the card.
   if (state.over && !state.overlayDismissed) {
     el.finalScore.textContent = state.score.toLocaleString();
-    el.overReason.textContent = state.overReason === 'turns'
-      ? 'Out of turns — final score' : 'Board full — final score';
     el.overLevel.textContent = 'Reached level ' + state.level;
     el.overlay.classList.add('show');
   } else {

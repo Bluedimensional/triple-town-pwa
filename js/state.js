@@ -13,11 +13,9 @@ export const state = {
   best: 0,
   coins: 0,
   turns: 0,         // pieces placed so far (drives bear ramp)
-  level: 1,         // current level (level mode: reach the goal to advance)
-  goal: 0,          // points target for the current level
-  turnsLeft: 0,     // placements remaining in the whole game (0 -> game over)
+  level: 1,         // current level — a score milestone, for score-keeping only
+  goal: 0,          // score needed to reach the next level
   levelFlash: false, // one-shot: briefly highlight the goal bar when the level ticks up
-  overReason: null, // 'turns' | 'full' — why the game ended, for the overlay
   grassStreak: 0,   // consecutive grass pieces handed out (caps long streaks)
   storeBought: {},  // tile type -> times purchased (drives rising prices)
   over: false,
@@ -54,9 +52,7 @@ export function resetGame() {
   state.turns = 0;
   state.level = 1;
   state.goal = 0;
-  state.turnsLeft = 0;
   state.levelFlash = false;
-  state.overReason = null;
   state.grassStreak = 0;
   state.storeBought = {};
   state.over = false;
