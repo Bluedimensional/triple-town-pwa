@@ -62,7 +62,7 @@ body {
 /* Level field themes (a test): the field recolours as you level up, everything
    else stays the same. Set on <body data-field="..."> from the current level. */
 body[data-field="grass"]  { --field: #46632f; --field-dot-rgb: 20, 42, 14; }
-body[data-field="desert"] { --field: #cdb277; --field-dot-rgb: 120, 90, 40; }
+body[data-field="desert"] { --field: #a5894e; --field-dot-rgb: 110, 82, 34; }
 body[data-field="water"]  { --field: #3f7fa3; --field-dot-rgb: 12, 52, 82; }
 
 #app {

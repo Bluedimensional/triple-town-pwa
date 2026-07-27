@@ -279,7 +279,7 @@ export function openScores() {
   el.scoresCols.innerHTML = BOARD_SIZES.map((size) => {
     const list = scores[String(size)] || [];
     const rows = list.length
-      ? list.map((e, i) => {
+      ? list.slice(0, 3).map((e, i) => {
           const meta = [e.l ? 'Lv ' + e.l : '', formatDate(e.d)].filter(Boolean).join(' · ');
           return `<li><span class="sc-rank">${i + 1}</span>` +
             `<span class="sc-body"><span class="sc-score">${e.s.toLocaleString()}</span>` +

@@ -3,6 +3,25 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.19.2] - 2026-07-24 (v38)
+
+### Changed
+- **Desert (level 2) field darkened** from `#cdb277` to `#a5894e` — it was too
+  bright; now a muted sand that sits with the grass/water tones.
+- **High Scores modal now shows the top 3** per board size (was top 5). Scores are
+  still stored beyond that; only the display changed.
+
+### Notes
+- **High scores already persist across updates and app close/reopen** — they live
+  in `localStorage` (`tripletown.scores.v1`), which the service-worker update
+  never touches (it only clears the old app-shell *cache*), and which survives
+  reloads. Verified there's no code path that clears them. (Local dev only: each
+  `localhost:PORT` is a separate origin with its own storage, so test scores
+  don't carry between ports — the live site is a single origin and is fine.)
+
+### Migration
+- Service-worker cache bumped to `tripletown-v38`.
+
 ## [0.19.1] - 2026-07-24 (v37)
 
 ### Changed
