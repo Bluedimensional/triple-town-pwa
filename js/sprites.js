@@ -11,8 +11,8 @@
 // Soft two-layer contact shadow, drawn behind the piece. Tagged so it can be
 // hidden on the active (white-bordered) piece.
 const shadow = (cy, rx, ry) =>
-  `<ellipse class="pc-shadow" cx="50" cy="${cy}" rx="${rx}" ry="${ry}" fill="#0e1f08" opacity="0.16"/>` +
-  `<ellipse class="pc-shadow" cx="50" cy="${cy}" rx="${(rx * 0.7).toFixed(1)}" ry="${(ry * 0.7).toFixed(1)}" fill="#0a1706" opacity="0.18"/>`;
+  `<ellipse class="pc-shadow" cx="50" cy="${(cy + 2).toFixed(1)}" rx="${(rx * 1.22).toFixed(1)}" ry="${(ry * 1.25).toFixed(1)}" fill="#0b1a06" opacity="0.26"/>` +
+  `<ellipse class="pc-shadow" cx="50" cy="${(cy + 2).toFixed(1)}" rx="${(rx * 0.82).toFixed(1)}" ry="${(ry * 1.02).toFixed(1)}" fill="#071104" opacity="0.3"/>`;
 
 const svg = (inner, sh) =>
   `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">` +
@@ -74,30 +74,42 @@ const hut = svg(`
   <path d="M50 30 L68 50 L32 50 Z" fill="#db9f52" opacity="0.6"/>
   <path d="M44 86 L44 70 Q50 64 56 70 L56 86 Z" fill="#2a1610"/>`, { cy: 89, rx: 22, ry: 5.5 });
 
+// House — Mediterranean villa: white stucco, terracotta roof, arched openings.
 const house = svg(`
-  <rect x="26" y="52" width="48" height="34" fill="#ecdcaa" stroke="#463516" stroke-width="3"/>
-  <path d="M20 54 L50 26 L80 54 Z" fill="#b5462e" stroke="#45200f" stroke-width="3" stroke-linejoin="round"/>
-  <rect x="44" y="66" width="13" height="20" fill="#6a4423" stroke="#463516" stroke-width="2"/>
-  <rect x="31" y="60" width="10" height="10" fill="#8fc0d8" stroke="#463516" stroke-width="2"/>
-  <rect x="59" y="60" width="10" height="10" fill="#8fc0d8" stroke="#463516" stroke-width="2"/>`, { cy: 89, rx: 26, ry: 6 });
+  <rect x="28" y="52" width="44" height="34" fill="#fbf4e6" stroke="#8a6a3a" stroke-width="3"/>
+  <path d="M24 54 L50 35 L76 54 Z" fill="#d0763e" stroke="#7a4420" stroke-width="3" stroke-linejoin="round"/>
+  <g stroke="#a85a2c" stroke-width="1.4"><line x1="39" y1="46" x2="36" y2="54"/><line x1="50" y1="41" x2="50" y2="54"/><line x1="61" y1="46" x2="64" y2="54"/></g>
+  <path d="M44 86 L44 70 Q50 62 56 70 L56 86 Z" fill="#7a4a22" stroke="#8a6a3a" stroke-width="2"/>
+  <path d="M31 73 L31 65 Q36 60 41 65 L41 73 Z" fill="#8fc0d8" stroke="#8a6a3a" stroke-width="2"/>
+  <path d="M59 73 L59 65 Q64 60 69 65 L69 73 Z" fill="#8fc0d8" stroke="#8a6a3a" stroke-width="2"/>`, { cy: 89, rx: 26, ry: 6 });
 
+// Mansion — a grander villa with a corner tower and an arched arcade.
 const mansion = svg(`
-  <rect x="20" y="50" width="60" height="36" fill="#ecdcaa" stroke="#463516" stroke-width="3"/>
-  <rect x="60" y="20" width="10" height="18" fill="#8a5a2b" stroke="#45200f" stroke-width="2"/>
-  <path d="M16 52 L50 24 L84 52 Z" fill="#a53e28" stroke="#45200f" stroke-width="3" stroke-linejoin="round"/>
-  <rect x="44" y="66" width="13" height="20" fill="#6a4423" stroke="#463516" stroke-width="2"/>
-  <g fill="#8fc0d8" stroke="#463516" stroke-width="2">
-    <rect x="26" y="58" width="9" height="9"/><rect x="65" y="58" width="9" height="9"/>
-    <rect x="26" y="72" width="9" height="9"/><rect x="65" y="72" width="9" height="9"/></g>`, { cy: 89, rx: 32, ry: 6.5 });
+  <rect x="20" y="48" width="58" height="38" fill="#fbf4e6" stroke="#8a6a3a" stroke-width="3"/>
+  <rect x="64" y="28" width="16" height="20" fill="#fbf4e6" stroke="#8a6a3a" stroke-width="3"/>
+  <path d="M62 29 L72 18 L82 29 Z" fill="#d0763e" stroke="#7a4420" stroke-width="2" stroke-linejoin="round"/>
+  <rect x="18" y="44" width="60" height="5" fill="#d0763e" stroke="#7a4420" stroke-width="2"/>
+  <rect x="26" y="55" width="30" height="4" fill="#c9a86a" stroke="#8a6a3a" stroke-width="1.5"/>
+  <g fill="#8fc0d8" stroke="#8a6a3a" stroke-width="2"><rect x="28" y="49" width="9" height="7"/><rect x="45" y="49" width="9" height="7"/></g>
+  <g fill="#7a4a22" stroke="#8a6a3a" stroke-width="2"><path d="M27 86 L27 70 Q32 64 37 70 L37 86 Z"/><path d="M45 86 L45 70 Q50 64 55 70 L55 86 Z"/></g>
+  <rect x="68" y="34" width="8" height="9" fill="#8fc0d8" stroke="#8a6a3a" stroke-width="2"/>`, { cy: 89, rx: 33, ry: 6.5 });
 
+// Castle — gothic: pointed slate spires, a rose window, a portcullis gate, a flag.
 const castle = svg(`
-  <rect x="24" y="40" width="52" height="46" fill="#c9c4b0" stroke="#4a463a" stroke-width="3"/>
-  <g fill="#c9c4b0" stroke="#4a463a" stroke-width="3">
-    <rect x="24" y="30" width="11" height="14"/><rect x="44" y="30" width="12" height="14"/>
-    <rect x="65" y="30" width="11" height="14"/></g>
-  <rect x="42" y="62" width="16" height="24" fill="#5a5346"/>
-  <path d="M42 62 Q50 54 58 62" fill="#5a5346"/>
-  <g fill="#9a9484"><rect x="30" y="50" width="8" height="8"/><rect x="62" y="50" width="8" height="8"/></g>`, { cy: 89, rx: 28, ry: 6.5 });
+  <defs><linearGradient id="castleG" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#bdb8a6"/><stop offset="100%" stop-color="#8b8674"/></linearGradient></defs>
+  <rect x="18" y="46" width="15" height="40" fill="url(#castleG)" stroke="#39352b" stroke-width="3"/>
+  <rect x="67" y="46" width="15" height="40" fill="url(#castleG)" stroke="#39352b" stroke-width="3"/>
+  <rect x="34" y="40" width="32" height="46" fill="url(#castleG)" stroke="#39352b" stroke-width="3"/>
+  <path d="M16 47 L25.5 24 L35 47 Z" fill="#553a5e" stroke="#281f30" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M65 47 L74.5 24 L84 47 Z" fill="#553a5e" stroke="#281f30" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M32 41 L50 12 L68 41 Z" fill="#5f4268" stroke="#281f30" stroke-width="3" stroke-linejoin="round"/>
+  <line x1="50" y1="12" x2="50" y2="5" stroke="#281f30" stroke-width="2"/><path d="M50 5 L59 8 L50 11 Z" fill="#b5462e"/>
+  <circle cx="50" cy="34" r="5" fill="#7bb0cf" stroke="#39352b" stroke-width="2"/>
+  <path d="M42 86 L42 62 Q50 52 58 62 L58 86 Z" fill="#2c281f" stroke="#39352b" stroke-width="2"/>
+  <g stroke="#6a6456" stroke-width="1.2"><line x1="46" y1="58" x2="46" y2="86"/><line x1="50" y1="55" x2="50" y2="86"/><line x1="54" y1="58" x2="54" y2="86"/><line x1="43" y1="66" x2="57" y2="66"/><line x1="43" y1="76" x2="57" y2="76"/></g>
+  <path d="M22 62 L22 55 Q25.5 51 29 55 L29 62 Z" fill="#f0d878"/>
+  <path d="M71 62 L71 55 Q74.5 51 78 55 L78 62 Z" fill="#f0d878"/>`, { cy: 89, rx: 30, ry: 6.5 });
 
 const floatingCastle = svg(`
   <ellipse cx="50" cy="80" rx="34" ry="12" fill="#eef4f8"/>
@@ -226,16 +238,26 @@ const plate = svg(`
 // --- crystal (wildcard) & rock ------------------------------------------
 
 // A faceted blue gem (the wildcard piece).
+// Crystal (wildcard) — drawn to match the original: a tall icy faceted shard
+// with a bright highlight, standing on a small grassy mound with a rock at the base.
 const crystal = svg(`
-  <polygon points="50,10 71,38 61,84 39,84 29,38"
-           fill="#8fcdf0" stroke="#255a80" stroke-width="3" stroke-linejoin="round"/>
-  <polygon points="50,10 71,38 50,46 29,38" fill="#c4e9fc"/>
-  <polygon points="29,38 50,46 39,84" fill="#86c3ea"/>
-  <polygon points="71,38 50,46 61,84" fill="#5a9bd0"/>
-  <polygon points="50,46 61,84 39,84" fill="#74b6e4"/>
-  <polygon points="50,15 61,36 50,43 42,36" fill="#eafaff" opacity="0.75"/>
-  <line x1="50" y1="46" x2="50" y2="82" stroke="#3f78a0" stroke-width="1.6" opacity="0.5"/>`,
-  { cy: 90, rx: 18, ry: 5 });
+  <defs>
+    <linearGradient id="crysB" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f7fcff"/><stop offset="52%" stop-color="#d4edf9"/>
+      <stop offset="100%" stop-color="#a6d0e8"/></linearGradient>
+    <linearGradient id="crysG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6aa63a"/><stop offset="100%" stop-color="#3d7020"/></linearGradient>
+  </defs>
+  <ellipse cx="50" cy="80" rx="22" ry="9" fill="url(#crysG)" stroke="#2e5616" stroke-width="2.5"/>
+  <g fill="#5f9433"><path d="M31 76 l1 -6 3 5 z"/><path d="M40 78 l1 -5 2 5 z"/><path d="M66 75 l1 -6 3 6 z"/></g>
+  <path d="M39 87 Q42 80 50 81 Q60 80 61 86 Q52 90 42 89 Z" fill="#4c4b46" stroke="#2b2a27" stroke-width="2"/>
+  <path d="M50 15 L65 43 L62 70 L56 76 L44 76 L38 70 L35 43 Z" fill="url(#crysB)" stroke="#4d7690" stroke-width="2.6" stroke-linejoin="round"/>
+  <path d="M50 35 L65 43 L62 70 L56 76 L50 76 Z" fill="#7fb2cf" opacity="0.28"/>
+  <path d="M50 15 L65 43 L50 35 Z" fill="#7fb2cf" opacity="0.16"/>
+  <g stroke="#8fbfda" stroke-width="1.5" fill="none"><path d="M50 15 L50 76"/><path d="M35 43 L50 35 L65 43"/></g>
+  <path d="M43 39 L46 40 L44.5 66 L42 59 Z" fill="#ffffff" opacity="0.55"/>
+  <path d="M59 27 l1.4 3.2 3.2 1.4 -3.2 1.4 -1.4 3.2 -1.4 -3.2 -3.2 -1.4 3.2 -1.4 z" fill="#ffffff"/>`,
+  { cy: 90, rx: 22, ry: 6 });
 
 // A gray boulder (what a crystal becomes when it can't complete a match).
 const rock = svg(`

@@ -3,6 +3,24 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.20.0] - 2026-07-24 (v39)
+
+### Changed
+- **House & mansion redrawn (Mediterranean villa direction)** so the two former
+  cream buildings are now clearly distinct: the **house** is white stucco with a
+  terracotta roof and arched door/windows; the **mansion** is a grander villa with
+  a corner tower and an arched arcade. (The red hut is unchanged.)
+- **Castle is now gothic** — pointed slate spires, a rose window, a portcullis
+  gate, and a little flag; a taller, cooler silhouette.
+- **Crystal redrawn to match the original** — a tall icy faceted shard with a
+  bright highlight and sparkle, standing on a small grassy mound with a rock at
+  the base (was a floating blue gem).
+- **Bigger, darker contact shadow on every piece** — the shared shadow is ~22%
+  wider, a touch deeper, and sits slightly lower so pieces feel grounded.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v39`.
+
 ## [0.19.2] - 2026-07-24 (v38)
 
 ### Changed
