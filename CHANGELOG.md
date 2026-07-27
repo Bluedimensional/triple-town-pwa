@@ -3,6 +3,17 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.20.1] - 2026-07-24 (v40)
+
+### Changed
+- **Tree redrawn:** the two leaf canopies are now **organic lumpy blobs** instead
+  of perfect circles, the **trunk is ~30% fatter** with a flared, wider base, and
+  the overall base is a little wider. Keeps the two-tone (olive back / bright
+  front) depth.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v40`.
+
 ## [0.20.0] - 2026-07-24 (v39)
 
 ### Changed

@@ -56,11 +56,13 @@ const tree = svg(`
     <radialGradient id="treeFront" cx="42%" cy="30%" r="74%">
       <stop offset="0%" stop-color="#7cc047"/><stop offset="100%" stop-color="#3f7a22"/></radialGradient>
   </defs>
-  <rect x="45" y="62" width="11" height="27" rx="4" fill="#7a4a22" stroke="#452a12" stroke-width="3"/>
-  <circle cx="45" cy="50" r="23" fill="url(#treeBack)" stroke="#3a5a16" stroke-width="3"/>
-  <g fill="#6d8d27" opacity="0.6"><circle cx="38" cy="46" r="4.5"/><circle cx="47" cy="58" r="4"/></g>
-  <circle cx="58" cy="38" r="18" fill="url(#treeFront)" stroke="#2f5e18" stroke-width="3"/>
-  <g fill="#3f7a22" opacity="0.55"><circle cx="52" cy="35" r="4"/><circle cx="63" cy="44" r="4.5"/><circle cx="64" cy="34" r="3.5"/></g>`, { cy: 89, rx: 19, ry: 5.5 });
+  <path d="M43 61 L57 61 L58.5 87 Q50 90 41.5 87 Z" fill="#7a4a22" stroke="#452a12" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M22 51 Q20 39 30 34 Q33 25 45 27 Q57 23 64 33 Q72 37 67 48 Q69 59 56 60 Q47 65 38 59 Q27 61 22 51 Z"
+        fill="url(#treeBack)" stroke="#3a5a16" stroke-width="3" stroke-linejoin="round"/>
+  <g fill="#6d8d27" opacity="0.55"><circle cx="34" cy="46" r="4.5"/><circle cx="47" cy="56" r="3.8"/></g>
+  <path d="M45 39 Q45 28 54 26 Q60 20 68 26 Q77 28 74 39 Q78 47 68 48 Q61 53 54 49 Q45 49 45 39 Z"
+        fill="url(#treeFront)" stroke="#2f5e18" stroke-width="3" stroke-linejoin="round"/>
+  <g fill="#3f7a22" opacity="0.5"><circle cx="54" cy="34" r="3.8"/><circle cx="64" cy="42" r="4.2"/></g>`, { cy: 89, rx: 21, ry: 5.8 });
 
 // --- buildings ----------------------------------------------------------
 
