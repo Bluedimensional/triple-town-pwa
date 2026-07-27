@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.19.1] - 2026-07-24 (v37)
+
+### Changed
+- **Bears slimmed a bit more** — width moved about a quarter of the way from the
+  v36 midpoint back toward the pre-fattening bear: slimmer than v36, still
+  chunkier than the original. Ears, legs, and shadow adjusted to match.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v37`.
+
 ## [0.19.0] - 2026-07-24 (v36)
 
 ### Changed

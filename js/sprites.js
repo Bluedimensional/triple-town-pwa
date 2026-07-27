@@ -133,17 +133,17 @@ const tripleCastle = svg(`
 // faint rim colour, then again in the real colours, so a thin light rim traces
 // the whole outline. `.bear-eye` is animated in CSS (blink); those elements
 // carry no transform attribute, since the CSS transform would override it.
-// Width is a midpoint between the pre-v32 bear and the v32 "fat" bear — a little
-// slimmer than v32, still chunkier than the original.
-const BEAR_EAR_L = 'M13 22 C12.6 15.5 14.1 10.9 16.2 8.8 C18.3 10.5 21.7 9.2 24.6 10.5 '
-  + 'C29.7 12.6 32 16.4 32 21.6 C32 27.4 27.6 28.75 22.5 28.75 C16.6 28.75 13.4 26.2 13 22 Z';
-const BEAR_EAR_R = 'M87 22 C87.4 15.5 85.9 10.9 83.8 8.8 C81.7 10.5 78.3 9.2 75.4 10.5 '
-  + 'C70.3 12.6 68 16.4 68 21.6 C68 27.4 72.4 28.75 77.5 28.75 C83.4 28.75 86.6 26.2 87 22 Z';
-const BEAR_BODY = 'M15 35.5 C15 24 20.3 18.3 33 18.3 L67 18.3 C79.7 18.3 85 24 85 35.5 '
-  + 'L82 70.5 C82 81 77.3 85.3 67 85.3 L33 85.3 C22.8 85.3 18 81 18 70.5 Z';
+// Width sits about a quarter of the way from the v36 midpoint back toward the
+// pre-fattening bear — slimmer than v36, still chunkier than the original.
+const BEAR_EAR_L = 'M14 22 C13.7 15.75 15.05 11.25 17.1 9.2 C19.15 10.85 22.45 9.6 25.3 10.85 '
+  + 'C30.25 12.9 32.5 16.6 32.5 21.55 C32.5 27.3 28.2 28.625 23.25 28.625 C17.5 28.625 14.4 26.1 14 22 Z';
+const BEAR_EAR_R = 'M86 22 C86.3 15.75 84.95 11.25 82.9 9.2 C80.85 10.85 77.55 9.6 74.7 10.85 '
+  + 'C69.75 12.9 67.5 16.6 67.5 21.55 C67.5 27.3 71.8 28.625 76.75 28.625 C82.5 28.625 85.6 26.1 86 22 Z';
+const BEAR_BODY = 'M17 35.75 C17 24.5 22.1 19.1 34.5 19.1 L65.5 19.1 C77.9 19.1 83 24.5 83 35.75 '
+  + 'L80 70.25 C80 80.5 75.4 84.6 65.5 84.6 L34.5 84.6 C24.6 84.6 20 80.5 20 70.25 Z';
 const BEAR_LEGS =
-  '<rect x="23" y="81" width="11" height="12" rx="3.2"/><rect x="36.25" y="81" width="11" height="12" rx="3.2"/>'
-  + '<rect x="52.75" y="81" width="11" height="12" rx="3.2"/><rect x="66" y="81" width="11" height="12" rx="3.2"/>';
+  '<rect x="25" y="81.5" width="10.5" height="11.5" rx="3"/><rect x="37.6" y="81.5" width="10.5" height="11.5" rx="3"/>'
+  + '<rect x="51.9" y="81.5" width="10.5" height="11.5" rx="3"/><rect x="64.5" y="81.5" width="10.5" height="11.5" rx="3"/>';
 
 const bear = svg(`
   <defs>
@@ -170,7 +170,7 @@ const bear = svg(`
   <circle class="bear-eye" cx="64.6" cy="44.85" r="2.65" fill="#d8451c"/>
   <ellipse cx="50" cy="55" rx="3.8" ry="2.7" fill="#3a2410"/>
   <path d="M50 57.7 Q50 61.7 46 61.7 M50 57.7 Q50 61.7 54 61.7" stroke="#3a2410" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
-  { cy: 90, rx: 25.5, ry: 6 });
+  { cy: 90, rx: 24.5, ry: 6 });
 
 const tombstone = svg(`
   <ellipse cx="50" cy="85" rx="27" ry="7" fill="#3f6a24"/>
