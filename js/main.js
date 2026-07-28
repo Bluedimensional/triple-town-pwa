@@ -1,6 +1,6 @@
 // main.js — bootstrap: wire input, kick off the game, register the service worker.
 
-import { state, isStorehouse } from './state.js';
+import { state } from './state.js';
 import { VERSION } from './config.js';
 import { placePiece, newGame } from './game.js';
 import { swapReserve } from './storehouse.js';
@@ -10,19 +10,20 @@ import { cacheDom, buildBoard, render, bearCells, openScores, closeScores } from
 import { startGestures } from './gestures.js';
 
 function draw() {
-  render({ onBuy });
+  render({ onBuy, onSwap });
 }
 
-// A tap on the storehouse swaps; a tap on any other tile places the piece.
+// Tapping a board tile places the held piece there.
 function onCellTap(r, c) {
   if (state.over) return;
-  if (isStorehouse(r, c)) {
-    swapReserve();
-    save();
-    draw();
-    return;
-  }
   if (placePiece(r, c)) draw();
+}
+
+// Tapping an (unlocked) storage slot swaps/stashes the held piece.
+function onSwap(i) {
+  swapReserve(i);
+  save();
+  draw();
 }
 
 function onBuy(type) {

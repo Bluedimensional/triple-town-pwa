@@ -1,6 +1,6 @@
 // game.js — turn orchestration: spawning, placing, cascades, bears, game over.
 
-import { state, resetGame, isStorehouse } from './state.js';
+import { state, resetGame } from './state.js';
 import {
   SPAWN_WEIGHTS, MAX_GRASS_STREAK, CRYSTAL_CHANCE, POINTS,
   BEAR_BASE_CHANCE, BEAR_CHANCE_PER_TURN, BEAR_MAX_CHANCE,
@@ -27,12 +27,12 @@ function randInt(min, max) {
   return min + Math.floor(Math.random() * (max - min + 1));
 }
 
-// All empty, non-storehouse cells as [r,c] pairs.
+// All empty cells as [r,c] pairs.
 function emptyCells() {
   const out = [];
   for (let r = 0; r < state.size; r++) {
     for (let c = 0; c < state.size; c++) {
-      if (!isStorehouse(r, c) && state.board[r][c] === null) out.push([r, c]);
+      if (state.board[r][c] === null) out.push([r, c]);
     }
   }
   return out;
@@ -113,7 +113,6 @@ function maybeLevelUp() {
 export function placePiece(r, c) {
   if (state.over) return false;
   if (state.current === null) return false;
-  if (isStorehouse(r, c)) return false;   // the storehouse is swap-only
   if (state.board[r][c] !== null) return false; // must place on an empty tile
 
   const piece = state.current;

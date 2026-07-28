@@ -3,6 +3,37 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.23.0] - 2026-07-24 (v43)
+
+### Added
+- **Storage moved to a row above the board, with slots that unlock by level.**
+  There's now a dedicated row of reserve slots above the board: **1 slot from the
+  start, a 2nd unlocked at level 2, a 3rd at level 3** (locked slots show a dimmed
+  plate). Each slot swaps/stashes the held piece like the old storehouse did —
+  tap an empty slot to stash and draw fresh, tap a full one to swap. Buying from
+  the store tucks your held piece into the first free slot.
+
+### Changed
+- **The board's top-left cell is now a normal playable tile** (it used to be the
+  single storehouse). The board is a full 6×6 / 7×7 / 8×8 now; bears and prefill
+  can use that corner.
+- Toolbar hint updated ("slots above = storage").
+
+### Migration
+- Save format: a single `reserve` is migrated into the first storage slot on load.
+- Service-worker cache bumped to `tripletown-v43`.
+
+## [0.22.0] - 2026-07-24 (v42)
+
+### Changed
+- **Tree redrawn to match the original** — the v40 tree read sparse; the new one
+  is full and healthy: two big overlapping leaf masses (olive back, bright front)
+  built from clustered lumps with leaf-spot texture, coming down low over a short,
+  fat, flared trunk.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v42`.
+
 ## [0.21.0] - 2026-07-24 (v41)
 
 ### Changed

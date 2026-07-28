@@ -3,8 +3,8 @@
 // Tiles are drawn from the SVG sprite map (js/sprites.js). To change the art,
 // edit sprites.js — nothing here or in the game logic assumes how a tile looks.
 
-import { state, isStorehouse } from './state.js';
-import { NAMES, STORE_ITEMS, ORGANIC_PATH, BOARD_SIZES, goalForLevel } from './config.js';
+import { state, unlockedStorage } from './state.js';
+import { NAMES, STORE_ITEMS, ORGANIC_PATH, BOARD_SIZES, MAX_STORAGE, goalForLevel } from './config.js';
 import { SPRITES } from './sprites.js';
 import { priceOf } from './store.js';
 import { previewMergeGroup } from './match.js';
@@ -18,6 +18,7 @@ export function cacheDom() {
   el.best = document.getElementById('best');
   el.coins = document.getElementById('coins');
   el.store = document.getElementById('store-items');
+  el.storage = document.getElementById('storage-slots');
   el.overlay = document.getElementById('gameover');
   el.finalScore = document.getElementById('final-score');
   el.overLevel = document.getElementById('over-level');
@@ -61,7 +62,11 @@ function cobblePattern() {
 // Build the 6x6 grid once; cells are updated in place afterward.
 export function buildBoard(onCellTap) {
   el.board.innerHTML = '';
+  // Set the column count on the stack so both the board and the storage row
+  // (which share the same grid columns) update together.
+  document.getElementById('board-stack').style.setProperty('--size', state.size);
   el.board.style.setProperty('--size', state.size);
+  el.storageKey = null;          // force the storage row to rebuild for the new size
 
   // Organic path layer: a single tan shape (union of path tiles) rendered behind
   // the tiles, with a turbulence/displacement filter that wobbles its edges so
@@ -98,8 +103,7 @@ export function buildBoard(onCellTap) {
       cell.className = 'cell';
       cell.dataset.r = r;
       cell.dataset.c = c;
-      cell.setAttribute('aria-label',
-        isStorehouse(r, c) ? 'storehouse' : `row ${r + 1} column ${c + 1}`);
+      cell.setAttribute('aria-label', `row ${r + 1} column ${c + 1}`);
       // Respond on press (pointerdown), not click — click fires on release after
       // a tap-disambiguation delay, which is the "tiny delay" that felt laggy.
       cell.addEventListener('pointerdown', (e) => { if (e.button === 0) onCellTap(r, c); });
@@ -126,7 +130,7 @@ function isActive(r, c) {
 // A cell carries the tan path surface when it's empty (incl. the active preview)
 // or has a bear standing on it.
 function isPathCell(r, c) {
-  return !isStorehouse(r, c) && (state.board[r][c] === null || state.board[r][c] === 'bear');
+  return state.board[r][c] === null || state.board[r][c] === 'bear';
 }
 
 // The union of all path tiles as one SVG path `d` (each tile a 1x1 square in the
@@ -189,16 +193,7 @@ function paintBoard() {
       let cls = 'cell';
       const pulsing = pulse.has(r + ',' + c);
 
-      if (isStorehouse(r, c)) {
-        // The plate is always shown; a held piece sits ON it (both visible).
-        setContent(idx, 'store:' + (state.reserve || 'plate'),
-          state.reserve
-            ? `<div class="sh-plate">${SPRITES.plate}</div>` +
-              `<div class="sh-item">${sprite(state.reserve)}</div>`
-            : SPRITES.plate);
-        cls += ' storehouse';
-        cell.title = state.reserve ? NAMES[state.reserve] : 'Storehouse — tap to store/swap';
-      } else if (isActive(r, c) && state.current) {
+      if (isActive(r, c) && state.current) {
         // The waiting piece: sits on the path; white glow + pulse live on the sprite.
         setContent(idx, 'active:' + state.current, sprite(state.current));
         cls += ' path pulsing lead';
@@ -306,6 +301,33 @@ function formatDate(iso) {
   return (MONTHS[mi] || '') + ' ' + parseInt(d, 10);
 }
 
+// The storage row above the board: MAX_STORAGE slots, but only the ones unlocked
+// at the current level are usable. Each shows the plate (and any held piece on
+// it); locked slots are dimmed. Tapping an unlocked slot swaps/stashes.
+function paintStorage(onSwap) {
+  const unlocked = unlockedStorage();
+  const key = state.reserves.slice(0, MAX_STORAGE).join('|') + '#' + unlocked + '#' + state.over;
+  if (el.storageKey === key) return;          // nothing changed — skip the rebuild
+  el.storageKey = key;
+  el.storage.innerHTML = '';
+  for (let i = 0; i < MAX_STORAGE; i++) {
+    const open = i < unlocked;
+    const piece = state.reserves[i];
+    const slot = document.createElement('button');
+    slot.className = 'slot' + (open ? '' : ' locked');
+    slot.disabled = !open || state.over;
+    // Every slot shows its plate (locked ones dimmed via CSS); the held piece
+    // only shows on an unlocked slot.
+    slot.innerHTML = `<span class="sh-plate">${SPRITES.plate}</span>` +
+      (open && piece ? `<span class="sh-item">${sprite(piece)}</span>` : '');
+    slot.title = !open
+      ? `Storage slot ${i + 1} — unlocks at level ${i + 1}`
+      : (piece ? NAMES[piece] + ' — tap to swap' : `Storage slot ${i + 1} — tap to store`);
+    slot.addEventListener('pointerdown', (e) => { if (e.button === 0 && !slot.disabled) onSwap(i); });
+    el.storage.appendChild(slot);
+  }
+}
+
 function paintStore(onBuy) {
   el.store.innerHTML = '';
   for (const type of STORE_ITEMS) {
@@ -376,13 +398,14 @@ function renderPointFloat() {
   el.board.appendChild(f);
 }
 
-export function render({ onBuy }) {
+export function render({ onBuy, onSwap }) {
   paintBoard();
   renderMergeSlides();
   renderPointFloat();
   paintHud();
   paintGoal();
   paintTheme();
+  paintStorage(onSwap);
   paintStore(onBuy);
   paintOverlay();
   state.lastCreated = null; // consume the one-shot pop marker

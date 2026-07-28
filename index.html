@@ -43,7 +43,7 @@
 
     <section id="toolbar">
       <span id="version" class="version" title="build version"></span>
-      <span class="hint">Tap to place · corner = store</span>
+      <span class="hint">Tap to place · slots above = storage</span>
       <div id="new-controls">
         <span class="new-label">New</span>
         <button class="size-btn" data-size="6" title="New 6×6 game">6×6</button>
@@ -53,7 +53,10 @@
     </section>
 
     <main id="board-wrap">
-      <div id="board" role="grid" aria-label="game board"></div>
+      <div id="board-stack">
+        <div id="storage-slots" aria-label="storage"></div>
+        <div id="board" role="grid" aria-label="game board"></div>
+      </div>
     </main>
 
     <section id="store">

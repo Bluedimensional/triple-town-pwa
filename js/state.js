@@ -1,6 +1,6 @@
 // state.js — the single mutable game state object plus helpers to reset it.
 
-import { BOARD_SIZE, STOREHOUSE_R, STOREHOUSE_C } from './config.js';
+import { BOARD_SIZE, MAX_STORAGE } from './config.js';
 
 export const state = {
   size: BOARD_SIZE,        // current board is size x size
@@ -8,7 +8,7 @@ export const state = {
   board: [],        // board[r][c] = tile type string, or null when empty
   current: null,    // the piece waiting to be placed (shown pulsing on the board)
   activePos: null,  // {r,c} where the current piece is previewed, or null
-  reserve: null,    // the storehouse slot (one piece held aside)
+  reserves: new Array(MAX_STORAGE).fill(null), // storage slots above the board (unlock by level)
   score: 0,
   best: 0,
   coins: 0,
@@ -26,10 +26,9 @@ export const state = {
   floatPoints: null, // {r,c,points} points earned by the last placement, floats up
 };
 
-// The storehouse occupies board cell (0,0); it is swap-only and never a real
-// board tile (board[0][0] stays null; its contents live in state.reserve).
-export function isStorehouse(r, c) {
-  return r === STOREHOUSE_R && c === STOREHOUSE_C;
+// How many storage slots are unlocked at the current level (1 / 2 / 3).
+export function unlockedStorage() {
+  return Math.min(MAX_STORAGE, state.level);
 }
 
 export function emptyBoard() {
@@ -46,7 +45,7 @@ export function resetGame() {
   state.board = emptyBoard();
   state.current = null;
   state.activePos = null;
-  state.reserve = null;
+  state.reserves = new Array(MAX_STORAGE).fill(null);
   state.score = 0;
   state.coins = 0;
   state.turns = 0;

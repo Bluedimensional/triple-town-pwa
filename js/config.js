@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v42';
+export const VERSION = 'v43';
 
 // Organic path uses an SVG turbulence/displacement filter. It's cheap on desktop
 // GPUs but slow to rasterize on iOS. Off = plain (fast) path, for perf testing.
@@ -89,9 +89,9 @@ export function goalForLevel(level) {
   return Math.round(raw / 5000) * 5000;   // keep goals as clean round numbers
 }
 
-// The storehouse is the top-left board square (0,0): swap-only, never matches.
-export const STOREHOUSE_R = 0;
-export const STOREHOUSE_C = 0;
+// Storage: reserve slots in a row above the board (swap-only, never match).
+// Slots unlock by level — 1 from the start, a 2nd at level 2, a 3rd at level 3.
+export const MAX_STORAGE = 3;
 
 // Swappable asset map: tile type -> glyph. Swap these for <img> paths later
 // (see render.js) without touching any game logic. Grass is a leafy tuft,

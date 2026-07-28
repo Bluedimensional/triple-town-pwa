@@ -3,7 +3,7 @@
 // service worker cache for state).
 
 import { state, emptyBoard } from './state.js';
-import { BOARD_SIZE, goalForLevel } from './config.js';
+import { BOARD_SIZE, MAX_STORAGE, goalForLevel } from './config.js';
 
 const KEY = 'tripletown.save.v2';
 const BEST_KEY = 'tripletown.best.v1';        // legacy single best (pre per-mode)
@@ -56,7 +56,7 @@ export function save() {
       board: state.board,
       current: state.current,
       activePos: state.activePos,
-      reserve: state.reserve,
+      reserves: state.reserves,
       score: state.score,
       coins: state.coins,
       turns: state.turns,
@@ -93,7 +93,13 @@ export function load() {
     state.board = data.board;
     state.current = data.current ?? null;
     state.activePos = data.activePos ?? null;
-    state.reserve = data.reserve ?? null;
+    // Restore storage slots; migrate an old single `reserve` into slot 0.
+    state.reserves = new Array(MAX_STORAGE).fill(null);
+    if (Array.isArray(data.reserves)) {
+      for (let i = 0; i < MAX_STORAGE; i++) state.reserves[i] = data.reserves[i] ?? null;
+    } else if (data.reserve != null) {
+      state.reserves[0] = data.reserve;
+    }
     state.score = data.score || 0;
     state.coins = data.coins || 0;
     state.turns = data.turns || 0;

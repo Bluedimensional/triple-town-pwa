@@ -271,11 +271,47 @@ body[data-field="ocean"] {
   align-items: center;
   justify-content: center;
 }
+/* The storage row + board share one centered column so they line up. The width
+   is capped so the whole stack (storage row is one cell tall) fits the height. */
+#board-stack {
+  --size: 6;
+  width: min(100%, calc((100dvh - 300px) * 6 / 7));
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+/* Storage: a grid matching the board's columns, so each slot is one cell wide;
+   the (up to 3) slots fill the leftmost columns. */
+#storage-slots {
+  display: grid;
+  grid-template-columns: repeat(var(--size), 1fr);
+  gap: 0;
+}
+.slot {
+  aspect-ratio: 1 / 1;
+  position: relative;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.slot .sh-plate,
+.slot .sh-item {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.slot .sh-plate svg { width: 84%; height: 84%; }
+.slot .sh-item svg { width: 58%; height: 58%; transform: translateY(-14%); }
+.slot .sh-item .pc-shadow { display: none; }
+.slot.locked { opacity: 0.26; }
+.slot:not(.locked):active { transform: scale(0.94); }
 #board {
   --size: 6;
   position: relative;          /* anchors the path layer */
-  /* Fill the width, but never taller than the space left after HUD/toolbar/store. */
-  width: min(100%, calc(100dvh - 240px));
+  width: 100%;                 /* the stack sets the size */
   aspect-ratio: 1 / 1;
   display: grid;
   grid-template-columns: repeat(var(--size), 1fr);
@@ -314,22 +350,6 @@ body[data-field="ocean"] {
 /* Bears keep their tuned (slimmer) size while the other pieces got fatter. */
 .cell.bear svg { width: 94%; height: 94%; }
 .cell:active { transform: scale(0.94); }
-
-/* The storehouse: top-left corner square — just the plate on the field, no
-   dark backing. A held piece sits ON the plate (both visible). */
-.cell.storehouse { background: transparent; }
-.cell.storehouse .sh-plate,
-.cell.storehouse .sh-item {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.cell.storehouse .sh-plate svg { width: 86%; height: 86%; }
-.cell.storehouse .sh-item svg { width: 62%; height: 62%; transform: translateY(-16%); }
-/* The piece on the plate doesn't cast its ground shadow onto the plate. */
-.cell.storehouse .sh-item .pc-shadow { display: none; }
 
 /* Only the SPRITE animates; the tile underneath stays static. */
 .cell.pulsing { z-index: 5; }

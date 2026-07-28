@@ -2,6 +2,7 @@
 
 import { state } from './state.js';
 import { STORE_BASE_PRICE, STORE_PRICE_GROWTH } from './config.js';
+import { stashCurrent } from './storehouse.js';
 
 // Current price of a tile = base * growth^(times already bought).
 export function priceOf(type) {
@@ -21,9 +22,7 @@ export function buyItem(type) {
   state.coins -= price;
   state.storeBought[type] = (state.storeBought[type] || 0) + 1;
 
-  if (state.current !== null && state.reserve === null) {
-    state.reserve = state.current;
-  }
+  stashCurrent();       // tuck the held piece into a free storage slot if there is one
   state.current = type;
   return true;
 }
