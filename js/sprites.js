@@ -48,21 +48,31 @@ const bush = svg(`
     <circle cx="57" cy="61" r="7"/><circle cx="39" cy="62" r="5.5"/>
     <circle cx="50" cy="52" r="5"/><circle cx="68" cy="55" r="4.5"/></g>`, { cy: 85, rx: 30, ry: 7 });
 
-// Two overlapping sets of leaves (a lower olive canopy + upper bright canopy).
-const tree = svg(`
-  <defs>
-    <radialGradient id="treeBack" cx="42%" cy="34%" r="72%">
-      <stop offset="0%" stop-color="#9cbb42"/><stop offset="100%" stop-color="#6d8d27"/></radialGradient>
-    <radialGradient id="treeFront" cx="42%" cy="30%" r="74%">
-      <stop offset="0%" stop-color="#7cc047"/><stop offset="100%" stop-color="#3f7a22"/></radialGradient>
-  </defs>
-  <path d="M43 61 L57 61 L58.5 87 Q50 90 41.5 87 Z" fill="#7a4a22" stroke="#452a12" stroke-width="3" stroke-linejoin="round"/>
-  <path d="M22 51 Q20 39 30 34 Q33 25 45 27 Q57 23 64 33 Q72 37 67 48 Q69 59 56 60 Q47 65 38 59 Q27 61 22 51 Z"
-        fill="url(#treeBack)" stroke="#3a5a16" stroke-width="3" stroke-linejoin="round"/>
-  <g fill="#6d8d27" opacity="0.55"><circle cx="34" cy="46" r="4.5"/><circle cx="47" cy="56" r="3.8"/></g>
-  <path d="M45 39 Q45 28 54 26 Q60 20 68 26 Q77 28 74 39 Q78 47 68 48 Q61 53 54 49 Q45 49 45 39 Z"
-        fill="url(#treeFront)" stroke="#2f5e18" stroke-width="3" stroke-linejoin="round"/>
-  <g fill="#3f7a22" opacity="0.5"><circle cx="54" cy="34" r="3.8"/><circle cx="64" cy="42" r="4.2"/></g>`, { cy: 89, rx: 21, ry: 5.8 });
+// Tree — full and healthy, matching the original: two big overlapping leaf
+// masses (olive back, bright front) built from clustered lumps, coming down low
+// over a short, fat, flared trunk. Each mass is stamped once fattened in the dark
+// outline colour then filled, so the whole bumpy cluster gets one clean rim.
+const tree = (() => {
+  const clump = (circles, fill, spots, spotFill) => {
+    const cs = circles.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join('');
+    const sp = spots.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}"/>`).join('');
+    return `<g fill="#2f5613" stroke="#2f5613" stroke-width="3" stroke-linejoin="round">${cs}</g>`
+      + `<g fill="${fill}">${cs}</g>`
+      + `<g fill="${spotFill}" opacity="0.4">${sp}</g>`;
+  };
+  const back = [[50, 40, 21], [31, 35, 12], [45, 26, 13], [62, 28, 13], [73, 40, 12],
+    [72, 53, 11], [29, 51, 12], [40, 59, 12], [61, 59, 12], [50, 61, 13]];
+  const front = [[44, 55, 17], [30, 53, 10], [39, 45, 11], [54, 47, 11],
+    [62, 55, 10], [53, 64, 11], [37, 63, 11]];
+  const backSpots = [[37, 37, 4.2], [58, 42, 4.5], [48, 52, 4], [66, 48, 3.8], [33, 46, 3.6]];
+  const frontSpots = [[39, 51, 3.8], [52, 55, 4], [45, 62, 3.6], [31, 57, 3]];
+  return svg(
+    '<path d="M42 62 Q39 74 33 89 Q50 93 67 89 Q61 74 58 62 Z" fill="#7a4a22" stroke="#452a12" stroke-width="3" stroke-linejoin="round"/>'
+    + '<path d="M47 66 Q50 80 45 89" fill="none" stroke="#5c3717" stroke-width="2.2" stroke-linecap="round" opacity="0.55"/>'
+    + clump(back, '#a6b24c', backSpots, '#83903a')
+    + clump(front, '#74b83c', frontSpots, '#4f8f2a'),
+    { cy: 90, rx: 24, ry: 6 });
+})();
 
 // --- buildings ----------------------------------------------------------
 
