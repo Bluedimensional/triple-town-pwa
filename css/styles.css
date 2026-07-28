@@ -40,7 +40,7 @@ body {
   /* Field: scattered darker spots in three sizes (one large, two small and close
      in size, one of those fainter). Three grids at incommensurate spacings read
      as random rather than a perfect grid. Colour comes from --field / the dot rgb
-     so the theme can swap it per level (grass -> desert -> water) below. */
+     so the theme can swap it per level (grass; space/ocean bring their own) below. */
   background-color: var(--field);
   background-image:
     radial-gradient(circle, rgba(var(--field-dot-rgb), 0.16) 2.6px, transparent 3px),
@@ -59,11 +59,36 @@ body {
   touch-action: manipulation;   /* no double-tap zoom delay on taps */
 }
 
-/* Level field themes (a test): the field recolours as you level up, everything
-   else stays the same. Set on <body data-field="..."> from the current level. */
-body[data-field="grass"]  { --field: #46632f; --field-dot-rgb: 20, 42, 14; }
-body[data-field="desert"] { --field: #a5894e; --field-dot-rgb: 110, 82, 34; }
-body[data-field="water"]  { --field: #3f7fa3; --field-dot-rgb: 12, 52, 82; }
+/* Level field themes: the field changes as you level up, everything else stays
+   the same. Set on <body data-field="..."> from the current level. Grass uses the
+   shared dot pattern (above); space and ocean bring their own background-image. */
+body[data-field="grass"] { --field: #46632f; --field-dot-rgb: 20, 42, 14; }
+
+/* Level 2 — outer space: dark sky, scattered stars, faint nebula glows. */
+body[data-field="space"] {
+  --field: #0b1026;
+  background-color: #0b1026;
+  background-image:
+    radial-gradient(circle, #ffffff 1.1px, transparent 1.7px),
+    radial-gradient(circle, #d7e6ff 0.9px, transparent 1.4px),
+    radial-gradient(circle, rgba(255,255,255,0.55) 0.7px, transparent 1.1px),
+    radial-gradient(60% 45% at 72% 22%, rgba(104,78,168,0.38), transparent 62%),
+    radial-gradient(55% 42% at 20% 82%, rgba(42,96,158,0.34), transparent 62%);
+  background-size: 137px 149px, 89px 97px, 61px 67px, 100% 100%, 100% 100%;
+  background-position: 0 0, 43px 61px, 22px 33px, 0 0, 0 0;
+}
+
+/* Level 3 — deep ocean: blue water with light ripples and a depth gradient. */
+body[data-field="ocean"] {
+  --field: #12597c;
+  background-color: #12597c;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.12) 2px, transparent 2.7px),
+    radial-gradient(circle, rgba(6,44,72,0.40) 1.6px, transparent 2.1px),
+    linear-gradient(180deg, rgba(70,158,196,0.28), rgba(6,38,62,0.42));
+  background-size: 72px 62px, 50px 54px, 100% 100%;
+  background-position: 0 0, 26px 32px, 0 0;
+}
 
 #app {
   height: 100%;
@@ -282,10 +307,12 @@ body[data-field="water"]  { --field: #3f7fa3; --field-dot-rgb: 12, 52, 82; }
   transition: transform 0.08s ease;
 }
 .cell svg {
-  width: 94%;
-  height: 94%;
+  width: 100%;
+  height: 100%;
   display: block;
 }
+/* Bears keep their tuned (slimmer) size while the other pieces got fatter. */
+.cell.bear svg { width: 94%; height: 94%; }
 .cell:active { transform: scale(0.94); }
 
 /* The storehouse: top-left corner square — just the plate on the field, no

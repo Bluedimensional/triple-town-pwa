@@ -3,6 +3,20 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.21.0] - 2026-07-24 (v41)
+
+### Changed
+- **Non-bear pieces are a bit fatter** — tiles now fill 100% of their cell (was
+  94%). **Bears are pinned at their tuned 94%** so they don't grow (the active
+  bear preview matches).
+- **Level themes reworked:** level 2 is now **outer space** (dark sky, scattered
+  stars, faint nebula glows) instead of desert, and level 3 is now **deep ocean**
+  (blue water with light ripples and a depth gradient) instead of the flat water.
+  Level 1 stays grass. Everything else (path, pieces, HUD) is unchanged.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v41`.
+
 ## [0.20.1] - 2026-07-24 (v40)
 
 ### Changed

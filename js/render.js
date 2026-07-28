@@ -202,6 +202,7 @@ function paintBoard() {
         // The waiting piece: sits on the path; white glow + pulse live on the sprite.
         setContent(idx, 'active:' + state.current, sprite(state.current));
         cls += ' path pulsing lead';
+        if (state.current === 'bear') cls += ' bear';   // keep the preview bear's tuned size
         setLean(cell, r, c);
         cell.title = NAMES[state.current] + ' — tap any tile to place';
       } else {
@@ -241,9 +242,9 @@ function paintHud() {
   el.coins.textContent = state.coins.toLocaleString();
 }
 
-// Field theme per level (a test): level 1 grass, 2 desert, 3+ water. Everything
-// else stays the same — only the field background recolours (see styles.css).
-const FIELD_THEMES = ['grass', 'desert', 'water'];
+// Field theme per level: level 1 grass, 2 space, 3+ ocean. Everything else stays
+// the same — only the field background changes (see styles.css).
+const FIELD_THEMES = ['grass', 'space', 'ocean'];
 function paintTheme() {
   const theme = FIELD_THEMES[Math.min(state.level - 1, FIELD_THEMES.length - 1)];
   if (document.body.dataset.field !== theme) document.body.dataset.field = theme;
