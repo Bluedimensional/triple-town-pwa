@@ -208,7 +208,7 @@ const tombstone = svg(`
 // --- tomb chain ---------------------------------------------------------
 
 const church = svg(`
-  <rect x="30" y="46" width="40" height="40" fill="#e4ddc6" stroke="#4a4636" stroke-width="3"/>
+  <rect x="30" y="46" width="40" height="40" fill="#a3a29a" stroke="#45443c" stroke-width="3"/>
   <path d="M26 48 L50 28 L74 48 Z" fill="#7d5a86" stroke="#3a2f42" stroke-width="3" stroke-linejoin="round"/>
   <rect x="47" y="12" width="6" height="18" fill="#caa02c"/>
   <rect x="42" y="17" width="16" height="6" fill="#caa02c"/>
@@ -216,7 +216,7 @@ const church = svg(`
   <circle cx="50" cy="52" r="5" fill="#8fbcd8" stroke="#4a4636" stroke-width="2"/>`, { cy: 89, rx: 24, ry: 5.5 });
 
 const cathedral = svg(`
-  <rect x="24" y="46" width="52" height="40" fill="#e4ddc6" stroke="#4a4636" stroke-width="3"/>
+  <rect x="24" y="46" width="52" height="40" fill="#a3a29a" stroke="#45443c" stroke-width="3"/>
   <path d="M24 46 L34 22 L44 46 Z" fill="#6f4f78" stroke="#3a2f42" stroke-width="2.5" stroke-linejoin="round"/>
   <path d="M56 46 L66 22 L76 46 Z" fill="#6f4f78" stroke="#3a2f42" stroke-width="2.5" stroke-linejoin="round"/>
   <rect x="31" y="14" width="5" height="9" fill="#caa02c"/><rect x="63" y="14" width="5" height="9" fill="#caa02c"/>

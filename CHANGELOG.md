@@ -3,6 +3,17 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.25.2] - 2026-07-24 (v47)
+
+### Changed
+- **Church and cathedral walls are now gray stone** (`#a3a29a`) instead of the
+  cream that read too much like the houses. They now clearly belong to the gray
+  bear/tombstone line and are easy to tell apart from the cream-and-terracotta
+  houses at a glance. (Purple roofs, cross, and windows unchanged.)
+
+### Migration
+- Service-worker cache bumped to `tripletown-v47`.
+
 ## [0.25.1] - 2026-07-24 (v46)
 
 ### Changed
