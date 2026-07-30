@@ -47,8 +47,8 @@ function bearChance() {
 export function spawnNext({ countTurn = true } = {}) {
   if (Math.random() < bearChance()) {
     state.current = 'bear';
-  } else if (Math.random() < CRYSTAL_CHANCE) {
-    state.current = 'crystal';   // rare wildcard
+  } else if (Math.random() < CRYSTAL_CHANCE * state.crystalMult) {
+    state.current = 'crystal';   // rare wildcard (density scaled per game)
   } else if (state.grassStreak >= MAX_GRASS_STREAK) {
     // Too many grass in a row — hand out a non-grass piece this time.
     const { grass, ...rest } = SPAWN_WEIGHTS;
@@ -186,6 +186,7 @@ export function newGame(cols, rows) {
   state.pendingCols = state.cols;
   state.pendingRows = state.rows;
   resetGame();      // rebuilds an empty board at state.cols x state.rows
+  state.crystalMult = state.pendingCrystalMult;   // lock in the chosen density
   state.level = 1;
   state.goal = goalForLevel(1);
   prefill();

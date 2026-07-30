@@ -279,8 +279,55 @@ const rock = svg(`
   <path d="M30 62 Q42 57 55 60 Q64 62 70 58" fill="none" stroke="#6c6c6c" stroke-width="2.4" stroke-linecap="round"/>`,
   { cy: 80, rx: 27, ry: 6 });
 
+// Mega Castle — the tier above Triple Castle: a big golden fortress with three
+// towers, red conical roofs + flags, a crown gem, and a grand gate.
+const megaCastle = svg(`
+  <defs><linearGradient id="megaG" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#ffe487"/><stop offset="100%" stop-color="#d6a12c"/></linearGradient></defs>
+  <rect x="14" y="44" width="18" height="42" fill="url(#megaG)" stroke="#7a5a12" stroke-width="3"/>
+  <rect x="68" y="44" width="18" height="42" fill="url(#megaG)" stroke="#7a5a12" stroke-width="3"/>
+  <rect x="34" y="34" width="32" height="52" fill="url(#megaG)" stroke="#7a5a12" stroke-width="3"/>
+  <g fill="url(#megaG)" stroke="#7a5a12" stroke-width="2">
+    <rect x="14" y="40" width="5" height="5"/><rect x="27" y="40" width="5" height="5"/>
+    <rect x="68" y="40" width="5" height="5"/><rect x="81" y="40" width="5" height="5"/></g>
+  <path d="M12 45 L23 24 L34 45 Z" fill="#c0392b" stroke="#6e1f16" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M66 45 L77 24 L88 45 Z" fill="#c0392b" stroke="#6e1f16" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M32 35 L50 10 L68 35 Z" fill="#c0392b" stroke="#6e1f16" stroke-width="3" stroke-linejoin="round"/>
+  <line x1="50" y1="10" x2="50" y2="3" stroke="#6e1f16" stroke-width="2"/><path d="M50 3 L60 6 L50 9 Z" fill="#ffd34d"/>
+  <circle cx="50" cy="29" r="4.6" fill="#e34b8a" stroke="#7a5a12" stroke-width="1.6"/>
+  <g fill="#fff2b0"><rect x="19" y="54" width="7" height="9" rx="1"/><rect x="74" y="54" width="7" height="9" rx="1"/></g>
+  <path d="M42 86 L42 60 Q50 50 58 60 L58 86 Z" fill="#7a5a12" stroke="#5a4210" stroke-width="2"/>
+  <path d="M46 86 L46 62 Q50 56 54 62 L54 86 Z" fill="#3a2a08"/>`,
+  { cy: 90, rx: 33, ry: 6.5 });
+
+// Kingdom — the ultimate tier: a grand golden palace with domed towers, a crown
+// on top, gem accents, and a soft radiant glow.
+const kingdom = svg(`
+  <defs>
+    <linearGradient id="kingG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff0a8"/><stop offset="100%" stop-color="#e0ac33"/></linearGradient>
+    <radialGradient id="kingGlow" cx="50%" cy="42%" r="58%">
+      <stop offset="0%" stop-color="#fff4c0" stop-opacity="0.5"/><stop offset="100%" stop-color="#fff4c0" stop-opacity="0"/></radialGradient>
+  </defs>
+  <ellipse cx="50" cy="46" rx="47" ry="43" fill="url(#kingGlow)"/>
+  <rect x="12" y="52" width="76" height="34" fill="url(#kingG)" stroke="#7a5a12" stroke-width="3"/>
+  <rect x="12" y="40" width="14" height="46" fill="url(#kingG)" stroke="#7a5a12" stroke-width="3"/>
+  <rect x="74" y="40" width="14" height="46" fill="url(#kingG)" stroke="#7a5a12" stroke-width="3"/>
+  <rect x="38" y="30" width="24" height="56" fill="url(#kingG)" stroke="#7a5a12" stroke-width="3"/>
+  <path d="M12 41 Q19 26 26 41 Z" fill="#e8b73a" stroke="#7a5a12" stroke-width="2"/>
+  <path d="M74 41 Q81 26 88 41 Z" fill="#e8b73a" stroke="#7a5a12" stroke-width="2"/>
+  <path d="M38 31 Q50 8 62 31 Z" fill="#e8b73a" stroke="#7a5a12" stroke-width="2.5"/>
+  <path d="M42 16 L44 9 L47 14 L50 6 L53 14 L56 9 L58 16 Z" fill="#ffd94d" stroke="#7a5a12" stroke-width="1.5" stroke-linejoin="round"/>
+  <circle cx="50" cy="12.5" r="1.8" fill="#e34b8a"/>
+  <g fill="#e34b8a" stroke="#7a5a12" stroke-width="1"><circle cx="19" cy="34" r="2.4"/><circle cx="81" cy="34" r="2.4"/></g>
+  <g fill="#fff2b0"><rect x="15" y="58" width="8" height="10" rx="1"/><rect x="77" y="58" width="8" height="10" rx="1"/></g>
+  <path d="M42 86 L42 58 Q50 48 58 58 L58 86 Z" fill="#7a5a12" stroke="#5a4210" stroke-width="2"/>
+  <path d="M46 86 L46 60 Q50 54 54 60 L54 86 Z" fill="#3a2a08"/>`,
+  { cy: 90, rx: 35, ry: 7 });
+
 export const SPRITES = {
   grass, bush, tree, hut, house, mansion, castle, floatingCastle, tripleCastle,
+  megaCastle, kingdom,
   bear, tombstone, church, cathedral, treasury, plate, crystal, rock,
 };
 
@@ -297,7 +344,8 @@ const SUPER_STAR =
   '<path d="M73 11 l2.7 5.6 6.2 .8 -4.6 4.3 1.2 6.1 -5.5-3-5.5 3 1.2-6.1-4.6-4.3 6.2-.8 z" ' +
   'fill="#ffd84a" stroke="#a9790f" stroke-width="1"/>';
 const SUPER_BASES = ['bush', 'tree', 'hut', 'house', 'mansion', 'castle',
-  'floatingCastle', 'tripleCastle', 'church', 'cathedral', 'treasury'];
+  'floatingCastle', 'tripleCastle', 'megaCastle', 'kingdom',
+  'church', 'cathedral', 'treasury'];
 const PLANT_SUPERS = new Set(['bush', 'tree']);
 for (const base of SUPER_BASES) {
   const decor = PLANT_SUPERS.has(base) ? SUPER_BERRIES : SUPER_STAR;

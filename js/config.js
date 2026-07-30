@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v44';
+export const VERSION = 'v45';
 
 // Organic path uses an SVG turbulence/displacement filter. It's cheap on desktop
 // GPUs but slow to rasterize on iOS. Off = plain (fast) path, for perf testing.
@@ -24,12 +24,14 @@ export const boardKey = (cols, rows) => cols + 'x' + rows;
 // Build chain and tombstone chain, for reference / ordering.
 export const BUILD_CHAIN = [
   'grass', 'bush', 'tree', 'hut', 'house', 'mansion',
-  'castle', 'floatingCastle', 'tripleCastle',
+  'castle', 'floatingCastle', 'tripleCastle', 'megaCastle', 'kingdom',
 ];
 export const TOMB_CHAIN = ['tombstone', 'church', 'cathedral', 'treasury'];
 
 // Merge rules: type -> { next tier, how many connected are needed }.
 // Standard merges need 3; Floating Castle -> Triple Castle intentionally needs 4.
+// The chain continues past Triple Castle so high-crystal games don't dead-end:
+// Triple Castle -> Mega Castle -> Kingdom (the ultimate).
 export const MERGE = {
   grass:          { next: 'bush',           need: 3 },
   bush:           { next: 'tree',           need: 3 },
@@ -39,6 +41,8 @@ export const MERGE = {
   mansion:        { next: 'castle',         need: 3 },
   castle:         { next: 'floatingCastle', need: 3 },
   floatingCastle: { next: 'tripleCastle',   need: 4 },
+  tripleCastle:   { next: 'megaCastle',     need: 3 },
+  megaCastle:     { next: 'kingdom',        need: 3 },
   // Tombstone chain (the bear payoff).
   tombstone:      { next: 'church',         need: 3 },
   church:         { next: 'cathedral',      need: 3 },
@@ -49,6 +53,7 @@ export const MERGE = {
 export const POINTS = {
   grass: 5, bush: 20, tree: 50, hut: 100, house: 300, mansion: 800,
   castle: 2000, floatingCastle: 5000, tripleCastle: 12000,
+  megaCastle: 30000, kingdom: 75000,
   tombstone: 10, church: 500, cathedral: 2000, treasury: 8000,
   bear: 0, crystal: 0, rock: 0,
 };
@@ -57,6 +62,7 @@ export const POINTS = {
 export const COINS = {
   bush: 1, tree: 2, hut: 4, house: 8, mansion: 16,
   castle: 40, floatingCastle: 100, tripleCastle: 300,
+  megaCastle: 600, kingdom: 1500,
   church: 10, cathedral: 40, treasury: 150,
 };
 
@@ -72,6 +78,9 @@ export const SPAWN_WEIGHTS = { grass: 58, bush: 16, tree: 4 };
 export const MAX_GRASS_STREAK = 5;
 // Crystal (wildcard) is a rare random spawn (~2.5% in the original). Tunable.
 export const CRYSTAL_CHANCE = 0.025;
+// Per-game crystal density: the player picks one of these multipliers on the
+// crystal spawn rate when starting a game (1x = normal, 2x, 3x).
+export const CRYSTAL_MULTS = [1, 2, 3];
 
 // Bear spawn chance ramps up over the game.
 export const BEAR_BASE_CHANCE = 0.06;
@@ -108,6 +117,7 @@ export const MAX_STORAGE = 3;
 export const ASSETS = {
   grass: '🌿', bush: '🌳', tree: '🌲', hut: '🛖', house: '🏠',
   mansion: '🏘️', castle: '🏰', floatingCastle: '🏯', tripleCastle: '💎',
+  megaCastle: '🏰', kingdom: '👑',
   bear: '🐻', tombstone: '🪦', church: '⛪', cathedral: '🕌', treasury: '💰',
   crystal: '🔷', rock: '🪨',
 };
@@ -116,12 +126,14 @@ export const ASSETS = {
 export const NAMES = {
   grass: 'Grass', bush: 'Bush', tree: 'Tree', hut: 'Hut', house: 'House',
   mansion: 'Mansion', castle: 'Castle', floatingCastle: 'Floating Castle',
-  tripleCastle: 'Triple Castle', bear: 'Bear', tombstone: 'Tombstone',
+  tripleCastle: 'Triple Castle', megaCastle: 'Mega Castle', kingdom: 'Kingdom',
+  bear: 'Bear', tombstone: 'Tombstone',
   church: 'Church', cathedral: 'Cathedral', treasury: 'Treasury',
   crystal: 'Crystal', rock: 'Rock',
 };
 // "Super" variants (matched 4+) get their own tooltip names.
 for (const t of ['bush', 'tree', 'hut', 'house', 'mansion', 'castle',
-  'floatingCastle', 'tripleCastle', 'church', 'cathedral', 'treasury']) {
+  'floatingCastle', 'tripleCastle', 'megaCastle', 'kingdom',
+  'church', 'cathedral', 'treasury']) {
   NAMES[t + 'Super'] = 'Super ' + NAMES[t];
 }

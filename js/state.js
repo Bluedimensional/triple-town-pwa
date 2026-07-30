@@ -15,6 +15,8 @@ export const state = {
   best: 0,
   coins: 0,
   turns: 0,         // pieces placed so far (drives bear ramp)
+  crystalMult: 1,   // this game's crystal-density multiplier (1x / 2x / 3x)
+  pendingCrystalMult: 1, // the multiplier a new game will use (player's choice)
   level: 1,         // current level — a score milestone, for score-keeping only
   goal: 0,          // score needed to reach the next level
   levelFlash: false, // one-shot: briefly highlight the goal bar when the level ticks up

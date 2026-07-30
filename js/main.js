@@ -51,6 +51,13 @@ function markCurrentSize() {
   });
 }
 
+// Highlight the crystal-density button matching the pending choice.
+function markCrystal() {
+  document.querySelectorAll('#crystal-controls .crys-btn').forEach((b) => {
+    b.classList.toggle('current', Number(b.dataset.mult) === state.pendingCrystalMult);
+  });
+}
+
 function boot() {
   cacheDom();
   document.getElementById('version').textContent = VERSION;
@@ -68,6 +75,16 @@ function boot() {
     btn.addEventListener('click', () =>
       onNewGame(Number(btn.dataset.cols), Number(btn.dataset.rows)));
   });
+
+  // Crystal-density buttons just set the choice for the NEXT new game.
+  document.querySelectorAll('#crystal-controls .crys-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      state.pendingCrystalMult = Number(btn.dataset.mult);
+      save();
+      markCrystal();
+    });
+  });
+  markCrystal();
 
   // Tapping the dark backdrop (outside the card) dismisses the game-over popup.
   const overlay = document.getElementById('gameover');

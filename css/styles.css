@@ -133,7 +133,8 @@ body[data-field="ocean"] {
 #toolbar {
   display: flex;
   align-items: center;
-  gap: 10px;
+  flex-wrap: wrap;          /* the New + crystal choosers wrap below on narrow screens */
+  gap: 8px 10px;
 }
 .version {
   font-size: 11px;
@@ -146,7 +147,7 @@ body[data-field="ocean"] {
   flex-shrink: 0;
 }
 .hint {
-  flex: 1;
+  flex: 1 1 90px;           /* shrinkable so the choosers can share the row / wrap */
   font-size: 11px;
   line-height: 1.25;
   color: var(--ink-soft);
@@ -164,7 +165,7 @@ body[data-field="ocean"] {
   letter-spacing: 0.05em;
   color: var(--ink-soft);
 }
-.size-btn {
+.size-btn, .crys-btn {
   background: rgba(255,255,255,0.12);
   color: var(--ink);
   border: 1px solid transparent;
@@ -174,7 +175,15 @@ body[data-field="ocean"] {
   font-size: 13px;
   font-variant-numeric: tabular-nums;
 }
-.size-btn.current { border-color: var(--accent); background: rgba(107,160,58,0.28); }
+.size-btn.current, .crys-btn.current { border-color: var(--accent); background: rgba(107,160,58,0.28); }
+/* Crystal-density chooser (toolbar). */
+#crystal-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+#crystal-controls .crys-btn { padding: 7px 9px; }
 .size-btn.primary {
   background: var(--accent);
   color: #fff;

@@ -3,6 +3,28 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.25.0] - 2026-07-24 (v45)
+
+### Added
+- **Crystal-density setting (1× / 2× / 3×), chosen per game.** A 💎 chooser in the
+  toolbar sets how many crystals spawn; the choice locks in when you start a new
+  game and persists. 2×/3× multiply the crystal spawn rate.
+- **Two new top-tier pieces so high-crystal games don't dead-end:** the merge
+  chain now continues **Triple Castle → Mega Castle → Kingdom**. Mega Castle is a
+  three-tower golden fortress with red roofs, a flag, and a crown gem; Kingdom is
+  a grand domed golden palace with a crown and a soft glow. (Points 30k / 75k;
+  coins 600 / 1500.)
+
+### Verified
+- Node: 3 Triple Castles → Mega Castle, 3 Mega Castles → Kingdom, Kingdom stays
+  top; crystal rate scales (1× ≈ 2.5%, 3× ≈ 6.7% over 3000 spawns).
+- Browser: 💎 chooser highlights/saves; toolbar wraps cleanly at 375px with no
+  overflow; new sprites render across the castle progression.
+
+### Migration
+- Save adds `crystalMult`/`pendingCrystalMult` (default 1); service-worker cache
+  bumped to `tripletown-v45`.
+
 ## [0.24.0] - 2026-07-24 (v44)
 
 ### Added

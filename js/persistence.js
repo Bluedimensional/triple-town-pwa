@@ -72,6 +72,8 @@ export function save() {
       score: state.score,
       coins: state.coins,
       turns: state.turns,
+      crystalMult: state.crystalMult,
+      pendingCrystalMult: state.pendingCrystalMult,
       level: state.level,
       goal: state.goal,
       grassStreak: state.grassStreak,
@@ -118,6 +120,8 @@ export function load() {
     state.score = data.score || 0;
     state.coins = data.coins || 0;
     state.turns = data.turns || 0;
+    state.crystalMult = data.crystalMult || 1;
+    state.pendingCrystalMult = data.pendingCrystalMult || state.crystalMult || 1;
     state.level = data.level || 1;
     state.goal = data.goal || goalForLevel(state.level);
     state.grassStreak = data.grassStreak || 0;
