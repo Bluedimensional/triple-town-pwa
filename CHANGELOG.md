@@ -3,6 +3,22 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.25.3] - 2026-07-24 (v48)
+
+### Changed
+- **Crystals spawn noticeably more often.** The base crystal rate was raised from
+  ~2.5% to 6% so the density settings are obvious: **1× ≈ 1 in 17, 2× ≈ 1 in 9,
+  3× ≈ 1 in 6** placements. (The 1×/2×/3× multiplier was already working — this
+  just makes the whole range easier to see.)
+
+### Notes
+- A **crystal placed between two churches already merges them into a cathedral**
+  (and two cathedrals into a treasury) — that was already supported; no change
+  needed.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v48`.
+
 ## [0.25.2] - 2026-07-24 (v47)
 
 ### Changed

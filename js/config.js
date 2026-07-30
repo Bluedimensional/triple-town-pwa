@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v47';
+export const VERSION = 'v48';
 
 // Organic path uses an SVG turbulence/displacement filter. It's cheap on desktop
 // GPUs but slow to rasterize on iOS. Off = plain (fast) path, for perf testing.
@@ -76,8 +76,9 @@ export const STORE_PRICE_GROWTH = 1.6;
 export const SPAWN_WEIGHTS = { grass: 58, bush: 16, tree: 4 };
 // Never hand out more than this many grass in a row (avoids long grass streaks).
 export const MAX_GRASS_STREAK = 5;
-// Crystal (wildcard) is a rare random spawn (~2.5% in the original). Tunable.
-export const CRYSTAL_CHANCE = 0.025;
+// Crystal (wildcard) spawn rate. The original is ~2.5%, but that's hard to
+// notice; raised so the 2x/3x density settings are clearly visible. Tunable.
+export const CRYSTAL_CHANCE = 0.06;
 // Per-game crystal density: the player picks one of these multipliers on the
 // crystal spawn rate when starting a game (1x = normal, 2x, 3x).
 export const CRYSTAL_MULTS = [1, 2, 3];
