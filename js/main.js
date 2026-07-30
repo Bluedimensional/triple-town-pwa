@@ -76,10 +76,13 @@ function boot() {
       onNewGame(Number(btn.dataset.cols), Number(btn.dataset.rows)));
   });
 
-  // Crystal-density buttons just set the choice for the NEXT new game.
+  // Crystal-density buttons take effect immediately (even mid-game) AND set the
+  // choice for the next new game.
   document.querySelectorAll('#crystal-controls .crys-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
-      state.pendingCrystalMult = Number(btn.dataset.mult);
+      const m = Number(btn.dataset.mult);
+      state.pendingCrystalMult = m;
+      state.crystalMult = m;        // live: the current game's spawns use it now
       save();
       markCrystal();
     });

@@ -3,6 +3,17 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.25.1] - 2026-07-24 (v46)
+
+### Changed
+- **Crystal-density changes now take effect immediately, even mid-game** (was
+  only applied when starting a new game). Tapping 1×/2×/3× updates the live
+  multiplier at once, so the next crystals spawn at the new rate, and it's still
+  remembered for future games.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v46`.
+
 ## [0.25.0] - 2026-07-24 (v45)
 
 ### Added
