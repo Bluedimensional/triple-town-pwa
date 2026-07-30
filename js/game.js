@@ -30,8 +30,8 @@ function randInt(min, max) {
 // All empty cells as [r,c] pairs.
 function emptyCells() {
   const out = [];
-  for (let r = 0; r < state.size; r++) {
-    for (let c = 0; c < state.size; c++) {
+  for (let r = 0; r < state.rows; r++) {
+    for (let c = 0; c < state.cols; c++) {
       if (state.board[r][c] === null) out.push([r, c]);
     }
   }
@@ -85,7 +85,7 @@ function endGame() {
   state.activePos = null;
   // Record the run (score + level reached) in this board size's leaderboard and
   // refresh the shown best.
-  state.best = recordScore(state.size, state.score, state.level);
+  state.best = recordScore(state.cols, state.rows, state.score, state.level);
 }
 
 // The game is perpetual — it only ends when the board is genuinely full (no
@@ -157,8 +157,8 @@ function prefill() {
     [cells[i], cells[j]] = [cells[j], cells[i]];
   }
   let idx = 0;
-  // Scale the scatter to the board area (6x6 is the baseline).
-  const scale = (state.size * state.size) / 36;
+  // Scale the scatter to the board area (6x6 = 36 is the baseline).
+  const scale = (state.cols * state.rows) / 36;
   const plants = Math.min(
     randInt(Math.round(PREFILL_MIN * scale), Math.round(PREFILL_MAX * scale)),
     cells.length);
@@ -178,12 +178,14 @@ function prefill() {
   }
 }
 
-// Start a brand-new game. `size` (6 or 8) sets the board dimensions; omitting it
+// Start a brand-new game. `cols`/`rows` set the board dimensions; omitting them
 // keeps the current/pending size.
-export function newGame(size) {
-  if (size) state.size = size;
-  state.pendingSize = state.size;
-  resetGame();      // rebuilds an empty board at state.size
+export function newGame(cols, rows) {
+  if (cols) state.cols = cols;
+  if (rows) state.rows = rows;
+  state.pendingCols = state.cols;
+  state.pendingRows = state.rows;
+  resetGame();      // rebuilds an empty board at state.cols x state.rows
   state.level = 1;
   state.goal = goalForLevel(1);
   prefill();

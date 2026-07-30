@@ -4,7 +4,7 @@
 // edit sprites.js — nothing here or in the game logic assumes how a tile looks.
 
 import { state, unlockedStorage } from './state.js';
-import { NAMES, STORE_ITEMS, ORGANIC_PATH, BOARD_SIZES, MAX_STORAGE, goalForLevel } from './config.js';
+import { NAMES, STORE_ITEMS, ORGANIC_PATH, BOARDS, MAX_STORAGE, boardKey, goalForLevel } from './config.js';
 import { SPRITES } from './sprites.js';
 import { priceOf } from './store.js';
 import { previewMergeGroup } from './match.js';
@@ -62,19 +62,21 @@ function cobblePattern() {
 // Build the 6x6 grid once; cells are updated in place afterward.
 export function buildBoard(onCellTap) {
   el.board.innerHTML = '';
-  // Set the column count on the stack so both the board and the storage row
-  // (which share the same grid columns) update together.
-  document.getElementById('board-stack').style.setProperty('--size', state.size);
-  el.board.style.setProperty('--size', state.size);
+  // Set columns/rows on the stack so the board and the storage row (which share
+  // the same grid columns) update together, and the board keeps square cells.
+  const stack = document.getElementById('board-stack');
+  stack.style.setProperty('--cols', state.cols);
+  stack.style.setProperty('--rows', state.rows);
+  el.board.style.setProperty('--cols', state.cols);
+  el.board.style.setProperty('--rows', state.rows);
   el.storageKey = null;          // force the storage row to rebuild for the new size
 
   // Organic path layer: a single tan shape (union of path tiles) rendered behind
   // the tiles, with a turbulence/displacement filter that wobbles its edges so
   // the path looks natural instead of made of squares. One filter, one element.
   // Built via DOMParser so the SVG filter primitives get the right namespace.
-  const n = state.size;
   const svgStr =
-    `<svg xmlns="http://www.w3.org/2000/svg" id="path-layer" viewBox="0 0 ${n} ${n}" aria-hidden="true">
+    `<svg xmlns="http://www.w3.org/2000/svg" id="path-layer" viewBox="0 0 ${state.cols} ${state.rows}" aria-hidden="true">
        <defs>
          ${cobblePattern()}
          <filter id="pathFx" x="-12%" y="-12%" width="124%" height="124%">
@@ -97,8 +99,8 @@ export function buildBoard(onCellTap) {
   // the path-layer SVG, so index math on board.children would be off by one.
   el.cells = [];
   el.cellKeys = [];   // last sprite content per cell, to skip needless re-parses
-  for (let r = 0; r < state.size; r++) {
-    for (let c = 0; c < state.size; c++) {
+  for (let r = 0; r < state.rows; r++) {
+    for (let c = 0; c < state.cols; c++) {
       const cell = document.createElement('button');
       cell.className = 'cell';
       cell.dataset.r = r;
@@ -137,8 +139,8 @@ function isPathCell(r, c) {
 // board's cell coordinate space). Adjacent squares merge; the filter organics it.
 function buildPathShape() {
   let d = '';
-  for (let r = 0; r < state.size; r++) {
-    for (let c = 0; c < state.size; c++) {
+  for (let r = 0; r < state.rows; r++) {
+    for (let c = 0; c < state.cols; c++) {
       if (isPathCell(r, c)) d += `M${c} ${r}h1v1h-1z`;
     }
   }
@@ -178,7 +180,7 @@ function paintBoard() {
   buildPathShape();                 // organic tan path behind the tiles
   const cells = el.cells;
   const pulse = pulseKeys();
-  const cellSize = el.board.clientWidth / state.size; // px, for the hop offset
+  const cellSize = el.board.clientWidth / state.cols; // px (cells are square)
   const moved = new Map();
   for (const m of state.bearMoves) moved.set(m.r + ',' + m.c, m);
   // Only rewrite a cell's sprite (an SVG parse) when its content actually
@@ -186,9 +188,9 @@ function paintBoard() {
   const setContent = (idx, key, html) => {
     if (el.cellKeys[idx] !== key) { cells[idx].innerHTML = html; el.cellKeys[idx] = key; }
   };
-  for (let r = 0; r < state.size; r++) {
-    for (let c = 0; c < state.size; c++) {
-      const idx = r * state.size + c;
+  for (let r = 0; r < state.rows; r++) {
+    for (let c = 0; c < state.cols; c++) {
+      const idx = r * state.cols + c;
       const cell = cells[idx];
       let cls = 'cell';
       const pulsing = pulse.has(r + ',' + c);
@@ -272,8 +274,8 @@ function paintGoal() {
 // five scores with the date earned. Call openScores() to show it.
 export function openScores() {
   const scores = loadScores();
-  el.scoresCols.innerHTML = BOARD_SIZES.map((size) => {
-    const list = scores[String(size)] || [];
+  el.scoresCols.innerHTML = BOARDS.map((b) => {
+    const list = scores[boardKey(b.cols, b.rows)] || [];
     const rows = list.length
       ? list.slice(0, 3).map((e, i) => {
           const meta = [e.l ? 'Lv ' + e.l : '', formatDate(e.d)].filter(Boolean).join(' · ');
@@ -282,7 +284,7 @@ export function openScores() {
             `<span class="sc-meta">${meta}</span></span></li>`;
         }).join('')
       : '<li class="sc-empty">No scores yet</li>';
-    return `<div class="scores-col"><h2>${size}×${size}</h2><ol>${rows}</ol></div>`;
+    return `<div class="scores-col"><h2>${b.label}</h2><ol>${rows}</ol></div>`;
   }).join('');
   el.scoresModal.classList.add('show');
 }
@@ -359,7 +361,7 @@ function paintOverlay() {
 // out — so merges flow instead of snapping.
 function renderMergeSlides() {
   if (!state.mergeSlides.length) return;
-  const cellSize = el.board.clientWidth / state.size;
+  const cellSize = el.board.clientWidth / state.cols;
   for (const s of state.mergeSlides) {
     const slider = document.createElement('div');
     slider.className = 'merge-slider';
@@ -383,7 +385,7 @@ function renderPointFloat() {
   const fp = state.floatPoints;
   state.floatPoints = null;
   if (!fp || fp.points <= 0) return;
-  const cellSize = el.board.clientWidth / state.size;
+  const cellSize = el.board.clientWidth / state.cols;
   const f = document.createElement('div');
   f.className = 'point-float';
   f.textContent = '+' + fp.points.toLocaleString();

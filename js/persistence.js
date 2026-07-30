@@ -3,29 +3,39 @@
 // service worker cache for state).
 
 import { state, emptyBoard } from './state.js';
-import { BOARD_SIZE, MAX_STORAGE, goalForLevel } from './config.js';
+import { BOARD_SIZE, MAX_STORAGE, boardKey, goalForLevel } from './config.js';
 
 const KEY = 'tripletown.save.v2';
 const BEST_KEY = 'tripletown.best.v1';        // legacy single best (pre per-mode)
-const SCORES_KEY = 'tripletown.scores.v1';    // per-mode leaderboard
-const TOP_N = 5;                              // scores kept per board size
+const SCORES_KEY = 'tripletown.scores.v1';    // per-board leaderboard
+const TOP_N = 5;                              // scores kept per board
 
-// --- Per-mode leaderboard ----------------------------------------------------
-// Shape: { "6": [{s, d}], "7": [...], "8": [...] } — each list is the top 5
-// scores for that board size, highest first, with the date (YYYY-MM-DD) earned.
+// --- Per-board leaderboard ---------------------------------------------------
+// Shape: { "6x6": [{s, l, d}], "7x8": [...] } — each list is the top 5 scores
+// for that board, highest first, with the level reached and the date earned.
+// Legacy numeric keys ("6"/"7"/"8", from the square-only days) are migrated to
+// "6x6"/"7x7"/"8x8" on read so old bests are preserved.
 
 export function loadScores() {
   try {
     const raw = localStorage.getItem(SCORES_KEY);
-    const data = raw ? JSON.parse(raw) : {};
-    return data && typeof data === 'object' ? data : {};
+    let data = raw ? JSON.parse(raw) : {};
+    if (!data || typeof data !== 'object') return {};
+    for (const k of Object.keys(data)) {
+      if (/^\d+$/.test(k)) {                 // legacy square key "N" -> "NxN"
+        const nk = k + 'x' + k;
+        if (!data[nk]) data[nk] = data[k];
+        delete data[k];
+      }
+    }
+    return data;
   } catch (e) {
     return {};
   }
 }
 
-export function bestFor(size) {
-  const list = loadScores()[String(size)] || [];
+export function bestFor(cols, rows) {
+  const list = loadScores()[boardKey(cols, rows)] || [];
   return list.length ? list[0].s : 0;
 }
 
@@ -35,10 +45,10 @@ function todayISO() {
   return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
 }
 
-// Insert a finished run (score + level reached) into its board size's
-// leaderboard; keep the top 5 by score. Returns the best score for that size.
-export function recordScore(size, score, level) {
-  const key = String(size);
+// Insert a finished run (score + level reached) into its board's leaderboard;
+// keep the top 5 by score. Returns the best score for that board.
+export function recordScore(cols, rows, score, level) {
+  const key = boardKey(cols, rows);
   const scores = loadScores();
   const list = scores[key] || [];
   list.push({ s: score, l: level, d: todayISO() });
@@ -51,8 +61,10 @@ export function recordScore(size, score, level) {
 export function save() {
   try {
     const data = {
-      size: state.size,
-      pendingSize: state.pendingSize,
+      cols: state.cols,
+      rows: state.rows,
+      pendingCols: state.pendingCols,
+      pendingRows: state.pendingRows,
       board: state.board,
       current: state.current,
       activePos: state.activePos,
@@ -78,18 +90,21 @@ export function load() {
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) {
-      // No saved game — best for the default size comes from the leaderboard.
-      state.best = bestFor(state.size) || parseInt(localStorage.getItem(BEST_KEY) || '0', 10) || 0;
+      // No saved game — best for the default board comes from the leaderboard.
+      state.best = bestFor(state.cols, state.rows) || parseInt(localStorage.getItem(BEST_KEY) || '0', 10) || 0;
       return false;
     }
     const data = JSON.parse(raw);
     if (!data || !Array.isArray(data.board)) return false;
 
-    // Board size must be restored before the board is used to build the grid.
-    state.size = data.size || data.board.length || BOARD_SIZE;
-    state.pendingSize = data.pendingSize || state.size;
-    // Best is the top score recorded for this board size (legacy value as backup).
-    state.best = bestFor(state.size) || parseInt(localStorage.getItem(BEST_KEY) || '0', 10) || 0;
+    // Dimensions must be restored before the board is used to build the grid.
+    // Old saves stored a single square `size`; new ones store cols/rows.
+    state.cols = data.cols || data.size || (data.board[0] && data.board[0].length) || BOARD_SIZE;
+    state.rows = data.rows || data.size || data.board.length || BOARD_SIZE;
+    state.pendingCols = data.pendingCols || data.pendingSize || state.cols;
+    state.pendingRows = data.pendingRows || data.pendingSize || state.rows;
+    // Best is the top score recorded for this board (legacy value as backup).
+    state.best = bestFor(state.cols, state.rows) || parseInt(localStorage.getItem(BEST_KEY) || '0', 10) || 0;
     state.board = data.board;
     state.current = data.current ?? null;
     state.activePos = data.activePos ?? null;

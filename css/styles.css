@@ -274,8 +274,12 @@ body[data-field="ocean"] {
 /* The storage row + board share one centered column so they line up. The width
    is capped so the whole stack (storage row is one cell tall) fits the height. */
 #board-stack {
-  --size: 6;
-  width: min(100%, calc((100dvh - 300px) * 6 / 7));
+  --cols: 6;
+  --rows: 6;
+  /* Cap the width so the whole stack (board + a one-cell storage row above) fits
+     the height. A board of `rows` cells plus the storage row is `rows + 1` cells
+     tall; keeping cells square means width = cols/(rows+1) of the height budget. */
+  width: min(100%, calc((100dvh - 300px) * var(--cols) / (var(--rows) + 1)));
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -284,7 +288,7 @@ body[data-field="ocean"] {
    the (up to 3) slots fill the leftmost columns. */
 #storage-slots {
   display: grid;
-  grid-template-columns: repeat(var(--size), 1fr);
+  grid-template-columns: repeat(var(--cols), 1fr);
   gap: 0;
 }
 .slot {
@@ -309,13 +313,14 @@ body[data-field="ocean"] {
 .slot.locked { opacity: 0.26; }
 .slot:not(.locked):active { transform: scale(0.94); }
 #board {
-  --size: 6;
+  --cols: 6;
+  --rows: 6;
   position: relative;          /* anchors the path layer */
   width: 100%;                 /* the stack sets the size */
-  aspect-ratio: 1 / 1;
+  aspect-ratio: var(--cols) / var(--rows);
   display: grid;
-  grid-template-columns: repeat(var(--size), 1fr);
-  grid-template-rows: repeat(var(--size), 1fr);
+  grid-template-columns: repeat(var(--cols), 1fr);
+  grid-template-rows: repeat(var(--rows), 1fr);
   gap: 0;
   padding: 0;
 }

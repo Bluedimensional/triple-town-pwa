@@ -3,14 +3,23 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v43';
+export const VERSION = 'v44';
 
 // Organic path uses an SVG turbulence/displacement filter. It's cheap on desktop
 // GPUs but slow to rasterize on iOS. Off = plain (fast) path, for perf testing.
 export const ORGANIC_PATH = false;
 
-export const BOARD_SIZE = 6;            // default board is 6x6
-export const BOARD_SIZES = [6, 7, 8];   // sizes the player can choose for a new game
+export const BOARD_SIZE = 6;            // default board dimension (6x6)
+// Board options the player can choose for a new game (columns x rows). Boards
+// may be non-square (e.g. 7x8 = 7 wide, 8 tall).
+export const BOARDS = [
+  { cols: 6, rows: 6, label: '6×6' },
+  { cols: 7, rows: 7, label: '7×7' },
+  { cols: 8, rows: 8, label: '8×8' },
+  { cols: 7, rows: 8, label: '7×8' },
+];
+// Leaderboard / DOM key for a board of the given dimensions.
+export const boardKey = (cols, rows) => cols + 'x' + rows;
 
 // Build chain and tombstone chain, for reference / ordering.
 export const BUILD_CHAIN = [

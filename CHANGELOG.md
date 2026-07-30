@@ -3,6 +3,26 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.24.0] - 2026-07-24 (v44)
+
+### Added
+- **7×8 board option** (7 wide, 8 tall) — the first non-square board. The engine
+  now supports arbitrary `cols × rows`, and the board keeps square cells at any
+  ratio. Chosen from the new-game chooser alongside 6×6 / 7×7 / 8×8.
+
+### Changed
+- **Board dimensions are now `cols` × `rows`** throughout (was a single square
+  `size`): state, board loops, bear/merge bounds, prefill scaling, rendering,
+  the grid CSS (`aspect-ratio: cols/rows`), and the storage row all use both.
+- **High scores are keyed per board** (`"6x6"`, `"7x8"`, …) and the modal shows a
+  column for each of the four boards.
+
+### Migration
+- Old saves with a single square `size` load as `cols = rows = size`; legacy
+  numeric score keys (`"6"`/`"7"`/`"8"`) migrate to `"6x6"`/`"7x7"`/`"8x8"` on
+  read, so existing bests are preserved.
+- Service-worker cache bumped to `tripletown-v44`.
+
 ## [0.23.0] - 2026-07-24 (v43)
 
 ### Added

@@ -14,7 +14,7 @@ export function baseType(t) { return isSuper(t) ? t.slice(0, -SUPER.length) : t;
 export function superType(base) { return base + SUPER; }
 
 function inBounds(r, c) {
-  return r >= 0 && r < state.size && c >= 0 && c < state.size;
+  return r >= 0 && r < state.rows && c >= 0 && c < state.cols;
 }
 
 // All tiles orthogonally connected to (r,c) whose BASE type matches (r,c)'s base

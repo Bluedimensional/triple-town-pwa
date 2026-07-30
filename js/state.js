@@ -3,8 +3,10 @@
 import { BOARD_SIZE, MAX_STORAGE } from './config.js';
 
 export const state = {
-  size: BOARD_SIZE,        // current board is size x size
-  pendingSize: BOARD_SIZE, // size a new game will use (the player's choice)
+  cols: BOARD_SIZE,        // current board width (columns)
+  rows: BOARD_SIZE,        // current board height (rows) — may differ (e.g. 7x8)
+  pendingCols: BOARD_SIZE, // dimensions a new game will use (the player's choice)
+  pendingRows: BOARD_SIZE,
   board: [],        // board[r][c] = tile type string, or null when empty
   current: null,    // the piece waiting to be placed (shown pulsing on the board)
   activePos: null,  // {r,c} where the current piece is previewed, or null
@@ -33,8 +35,8 @@ export function unlockedStorage() {
 
 export function emptyBoard() {
   const b = [];
-  for (let r = 0; r < state.size; r++) {
-    b.push(new Array(state.size).fill(null));
+  for (let r = 0; r < state.rows; r++) {
+    b.push(new Array(state.cols).fill(null));
   }
   return b;
 }

@@ -10,7 +10,7 @@ import { resolveMerges } from './match.js';
 const DIRS = [[-1, 0], [1, 0], [0, -1], [0, 1]];
 
 function inBounds(r, c) {
-  return r >= 0 && r < state.size && c >= 0 && c < state.size;
+  return r >= 0 && r < state.rows && c >= 0 && c < state.cols;
 }
 
 function emptyNeighbors(r, c) {
@@ -33,8 +33,8 @@ function fullyTrappedBears() {
   const key = (r, c) => r + ',' + c;
   const seen = new Set();
   const trapped = [];
-  for (let r = 0; r < state.size; r++) {
-    for (let c = 0; c < state.size; c++) {
+  for (let r = 0; r < state.rows; r++) {
+    for (let c = 0; c < state.cols; c++) {
       if (state.board[r][c] !== 'bear' || seen.has(key(r, c))) continue;
       // Flood-fill this bear group; note whether it touches any open tile.
       const group = [];
@@ -82,8 +82,8 @@ export function moveBears() {
 
   // 2) Move the remaining bears (those whose group had room), column-major.
   const bears = [];
-  for (let r = 0; r < state.size; r++) {
-    for (let c = 0; c < state.size; c++) {
+  for (let r = 0; r < state.rows; r++) {
+    for (let c = 0; c < state.cols; c++) {
       if (state.board[r][c] === 'bear') bears.push([r, c]);
     }
   }
