@@ -26,16 +26,16 @@ const grass = svg(`
   <defs><linearGradient id="grassG" x1="0" y1="0" x2="0" y2="1">
     <stop offset="0%" stop-color="#c8e85f"/><stop offset="38%" stop-color="#5aa62f"/>
     <stop offset="100%" stop-color="#276214"/></linearGradient></defs>
-  <path d="M17 63 L19 47 L24 27 L28 45 L33 36 L37 44 L42 21 L47 43 L51 31
-           L55 44 L60 24 L65 43 L69 34 L74 46 L79 50 L82 63
+  <path d="M17 63 L19 47 L24 28 L28 45 L33 32 L37 44 L42 26 L47 43 L51 30
+           L55 44 L60 27 L65 43 L69 31 L74 46 L79 50 L82 63
            C84 71 80 75.2 72 75.8 C60 77 40 77 28 75.8
            C20 75.2 16 71 17 63 Z"
         fill="url(#grassG)" stroke="#1c4410" stroke-width="2.6" stroke-linejoin="round"/>
   <g stroke="#2a6417" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.7">
-    <path d="M31 66 L33 43"/><path d="M42 68 L43 30"/><path d="M52 66 L53 40"/>
+    <path d="M31 66 L33 43"/><path d="M42 68 L43 33"/><path d="M52 66 L53 40"/>
     <path d="M62 67 L62 36"/><path d="M71 66 L71 46"/></g>
   <g stroke="#d9f083" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.45">
-    <path d="M24 40 L24 30"/><path d="M42 34 L42 24"/><path d="M60 36 L60 27"/></g>`, { cy: 76, rx: 27, ry: 6.5 });
+    <path d="M24 40 L24 31"/><path d="M42 34 L42 29"/><path d="M60 36 L60 30"/></g>`, { cy: 76, rx: 27, ry: 6.5 });
 
 const bush = svg(`
   <defs><radialGradient id="bushG" cx="40%" cy="32%" r="72%">
@@ -96,15 +96,18 @@ const house = svg(`
   <path d="M59 73 L59 65 Q64 60 69 65 L69 73 Z" fill="#8fc0d8" stroke="#8a6a3a" stroke-width="2"/>`, { cy: 89, rx: 26, ry: 6 });
 
 // Mansion — a grander villa with a corner tower and an arched arcade.
+// Mansion — a golden-tan villa (distinct from the white house), with a wider,
+// centered second story.
 const mansion = svg(`
-  <rect x="20" y="48" width="58" height="38" fill="#fbf4e6" stroke="#8a6a3a" stroke-width="3"/>
-  <rect x="64" y="28" width="16" height="20" fill="#fbf4e6" stroke="#8a6a3a" stroke-width="3"/>
-  <path d="M62 29 L72 18 L82 29 Z" fill="#d0763e" stroke="#7a4420" stroke-width="2" stroke-linejoin="round"/>
-  <rect x="18" y="44" width="60" height="5" fill="#d0763e" stroke="#7a4420" stroke-width="2"/>
-  <rect x="26" y="55" width="30" height="4" fill="#c9a86a" stroke="#8a6a3a" stroke-width="1.5"/>
-  <g fill="#8fc0d8" stroke="#8a6a3a" stroke-width="2"><rect x="28" y="49" width="9" height="7"/><rect x="45" y="49" width="9" height="7"/></g>
-  <g fill="#7a4a22" stroke="#8a6a3a" stroke-width="2"><path d="M27 86 L27 70 Q32 64 37 70 L37 86 Z"/><path d="M45 86 L45 70 Q50 64 55 70 L55 86 Z"/></g>
-  <rect x="68" y="34" width="8" height="9" fill="#8fc0d8" stroke="#8a6a3a" stroke-width="2"/>`, { cy: 89, rx: 33, ry: 6.5 });
+  <rect x="18" y="48" width="60" height="38" fill="#e6d29a" stroke="#8a6a3a" stroke-width="3"/>
+  <rect x="40" y="26" width="20" height="24" fill="#e6d29a" stroke="#8a6a3a" stroke-width="3"/>
+  <rect x="16" y="44" width="64" height="5" fill="#d0763e" stroke="#7a4420" stroke-width="2"/>
+  <path d="M37 27 L50 14 L63 27 Z" fill="#d0763e" stroke="#7a4420" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M46 40 L46 33 Q50 29 54 33 L54 40 Z" fill="#8fc0d8" stroke="#8a6a3a" stroke-width="2"/>
+  <g fill="#8fc0d8" stroke="#8a6a3a" stroke-width="2"><rect x="22" y="53" width="9" height="8"/><rect x="65" y="53" width="9" height="8"/></g>
+  <g fill="#7a4a22" stroke="#8a6a3a" stroke-width="2">
+    <path d="M22 86 L22 69 Q27 63 32 69 L32 86 Z"/><path d="M64 86 L64 69 Q69 63 74 69 L74 86 Z"/></g>
+  <path d="M43 86 L43 66 Q50 60 57 66 L57 86 Z" fill="#6a4020" stroke="#8a6a3a" stroke-width="2"/>`, { cy: 89, rx: 33, ry: 6.5 });
 
 // Castle — gothic: pointed slate spires, a rose window, a portcullis gate, a flag.
 const castle = svg(`
@@ -123,25 +126,50 @@ const castle = svg(`
   <path d="M22 62 L22 55 Q25.5 51 29 55 L29 62 Z" fill="#f0d878"/>
   <path d="M71 62 L71 55 Q74.5 51 78 55 L78 62 Z" fill="#f0d878"/>`, { cy: 89, rx: 30, ry: 6.5 });
 
-const floatingCastle = svg(`
-  <ellipse cx="50" cy="80" rx="34" ry="12" fill="#eef4f8"/>
-  <ellipse cx="34" cy="76" rx="14" ry="10" fill="#dfe9f0"/>
-  <ellipse cx="66" cy="76" rx="14" ry="10" fill="#dfe9f0"/>
-  <rect x="28" y="34" width="44" height="36" fill="#cfc9dd" stroke="#4a4658" stroke-width="3"/>
-  <g fill="#cfc9dd" stroke="#4a4658" stroke-width="3">
-    <rect x="28" y="26" width="10" height="12"/><rect x="45" y="26" width="10" height="12"/>
-    <rect x="62" y="26" width="10" height="12"/></g>
-  <rect x="44" y="50" width="12" height="20" fill="#4a4658"/>`);
+// A floating island (cloud + rock spike) shared by the Floating & Triple Castle,
+// so both read as grander, elevated structures.
+const FLOAT_BASE =
+  '<path d="M37 79 L50 93 L63 79 Q50 83 37 79 Z" fill="#6a6478" stroke="#3f3b4a" stroke-width="2" stroke-linejoin="round"/>'
+  + '<g fill="#eef3fb" stroke="#c3cde0" stroke-width="1.5">'
+  + '<ellipse cx="50" cy="78" rx="30" ry="8.5"/><ellipse cx="31" cy="76" rx="13" ry="8"/>'
+  + '<ellipse cx="69" cy="76" rx="13" ry="8"/><ellipse cx="50" cy="74" rx="17" ry="9"/></g>';
 
+// Floating Castle — a tall silver-and-blue keep with three spires, on the island.
+const floatingCastle = svg(`
+  <defs>
+    <linearGradient id="fcW" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f2f5fb"/><stop offset="100%" stop-color="#b7c1db"/></linearGradient>
+    <radialGradient id="fcGlow" cx="50%" cy="36%" r="56%"><stop offset="0%" stop-color="#bcd4ff" stop-opacity="0.5"/><stop offset="100%" stop-color="#bcd4ff" stop-opacity="0"/></radialGradient>
+  </defs>
+  <ellipse cx="50" cy="38" rx="46" ry="42" fill="url(#fcGlow)"/>
+  ${FLOAT_BASE}
+  <rect x="20" y="44" width="13" height="30" fill="url(#fcW)" stroke="#5a6484" stroke-width="3"/>
+  <rect x="67" y="44" width="13" height="30" fill="url(#fcW)" stroke="#5a6484" stroke-width="3"/>
+  <rect x="37" y="28" width="26" height="46" fill="url(#fcW)" stroke="#5a6484" stroke-width="3"/>
+  <path d="M18 45 L26.5 15 L35 45 Z" fill="#4a6fb0" stroke="#2f487a" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M65 45 L73.5 15 L82 45 Z" fill="#4a6fb0" stroke="#2f487a" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M35 29 L50 3 L65 29 Z" fill="#3f61a4" stroke="#2a4272" stroke-width="3" stroke-linejoin="round"/>
+  <line x1="50" y1="3" x2="50" y2="-1" stroke="#2a4272" stroke-width="2"/><path d="M50 -1 L58 1.5 L50 4 Z" fill="#8fd0ec"/>
+  <circle cx="50" cy="38" r="4.6" fill="#8fd0ec" stroke="#5a6484" stroke-width="2"/>
+  <g fill="#dfe8f7"><rect x="24" y="52" width="6" height="8" rx="1"/><rect x="70" y="52" width="6" height="8" rx="1"/></g>
+  <path d="M43 74 L43 52 Q50 44 57 52 L57 74 Z" fill="#5a6484" stroke="#404a68" stroke-width="2"/>`,
+  { cy: 90, rx: 31, ry: 6 });
+
+// Triple Castle — a tall gold keep crowned with a star, on the same island.
 const tripleCastle = svg(`
-  <defs><linearGradient id="tcG" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#f4d768"/><stop offset="100%" stop-color="#caa02c"/></linearGradient></defs>
-  <path d="M50 8 L54 20 L66 20 L56 28 L60 40 L50 32 L40 40 L44 28 L34 20 L46 20 Z" fill="#ffe07a"/>
-  <rect x="22" y="42" width="56" height="46" fill="url(#tcG)" stroke="#7a5c12" stroke-width="3"/>
-  <g fill="url(#tcG)" stroke="#7a5c12" stroke-width="3">
-    <rect x="22" y="34" width="12" height="12"/><rect x="44" y="34" width="12" height="12"/>
-    <rect x="66" y="34" width="12" height="12"/></g>
-  <rect x="42" y="64" width="16" height="24" fill="#7a5c12"/>`, { cy: 91, rx: 30, ry: 6.5 });
+  <defs><linearGradient id="tcW" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffe487"/><stop offset="100%" stop-color="#d6a12c"/></linearGradient></defs>
+  ${FLOAT_BASE}
+  <rect x="18" y="46" width="15" height="28" fill="url(#tcW)" stroke="#7a5a12" stroke-width="3"/>
+  <rect x="67" y="46" width="15" height="28" fill="url(#tcW)" stroke="#7a5a12" stroke-width="3"/>
+  <rect x="36" y="26" width="28" height="48" fill="url(#tcW)" stroke="#7a5a12" stroke-width="3"/>
+  <g fill="url(#tcW)" stroke="#7a5a12" stroke-width="2">
+    <rect x="18" y="42" width="5" height="5"/><rect x="28" y="42" width="5" height="5"/>
+    <rect x="67" y="42" width="5" height="5"/><rect x="77" y="42" width="5" height="5"/>
+    <rect x="36" y="22" width="6" height="5"/><rect x="47" y="22" width="6" height="5"/><rect x="58" y="22" width="6" height="5"/></g>
+  <path d="M50 1 L54.4 13 L67 13 L56.8 20.6 L60.8 32.6 L50 25 L39.2 32.6 L43.2 20.6 L33 13 L45.6 13 Z" fill="#ffe07a" stroke="#c99a1e" stroke-width="1.5" stroke-linejoin="round"/>
+  <g fill="#fff2b0"><rect x="23" y="54" width="6" height="8" rx="1"/><rect x="71" y="54" width="6" height="8" rx="1"/></g>
+  <path d="M43 74 L43 52 Q50 44 57 52 L57 74 Z" fill="#7a5a12" stroke="#5a4210" stroke-width="2"/>
+  <path d="M47 74 L47 54 Q50 49 53 54 L53 74 Z" fill="#3a2a08"/>`,
+  { cy: 90, rx: 32, ry: 6 });
 
 // --- bears & tombs ------------------------------------------------------
 
@@ -230,6 +258,25 @@ const treasury = svg(`
   <rect x="46" y="60" width="8" height="14" fill="#e8c14a" stroke="#7a5c12" stroke-width="2"/>
   <g fill="#f4d768" stroke="#7a5c12" stroke-width="1.5">
     <circle cx="36" cy="46" r="6"/><circle cx="50" cy="42" r="6"/><circle cx="63" cy="46" r="6"/></g>`, { cy: 89, rx: 28, ry: 6.5 });
+
+// Royal Vault — the tier above Treasury: a grand gold chest crowned and
+// overflowing with coins and gems.
+const royalVault = svg(`
+  <defs>
+    <linearGradient id="rvChest" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#a9791f"/><stop offset="100%" stop-color="#6e4d12"/></linearGradient>
+    <linearGradient id="rvGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffe487"/><stop offset="100%" stop-color="#d6a12c"/></linearGradient>
+  </defs>
+  <g fill="url(#rvGold)" stroke="#7a5c12" stroke-width="1.3">
+    <circle cx="26" cy="49" r="6.5"/><circle cx="37" cy="43" r="6.5"/><circle cx="50" cy="40" r="7"/>
+    <circle cx="63" cy="43" r="6.5"/><circle cx="74" cy="49" r="6"/><circle cx="44" cy="47" r="4.6"/><circle cx="57" cy="47" r="4.6"/></g>
+  <path d="M40 30 L44 20 L50 27 L56 20 L60 30 Z" fill="#ffd94d" stroke="#a9790f" stroke-width="1.6" stroke-linejoin="round"/>
+  <circle cx="50" cy="24" r="2.2" fill="#e34b8a"/>
+  <rect x="18" y="54" width="64" height="32" rx="5" fill="url(#rvChest)" stroke="#3f2c12" stroke-width="3"/>
+  <path d="M18 55 Q50 40 82 55 Z" fill="#8a5f2b" stroke="#3f2c12" stroke-width="3"/>
+  <rect x="16" y="62" width="68" height="8" fill="url(#rvGold)" stroke="#7a5c12" stroke-width="2"/>
+  <rect x="45" y="62" width="10" height="16" rx="2" fill="#ffe07a" stroke="#7a5c12" stroke-width="2"/>
+  <g stroke="#7a5c12" stroke-width="1"><circle cx="29" cy="49" r="2.3" fill="#e34b8a"/><circle cx="71" cy="49" r="2.3" fill="#4a9be0"/></g>`,
+  { cy: 89, rx: 31, ry: 6.5 });
 
 // --- storehouse ---------------------------------------------------------
 
@@ -328,7 +375,7 @@ const kingdom = svg(`
 export const SPRITES = {
   grass, bush, tree, hut, house, mansion, castle, floatingCastle, tripleCastle,
   megaCastle, kingdom,
-  bear, tombstone, church, cathedral, treasury, plate, crystal, rock,
+  bear, tombstone, church, cathedral, treasury, royalVault, plate, crystal, rock,
 };
 
 // --- "super" variants (made by matching 4+) ----------------------------------
@@ -345,7 +392,7 @@ const SUPER_STAR =
   'fill="#ffd84a" stroke="#a9790f" stroke-width="1"/>';
 const SUPER_BASES = ['bush', 'tree', 'hut', 'house', 'mansion', 'castle',
   'floatingCastle', 'tripleCastle', 'megaCastle', 'kingdom',
-  'church', 'cathedral', 'treasury'];
+  'church', 'cathedral', 'treasury', 'royalVault'];
 const PLANT_SUPERS = new Set(['bush', 'tree']);
 for (const base of SUPER_BASES) {
   const decor = PLANT_SUPERS.has(base) ? SUPER_BERRIES : SUPER_STAR;

@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v48';
+export const VERSION = 'v49';
 
 // Organic path uses an SVG turbulence/displacement filter. It's cheap on desktop
 // GPUs but slow to rasterize on iOS. Off = plain (fast) path, for perf testing.
@@ -26,7 +26,7 @@ export const BUILD_CHAIN = [
   'grass', 'bush', 'tree', 'hut', 'house', 'mansion',
   'castle', 'floatingCastle', 'tripleCastle', 'megaCastle', 'kingdom',
 ];
-export const TOMB_CHAIN = ['tombstone', 'church', 'cathedral', 'treasury'];
+export const TOMB_CHAIN = ['tombstone', 'church', 'cathedral', 'treasury', 'royalVault'];
 
 // Merge rules: type -> { next tier, how many connected are needed }.
 // Standard merges need 3; Floating Castle -> Triple Castle intentionally needs 4.
@@ -47,6 +47,7 @@ export const MERGE = {
   tombstone:      { next: 'church',         need: 3 },
   church:         { next: 'cathedral',      need: 3 },
   cathedral:      { next: 'treasury',       need: 3 },
+  treasury:       { next: 'royalVault',     need: 3 },
 };
 
 // Placement / creation points (proposed starter table — tune by feel).
@@ -54,7 +55,7 @@ export const POINTS = {
   grass: 5, bush: 20, tree: 50, hut: 100, house: 300, mansion: 800,
   castle: 2000, floatingCastle: 5000, tripleCastle: 12000,
   megaCastle: 30000, kingdom: 75000,
-  tombstone: 10, church: 500, cathedral: 2000, treasury: 8000,
+  tombstone: 10, church: 500, cathedral: 2000, treasury: 8000, royalVault: 20000,
   bear: 0, crystal: 0, rock: 0,
 };
 
@@ -63,7 +64,7 @@ export const COINS = {
   bush: 1, tree: 2, hut: 4, house: 8, mansion: 16,
   castle: 40, floatingCastle: 100, tripleCastle: 300,
   megaCastle: 600, kingdom: 1500,
-  church: 10, cathedral: 40, treasury: 150,
+  church: 10, cathedral: 40, treasury: 150, royalVault: 400,
 };
 
 // Store: which build-chain tiles are for sale, base price, and price growth
@@ -120,7 +121,7 @@ export const ASSETS = {
   mansion: '🏘️', castle: '🏰', floatingCastle: '🏯', tripleCastle: '💎',
   megaCastle: '🏰', kingdom: '👑',
   bear: '🐻', tombstone: '🪦', church: '⛪', cathedral: '🕌', treasury: '💰',
-  crystal: '🔷', rock: '🪨',
+  royalVault: '👑', crystal: '🔷', rock: '🪨',
 };
 
 // Human-readable names for the UI.
@@ -129,12 +130,12 @@ export const NAMES = {
   mansion: 'Mansion', castle: 'Castle', floatingCastle: 'Floating Castle',
   tripleCastle: 'Triple Castle', megaCastle: 'Mega Castle', kingdom: 'Kingdom',
   bear: 'Bear', tombstone: 'Tombstone',
-  church: 'Church', cathedral: 'Cathedral', treasury: 'Treasury',
+  church: 'Church', cathedral: 'Cathedral', treasury: 'Treasury', royalVault: 'Royal Vault',
   crystal: 'Crystal', rock: 'Rock',
 };
 // "Super" variants (matched 4+) get their own tooltip names.
 for (const t of ['bush', 'tree', 'hut', 'house', 'mansion', 'castle',
   'floatingCastle', 'tripleCastle', 'megaCastle', 'kingdom',
-  'church', 'cathedral', 'treasury']) {
+  'church', 'cathedral', 'treasury', 'royalVault']) {
   NAMES[t + 'Super'] = 'Super ' + NAMES[t];
 }

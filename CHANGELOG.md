@@ -3,6 +3,27 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.26.0] - 2026-07-24 (v49)
+
+### Changed
+- **Floating Castle redrawn** — was a small box that read as a downgrade; now a
+  tall silver-and-blue keep with three spires on a floating island (cloud + rock).
+- **Triple Castle** is taller (tall gold keep + big star) and sits on the same
+  floating island.
+- **Mansion** is now a golden-tan villa (distinct from the white house), with a
+  wider, **centered** second story instead of a right-corner tower.
+- **Grass tips are more even** — kept the varied height but reduced the gap
+  between the tall and short blades.
+
+### Added
+- **Royal Vault** — a new tier above Treasury (bear line): a grand crowned gold
+  chest overflowing with coins and gems. So three Treasuries now merge into a
+  Royal Vault instead of dead-ending (20,000 pts). A crystal between two
+  Treasuries makes one too.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v49`.
+
 ## [0.25.3] - 2026-07-24 (v48)
 
 ### Changed
