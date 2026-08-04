@@ -20,6 +20,9 @@ export const state = {
   level: 1,         // current level — a score milestone, for score-keeping only
   goal: 0,          // score needed to reach the next level
   levelFlash: false, // one-shot: briefly highlight the goal bar when the level ticks up
+  levelCelebrate: null, // one-shot {level}: fire the full-screen level-up celebration
+  undos: 0,         // undos available (earned one per level completed)
+  undoStack: [],    // snapshots of state before recent placements, for undo
   grassStreak: 0,   // consecutive grass pieces handed out (caps long streaks)
   storeBought: {},  // tile type -> times purchased (drives rising prices)
   over: false,
@@ -56,6 +59,9 @@ export function resetGame() {
   state.level = 1;
   state.goal = 0;
   state.levelFlash = false;
+  state.levelCelebrate = null;
+  state.undos = 0;
+  state.undoStack = [];
   state.grassStreak = 0;
   state.storeBought = {};
   state.over = false;

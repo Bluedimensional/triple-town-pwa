@@ -100,13 +100,42 @@ function checkGameOver() {
 // shows how many more points it needs. A `while` handles a single huge merge
 // that crosses several thresholds at once.
 function maybeLevelUp() {
-  let leveled = false;
+  let gained = 0;
   while (state.score >= state.goal) {
     state.level++;
     state.goal = goalForLevel(state.level);
-    leveled = true;
+    gained++;
   }
-  if (leveled) state.levelFlash = true;   // brief top-bar highlight, non-blocking
+  if (gained) {
+    state.levelFlash = true;                 // brief top-bar highlight
+    state.undos += gained;                   // earn an undo per level completed
+    state.levelCelebrate = { level: state.level }; // fire the big celebration
+  }
+}
+
+// A snapshot of everything a placement changes, so a move can be undone.
+const MAX_UNDO = 10;
+function snapshot() {
+  return JSON.stringify({
+    board: state.board, current: state.current, activePos: state.activePos,
+    reserves: state.reserves, score: state.score, coins: state.coins,
+    turns: state.turns, level: state.level, goal: state.goal,
+    grassStreak: state.grassStreak, storeBought: state.storeBought,
+    crystalMult: state.crystalMult, over: state.over,
+  });
+}
+
+// Take back the last placement (spends one earned undo).
+export function undoMove() {
+  if (state.undos <= 0 || state.undoStack.length === 0) return false;
+  const snap = JSON.parse(state.undoStack.pop());
+  Object.assign(state, snap);
+  state.undos--;
+  // Clear one-shot animation markers so nothing replays on the restored board.
+  state.lastCreated = null; state.bearMoves = []; state.mergeSlides = [];
+  state.floatPoints = null; state.levelFlash = false; state.levelCelebrate = null;
+  save();
+  return true;
 }
 
 // Place the held piece at (r,c). Returns true if the move was legal.
@@ -114,6 +143,10 @@ export function placePiece(r, c) {
   if (state.over) return false;
   if (state.current === null) return false;
   if (state.board[r][c] !== null) return false; // must place on an empty tile
+
+  // Snapshot BEFORE mutating, so this move can be undone (bounded history).
+  state.undoStack.push(snapshot());
+  if (state.undoStack.length > MAX_UNDO) state.undoStack.shift();
 
   const piece = state.current;
   const scoreBefore = state.score;

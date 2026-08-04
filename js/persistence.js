@@ -76,6 +76,8 @@ export function save() {
       pendingCrystalMult: state.pendingCrystalMult,
       level: state.level,
       goal: state.goal,
+      undos: state.undos,
+      undoStack: state.undoStack,
       grassStreak: state.grassStreak,
       storeBought: state.storeBought,
       over: state.over,
@@ -124,6 +126,8 @@ export function load() {
     state.pendingCrystalMult = data.pendingCrystalMult || state.crystalMult || 1;
     state.level = data.level || 1;
     state.goal = data.goal || goalForLevel(state.level);
+    state.undos = data.undos || 0;
+    state.undoStack = Array.isArray(data.undoStack) ? data.undoStack : [];
     state.grassStreak = data.grassStreak || 0;
     state.storeBought = data.storeBought || {};
     state.over = !!data.over;

@@ -2,7 +2,7 @@
 
 import { state } from './state.js';
 import { VERSION } from './config.js';
-import { placePiece, newGame } from './game.js';
+import { placePiece, newGame, undoMove } from './game.js';
 import { swapReserve } from './storehouse.js';
 import { buyItem } from './store.js';
 import { save, load } from './persistence.js';
@@ -102,6 +102,11 @@ function boot() {
     if (e.target === scoresModal) closeScores();
   });
   document.getElementById('scores-close').addEventListener('pointerdown', closeScores);
+
+  // Undo button: take back the last move (spends one earned undo).
+  document.getElementById('undo-btn').addEventListener('pointerdown', () => {
+    if (undoMove()) draw();
+  });
 
   draw();
   markCurrentSize();

@@ -26,6 +26,9 @@ export function cacheDom() {
   el.goalLevel = document.getElementById('goal-level');
   el.goalTarget = document.getElementById('goal-target');
   el.goalFill = document.getElementById('goal-fill');
+  el.undoBtn = document.getElementById('undo-btn');
+  el.undoCount = document.getElementById('undo-count');
+  el.celebrate = document.getElementById('level-celebrate');
   el.scoresModal = document.getElementById('scores-modal');
   el.scoresCols = document.getElementById('scores-cols');
 }
@@ -304,6 +307,45 @@ function paintGoal() {
   }
 }
 
+// The undo button: shows how many undos are banked (one per level completed) and
+// is enabled only when there's an undo to spend and a move to take back.
+function paintUndo() {
+  el.undoCount.textContent = state.undos;
+  el.undoBtn.disabled = state.undos <= 0 || state.undoStack.length === 0;
+}
+
+// A full-screen, non-blocking celebration when a level is completed: a gold
+// flash, a burst of stars, and the big new level number — then it fades on its
+// own (pointer-events stay off, so play is never interrupted).
+function renderLevelCelebrate() {
+  const lc = state.levelCelebrate;
+  state.levelCelebrate = null;
+  if (!lc) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let stars = '';
+  if (!reduce) {
+    for (let i = 0; i < 18; i++) {
+      const a = Math.random() * Math.PI * 2, dist = 120 + Math.random() * 190;
+      const tx = Math.round(Math.cos(a) * dist), ty = Math.round(Math.sin(a) * dist);
+      const size = Math.round(12 + Math.random() * 20), delay = (Math.random() * 0.12).toFixed(2);
+      const col = Math.random() < 0.5 ? '#ffe07a' : '#ffffff';
+      stars += `<span class="lc-star" style="--tx:${tx}px;--ty:${ty}px;font-size:${size}px;color:${col};animation-delay:${delay}s">★</span>`;
+    }
+  }
+  el.celebrate.innerHTML =
+    '<div class="lc-flash"></div>' +
+    `<div class="lc-stars">${stars}</div>` +
+    `<div class="lc-num">Level ${lc.level}</div>`;
+  el.celebrate.classList.remove('show');
+  void el.celebrate.offsetWidth;
+  el.celebrate.classList.add('show');
+  clearTimeout(el.celebrateTimer);
+  el.celebrateTimer = setTimeout(() => {
+    el.celebrate.classList.remove('show');
+    el.celebrate.innerHTML = '';
+  }, 2000);
+}
+
 // Build the high-scores modal: one column per board size, each listing its top
 // five scores with the date earned. Call openScores() to show it.
 export function openScores() {
@@ -440,6 +482,8 @@ export function render({ onBuy, onSwap }) {
   renderPointFloat();
   paintHud();
   paintGoal();
+  paintUndo();
+  renderLevelCelebrate();
   paintTheme();
   paintStorage(onSwap);
   paintStore(onBuy);

@@ -36,6 +36,7 @@
     <section id="goalbar">
       <div class="goal-info">
         <span class="goal-level" id="goal-level">Level 1</span>
+        <button class="undo-btn" id="undo-btn" type="button" title="Undo your last move — you earn one each level" disabled>↩<span class="undo-count" id="undo-count">0</span></button>
         <span class="goal-target" id="goal-target">20,000 to level 2</span>
       </div>
       <div class="goal-track"><div class="goal-fill" id="goal-fill"></div></div>
@@ -85,6 +86,8 @@
         </div>
       </div>
     </div>
+
+    <div id="level-celebrate" class="level-celebrate" aria-hidden="true"></div>
 
     <div id="scores-modal" class="overlay">
       <div class="overlay-card scores-card">

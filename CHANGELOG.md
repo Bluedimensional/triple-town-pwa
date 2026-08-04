@@ -3,6 +3,20 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.28.0] - 2026-07-24 (v52)
+
+### Added
+- **Undo** — you earn one undo each time you complete a level. An **↩ button with
+  a count** sits in the level bar; tap it to take back your last move (it restores
+  the board, score, level, coins, and hand exactly, and spends one undo). Up to
+  the last 10 moves are held; undos and history persist across reloads.
+- **Level-up celebration** — completing a level now fires a full-screen, **non-
+  blocking** flash with a burst of stars and a big **"Level N"**, then fades on
+  its own (play is never interrupted; honors reduced-motion).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v52`.
+
 ## [0.27.0] - 2026-07-24 (v51)
 
 ### Changed
