@@ -3,6 +3,21 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.27.0] - 2026-07-24 (v51)
+
+### Changed
+- **Organic path, done filter-free.** The path no longer renders as hard squares.
+  Each cell edge that borders open field now **bulges gently outward** (a
+  deterministic quadratic curve), while edges shared with another path cell stay
+  straight — so a lone tile becomes a soft blob and runs of tiles flow with wavy
+  borders, like the original. Crucially this is **pure path geometry with no SVG
+  filter**, so it can't cause the iOS rasterization lag the old turbulence filter
+  did. Measured ~2.3ms per placement (full render), same class as the old plain
+  path; the shape only rebuilds when it actually changes.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v51`.
+
 ## [0.26.1] - 2026-07-24 (v50)
 
 ### Changed

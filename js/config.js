@@ -3,10 +3,12 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v50';
+export const VERSION = 'v51';
 
-// Organic path uses an SVG turbulence/displacement filter. It's cheap on desktop
-// GPUs but slow to rasterize on iOS. Off = plain (fast) path, for perf testing.
+// The organic path edges are now baked into the path GEOMETRY (each outer edge
+// bulges outward — see buildPathShape in render.js), so there is NO runtime SVG
+// filter. This flag only toggles the old, deprecated turbulence filter, which
+// caused the iOS lag; leave it OFF.
 export const ORGANIC_PATH = false;
 
 export const BOARD_SIZE = 6;            // default board dimension (6x6)

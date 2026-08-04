@@ -135,17 +135,51 @@ function isPathCell(r, c) {
   return state.board[r][c] === null || state.board[r][c] === 'bear';
 }
 
-// The union of all path tiles as one SVG path `d` (each tile a 1x1 square in the
-// board's cell coordinate space). Adjacent squares merge; the filter organics it.
+// Stable pseudo-random in [-1, 1] from two numbers — deterministic per position,
+// so the wobble never jitters between frames.
+function wob(a, b) {
+  const h = Math.sin(a * 12.9898 + b * 78.233) * 43758.5453;
+  return (h - Math.floor(h)) * 2 - 1;
+}
+
+// The path region drawn as an ORGANIC shape — filter-free. Each cell is emitted
+// as a closed subpath (unioned by the fill); an edge that borders a non-path cell
+// bulges gently OUTWARD (a quadratic curve), while an edge shared with another
+// path cell stays straight so the cells tile seamlessly. A lone cell becomes a
+// soft blob; runs of cells flow with wavy borders. Pure vector, no SVG filter —
+// so it can't cause the iOS rasterization lag the old turbulence filter did.
+function isP(r, c) {
+  return r >= 0 && r < state.rows && c >= 0 && c < state.cols && isPathCell(r, c);
+}
 function buildPathShape() {
   let d = '';
+  const AMP = 0.12;                       // max outward bulge, in cell units
   for (let r = 0; r < state.rows; r++) {
     for (let c = 0; c < state.cols; c++) {
-      if (isPathCell(r, c)) d += `M${c} ${r}h1v1h-1z`;
+      if (!isPathCell(r, c)) continue;
+      const cx = c + 0.5, cy = r + 0.5;
+      const corner = [[c, r], [c + 1, r], [c + 1, r + 1], [c, r + 1]];
+      // open[e] = the neighbour across edge e is NOT a path cell (an outer edge).
+      const open = [!isP(r - 1, c), !isP(r, c + 1), !isP(r + 1, c), !isP(r, c - 1)];
+      d += `M${corner[0][0]} ${corner[0][1]}`;
+      for (let e = 0; e < 4; e++) {
+        const [ex, ey] = corner[(e + 1) % 4];
+        if (open[e]) {
+          const [sx, sy] = corner[e];
+          const mx = (sx + ex) / 2, my = (sy + ey) / 2;
+          let nx = mx - cx, ny = my - cy;
+          const len = Math.hypot(nx, ny) || 1; nx /= len; ny /= len;
+          const amp = AMP * (0.65 + 0.5 * Math.abs(wob(mx * 3.7, my * 2.3)));
+          const bx = (mx + nx * amp * 2).toFixed(3), by = (my + ny * amp * 2).toFixed(3);
+          d += `Q${bx} ${by} ${ex} ${ey}`;
+        } else {
+          d += `L${ex} ${ey}`;
+        }
+      }
+      d += 'Z';
     }
   }
-  // Only touch the DOM (and re-run the displacement filter) when the shape
-  // actually changed — avoids needless filter re-rasterization.
+  // Only touch the DOM when the shape actually changed.
   if (el.pathShape && d !== el.lastPathD) {
     el.pathShape.setAttribute('d', d);
     el.lastPathD = d;
