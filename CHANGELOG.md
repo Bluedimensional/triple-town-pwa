@@ -3,6 +3,20 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.32.0] - 2026-08-04 (v56)
+
+### Fixed
+- **Floating Castle now merges at 3, like every other piece.** It was the lone
+  exception that needed **4** to combine into a Triple Castle. That surprised
+  players (three Floating Castles did nothing) and — the reported bug — a **crystal
+  placed between two Floating Castles couldn't complete the trio, so it fizzled into
+  a Rock** instead of making a Triple Castle. Changed `floatingCastle → tripleCastle`
+  to `need: 3`. Verified: crystal-between-two and three-in-a-group both now yield a
+  Triple Castle.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v56`.
+
 ## [0.31.0] - 2026-08-04 (v55)
 
 ### Added

@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v55';
+export const VERSION = 'v56';
 
 // The organic path edges are now baked into the path GEOMETRY (each outer edge
 // bulges outward — see buildPathShape in render.js), so there is NO runtime SVG
@@ -32,7 +32,9 @@ export const TOMB_CHAIN = ['tombstone', 'church', 'cathedral', 'treasury', 'roya
   'treasureHoard', 'goldPyramid'];
 
 // Merge rules: type -> { next tier, how many connected are needed }.
-// Standard merges need 3; Floating Castle -> Triple Castle intentionally needs 4.
+// Every merge needs 3 connected (uniform — Floating Castle used to need 4, which
+// surprised players and made a crystal placed between two of them fizzle to a rock
+// instead of completing the trio; fixed to 3 in v56).
 // The chain continues past Triple Castle so high-crystal games don't dead-end:
 // Triple Castle -> Mega Castle -> Kingdom (the ultimate).
 export const MERGE = {
@@ -43,7 +45,7 @@ export const MERGE = {
   house:          { next: 'mansion',        need: 3 },
   mansion:        { next: 'castle',         need: 3 },
   castle:         { next: 'floatingCastle', need: 3 },
-  floatingCastle: { next: 'tripleCastle',   need: 4 },
+  floatingCastle: { next: 'tripleCastle',   need: 3 },
   tripleCastle:   { next: 'megaCastle',     need: 3 },
   megaCastle:     { next: 'kingdom',        need: 3 },
   // Tombstone chain (the bear payoff).
