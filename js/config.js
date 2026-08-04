@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v56';
+export const VERSION = 'v57';
 
 // The organic path edges are now baked into the path GEOMETRY (each outer edge
 // bulges outward — see buildPathShape in render.js), so there is NO runtime SVG
@@ -27,16 +27,18 @@ export const boardKey = (cols, rows) => cols + 'x' + rows;
 export const BUILD_CHAIN = [
   'grass', 'bush', 'tree', 'hut', 'house', 'mansion',
   'castle', 'floatingCastle', 'tripleCastle', 'megaCastle', 'kingdom',
+  'metropolis', 'skyUtopia',
 ];
 export const TOMB_CHAIN = ['tombstone', 'church', 'cathedral', 'treasury', 'royalVault',
-  'treasureHoard', 'goldPyramid'];
+  'treasureHoard', 'goldPyramid', 'phoenix', 'divineSun'];
 
 // Merge rules: type -> { next tier, how many connected are needed }.
 // Every merge needs 3 connected (uniform — Floating Castle used to need 4, which
 // surprised players and made a crystal placed between two of them fizzle to a rock
 // instead of completing the trio; fixed to 3 in v56).
-// The chain continues past Triple Castle so high-crystal games don't dead-end:
-// Triple Castle -> Mega Castle -> Kingdom (the ultimate).
+// Both chains run deep so long games never dead-end. Build tops out at Sky Utopia
+// (...Kingdom -> Metropolis -> Sky Utopia); the bear/tomb line at Divine Sun
+// (...Golden Pyramid -> Phoenix -> Divine Sun).
 export const MERGE = {
   grass:          { next: 'bush',           need: 3 },
   bush:           { next: 'tree',           need: 3 },
@@ -48,6 +50,8 @@ export const MERGE = {
   floatingCastle: { next: 'tripleCastle',   need: 3 },
   tripleCastle:   { next: 'megaCastle',     need: 3 },
   megaCastle:     { next: 'kingdom',        need: 3 },
+  kingdom:        { next: 'metropolis',     need: 3 },
+  metropolis:     { next: 'skyUtopia',      need: 3 },
   // Tombstone chain (the bear payoff).
   tombstone:      { next: 'church',         need: 3 },
   church:         { next: 'cathedral',      need: 3 },
@@ -55,15 +59,17 @@ export const MERGE = {
   treasury:       { next: 'royalVault',     need: 3 },
   royalVault:     { next: 'treasureHoard',  need: 3 },
   treasureHoard:  { next: 'goldPyramid',    need: 3 },
+  goldPyramid:    { next: 'phoenix',        need: 3 },
+  phoenix:        { next: 'divineSun',      need: 3 },
 };
 
 // Placement / creation points (proposed starter table — tune by feel).
 export const POINTS = {
   grass: 5, bush: 20, tree: 50, hut: 100, house: 300, mansion: 800,
   castle: 2000, floatingCastle: 5000, tripleCastle: 12000,
-  megaCastle: 30000, kingdom: 75000,
+  megaCastle: 30000, kingdom: 75000, metropolis: 180000, skyUtopia: 400000,
   tombstone: 10, church: 500, cathedral: 2000, treasury: 8000, royalVault: 20000,
-  treasureHoard: 50000, goldPyramid: 120000,
+  treasureHoard: 50000, goldPyramid: 120000, phoenix: 280000, divineSun: 600000,
   bear: 0, crystal: 0, rock: 0,
 };
 
@@ -71,9 +77,9 @@ export const POINTS = {
 export const COINS = {
   bush: 1, tree: 2, hut: 4, house: 8, mansion: 16,
   castle: 40, floatingCastle: 100, tripleCastle: 300,
-  megaCastle: 600, kingdom: 1500,
+  megaCastle: 600, kingdom: 1500, metropolis: 3500, skyUtopia: 8000,
   church: 10, cathedral: 40, treasury: 150, royalVault: 400,
-  treasureHoard: 1000, goldPyramid: 2500,
+  treasureHoard: 1000, goldPyramid: 2500, phoenix: 6000, divineSun: 15000,
 };
 
 // Store: which build-chain tiles are for sale, base price, and price growth
@@ -128,9 +134,10 @@ export const MAX_STORAGE = 3;
 export const ASSETS = {
   grass: '🌿', bush: '🌳', tree: '🌲', hut: '🛖', house: '🏠',
   mansion: '🏘️', castle: '🏰', floatingCastle: '🏯', tripleCastle: '💎',
-  megaCastle: '🏰', kingdom: '👑',
+  megaCastle: '🏰', kingdom: '👑', metropolis: '🏙️', skyUtopia: '🌈',
   bear: '🐻', tombstone: '🪦', church: '⛪', cathedral: '🕌', treasury: '💰',
-  royalVault: '👑', treasureHoard: '💰', goldPyramid: '🔺', crystal: '🔷', rock: '🪨',
+  royalVault: '👑', treasureHoard: '💰', goldPyramid: '🔺', phoenix: '🔥', divineSun: '☀️',
+  crystal: '🔷', rock: '🪨',
 };
 
 // Human-readable names for the UI.
@@ -138,14 +145,17 @@ export const NAMES = {
   grass: 'Grass', bush: 'Bush', tree: 'Tree', hut: 'Hut', house: 'House',
   mansion: 'Mansion', castle: 'Castle', floatingCastle: 'Floating Castle',
   tripleCastle: 'Triple Castle', megaCastle: 'Mega Castle', kingdom: 'Kingdom',
+  metropolis: 'Metropolis', skyUtopia: 'Sky Utopia',
   bear: 'Bear', tombstone: 'Tombstone',
   church: 'Church', cathedral: 'Cathedral', treasury: 'Treasury', royalVault: 'Royal Vault',
   treasureHoard: 'Treasure Hoard', goldPyramid: 'Golden Pyramid',
+  phoenix: 'Phoenix', divineSun: 'Divine Sun',
   crystal: 'Crystal', rock: 'Rock',
 };
 // "Super" variants (matched 4+) get their own tooltip names.
 for (const t of ['bush', 'tree', 'hut', 'house', 'mansion', 'castle',
-  'floatingCastle', 'tripleCastle', 'megaCastle', 'kingdom',
-  'church', 'cathedral', 'treasury', 'royalVault', 'treasureHoard', 'goldPyramid']) {
+  'floatingCastle', 'tripleCastle', 'megaCastle', 'kingdom', 'metropolis', 'skyUtopia',
+  'church', 'cathedral', 'treasury', 'royalVault', 'treasureHoard', 'goldPyramid',
+  'phoenix', 'divineSun']) {
   NAMES[t + 'Super'] = 'Super ' + NAMES[t];
 }

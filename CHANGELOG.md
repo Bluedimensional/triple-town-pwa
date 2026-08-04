@@ -3,6 +3,25 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.33.0] - 2026-08-04 (v57)
+
+### Added
+- **Both chains extended with two new top tiers each**, so long games keep producing
+  upgrades instead of topping out:
+  - **Build:** …Kingdom → **Metropolis** (teal glass-skyscraper skyline; 180,000 pts /
+    3,500 coins) → **Sky Utopia** (floating cloud-city with white spires, gold domes,
+    and a rainbow; 400,000 pts / 8,000 coins).
+  - **Tomb:** …Golden Pyramid → **Phoenix** (a fiery bird rising — rebirth; 280,000 pts /
+    6,000 coins) → **Divine Sun** (a radiant sun with a serene face; 600,000 pts /
+    15,000 coins).
+  - Each is deliberately unlike the pieces below it (modern city, cloud-city, a bird,
+    a sun). New SVG sprites with Super (match-4+) variants; MERGE / POINTS / COINS /
+    NAMES / ASSETS / chains / SUPER_BASES all wired. Both chains verified end-to-end.
+    Placeholder art for now — tunable later.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v57`.
+
 ## [0.32.0] - 2026-08-04 (v56)
 
 ### Fixed

@@ -372,6 +372,69 @@ const kingdom = svg(`
   <path d="M46 86 L46 60 Q50 54 54 60 L54 86 Z" fill="#3a2a08"/>`,
   { cy: 90, rx: 35, ry: 7 });
 
+// --- build line, above Kingdom -----------------------------------------------
+
+// Metropolis — the tier above Kingdom: a modern skyline of teal glass towers with
+// lit windows and a spire. Deliberately unlike the medieval gold castles below it.
+const metropolis = svg(`
+  <defs>
+    <linearGradient id="mtpG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8fe3e0"/><stop offset="100%" stop-color="#3f8fb0"/></linearGradient>
+    <linearGradient id="mtpG2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c4f2ee"/><stop offset="100%" stop-color="#57a7c4"/></linearGradient>
+  </defs>
+  <rect x="20" y="34" width="14" height="52" fill="url(#mtpG)" stroke="#173340" stroke-width="2.5"/>
+  <rect x="66" y="40" width="14" height="46" fill="url(#mtpG)" stroke="#173340" stroke-width="2.5"/>
+  <rect x="32" y="46" width="12" height="40" fill="url(#mtpG2)" stroke="#173340" stroke-width="2.5"/>
+  <rect x="56" y="50" width="12" height="36" fill="url(#mtpG2)" stroke="#173340" stroke-width="2.5"/>
+  <rect x="42" y="22" width="16" height="64" fill="url(#mtpG2)" stroke="#173340" stroke-width="3"/>
+  <path d="M42 22 L50 10 L58 22 Z" fill="#c4f2ee" stroke="#173340" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="50" cy="9" r="2.4" fill="#ffe487" stroke="#173340" stroke-width="1"/>
+  <g fill="#fff6c8">
+    <rect x="45" y="28" width="3" height="4"/><rect x="52" y="28" width="3" height="4"/>
+    <rect x="45" y="37" width="3" height="4"/><rect x="52" y="37" width="3" height="4"/>
+    <rect x="45" y="46" width="3" height="4"/><rect x="52" y="46" width="3" height="4"/>
+    <rect x="45" y="55" width="3" height="4"/><rect x="52" y="55" width="3" height="4"/>
+    <rect x="45" y="64" width="3" height="4"/><rect x="52" y="64" width="3" height="4"/></g>
+  <g fill="#eaffff" opacity="0.75">
+    <rect x="23" y="40" width="3" height="4"/><rect x="28" y="40" width="3" height="4"/>
+    <rect x="23" y="51" width="3" height="4"/><rect x="28" y="51" width="3" height="4"/>
+    <rect x="23" y="62" width="3" height="4"/><rect x="28" y="62" width="3" height="4"/>
+    <rect x="69" y="46" width="3" height="4"/><rect x="74" y="46" width="3" height="4"/>
+    <rect x="69" y="57" width="3" height="4"/><rect x="74" y="57" width="3" height="4"/>
+    <rect x="69" y="68" width="3" height="4"/><rect x="74" y="68" width="3" height="4"/></g>`,
+  { cy: 89, rx: 34, ry: 6.5 });
+
+// Sky Utopia — the ultimate build tier: a radiant floating cloud-city with white
+// spires under golden domes, a rainbow arc, and scattered stars.
+const skyUtopia = svg(`
+  <defs>
+    <radialGradient id="utGlow" cx="50%" cy="46%" r="56%">
+      <stop offset="0%" stop-color="#fffbe0" stop-opacity="0.6"/><stop offset="100%" stop-color="#fffbe0" stop-opacity="0"/></radialGradient>
+    <linearGradient id="utDome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff3b0"/><stop offset="100%" stop-color="#e7b24a"/></linearGradient>
+    <linearGradient id="utTower" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#cfe0ef"/></linearGradient>
+  </defs>
+  <ellipse cx="50" cy="48" rx="48" ry="44" fill="url(#utGlow)"/>
+  <g fill="none" stroke-width="3" stroke-linecap="round">
+    <path d="M20 47 A30 30 0 0 1 80 47" stroke="#e8635e"/>
+    <path d="M24 47 A26 26 0 0 1 76 47" stroke="#eeb44f"/>
+    <path d="M28 47 A22 22 0 0 1 72 47" stroke="#e6d94f"/>
+    <path d="M32 47 A18 18 0 0 1 68 47" stroke="#5fbf6a"/>
+    <path d="M36 47 A14 14 0 0 1 64 47" stroke="#5aa9e6"/></g>
+  <g fill="#fff2a8"><circle cx="18" cy="30" r="1.6"/><circle cx="82" cy="32" r="1.6"/><circle cx="74" cy="18" r="1.3"/><circle cx="26" cy="20" r="1.3"/></g>
+  <rect x="30" y="47" width="10" height="25" fill="url(#utTower)" stroke="#26384a" stroke-width="2"/>
+  <rect x="60" y="47" width="10" height="25" fill="url(#utTower)" stroke="#26384a" stroke-width="2"/>
+  <rect x="43" y="39" width="14" height="33" fill="url(#utTower)" stroke="#26384a" stroke-width="2.5"/>
+  <path d="M30 47 Q35 37 40 47 Z" fill="url(#utDome)" stroke="#5a3f10" stroke-width="1.6"/>
+  <path d="M60 47 Q65 37 70 47 Z" fill="url(#utDome)" stroke="#5a3f10" stroke-width="1.6"/>
+  <path d="M43 39 Q50 25 57 39 Z" fill="url(#utDome)" stroke="#5a3f10" stroke-width="2"/>
+  <circle cx="50" cy="27" r="2.2" fill="#e8635e" stroke="#5a3f10" stroke-width="1"/>
+  <g fill="#f4f9ff" stroke="#b9c9dc" stroke-width="2">
+    <ellipse cx="34" cy="75" rx="14" ry="9"/><ellipse cx="66" cy="75" rx="14" ry="9"/><ellipse cx="50" cy="77" rx="18" ry="11"/></g>`,
+  { cy: 87, rx: 34, ry: 6 });
+
 // --- tomb line, above Royal Vault --------------------------------------------
 
 // Treasure Hoard — the tier above Royal Vault: the treasure has burst its chest
@@ -416,10 +479,61 @@ const goldPyramid = svg(`
   <path d="M44 24 L56 24 L50 30 Z" fill="#4a9be0" stroke="#123a5a" stroke-width="1"/>`,
   { cy: 85, rx: 34, ry: 7 });
 
+// Phoenix — the tier above Golden Pyramid: rebirth from the tomb. A fiery bird
+// rising with spread wings, a flame body and tail. The only creature in the game.
+const phoenix = svg(`
+  <defs>
+    <radialGradient id="phGlow" cx="50%" cy="46%" r="55%">
+      <stop offset="0%" stop-color="#ffd27a" stop-opacity="0.55"/><stop offset="100%" stop-color="#ffd27a" stop-opacity="0"/></radialGradient>
+    <linearGradient id="phBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffe08a"/><stop offset="55%" stop-color="#ff9f38"/><stop offset="100%" stop-color="#e5561f"/></linearGradient>
+    <linearGradient id="phWing" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffcf6a"/><stop offset="100%" stop-color="#f0761f"/></linearGradient>
+  </defs>
+  <ellipse cx="50" cy="48" rx="46" ry="44" fill="url(#phGlow)"/>
+  <path d="M50 46 C34 30 20 30 12 40 C24 42 30 52 44 54 Z" fill="url(#phWing)" stroke="#7a2a08" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M50 46 C66 30 80 30 88 40 C76 42 70 52 56 54 Z" fill="url(#phWing)" stroke="#7a2a08" stroke-width="2.5" stroke-linejoin="round"/>
+  <g fill="url(#phBody)" stroke="#7a2a08" stroke-width="2" stroke-linejoin="round">
+    <path d="M50 56 C45 66 40 74 44 83 C47 76 50 74 50 67 Z"/>
+    <path d="M50 56 C55 66 60 74 56 83 C53 76 50 74 50 67 Z"/></g>
+  <path d="M50 20 C58 30 58 45 54 58 C52 66 48 66 46 58 C42 45 42 30 50 20 Z" fill="url(#phBody)" stroke="#7a2a08" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="50" cy="23" r="6.2" fill="url(#phBody)" stroke="#7a2a08" stroke-width="2"/>
+  <path d="M50 17 L55 13 L52.5 19 Z" fill="#ffd24a" stroke="#7a2a08" stroke-width="1" stroke-linejoin="round"/>
+  <circle cx="52" cy="22" r="1.4" fill="#3a1404"/>`,
+  { cy: 88, rx: 30, ry: 6 });
+
+// Divine Sun — the ultimate tomb tier: a radiant sun disc with a serene face and
+// long rays. Transcendence beyond all earthly riches.
+const divineSun = svg(`
+  <defs>
+    <radialGradient id="dsGlow" cx="50%" cy="46%" r="56%">
+      <stop offset="0%" stop-color="#fff3b0" stop-opacity="0.65"/><stop offset="100%" stop-color="#fff3b0" stop-opacity="0"/></radialGradient>
+    <radialGradient id="dsDisc" cx="50%" cy="42%" r="58%">
+      <stop offset="0%" stop-color="#fff0a0"/><stop offset="100%" stop-color="#e8a521"/></radialGradient>
+  </defs>
+  <ellipse cx="50" cy="48" rx="48" ry="46" fill="url(#dsGlow)"/>
+  <g stroke="#f4c33a" stroke-width="4" stroke-linecap="round">
+    <line x1="50" y1="7" x2="50" y2="18"/><line x1="50" y1="78" x2="50" y2="89"/>
+    <line x1="7" y1="48" x2="18" y2="48"/><line x1="82" y1="48" x2="93" y2="48"/>
+    <line x1="20" y1="18" x2="28" y2="26"/><line x1="80" y1="18" x2="72" y2="26"/>
+    <line x1="20" y1="78" x2="28" y2="70"/><line x1="80" y1="78" x2="72" y2="70"/></g>
+  <g stroke="#f0b52e" stroke-width="3" stroke-linecap="round" opacity="0.85">
+    <line x1="34" y1="10" x2="38" y2="21"/><line x1="66" y1="10" x2="62" y2="21"/>
+    <line x1="10" y1="34" x2="21" y2="38"/><line x1="90" y1="34" x2="79" y2="38"/>
+    <line x1="10" y1="62" x2="21" y2="58"/><line x1="90" y1="62" x2="79" y2="58"/>
+    <line x1="34" y1="86" x2="38" y2="75"/><line x1="66" y1="86" x2="62" y2="75"/></g>
+  <circle cx="50" cy="48" r="25" fill="url(#dsDisc)" stroke="#8a5a10" stroke-width="3"/>
+  <g fill="#f6b8a0" opacity="0.75"><circle cx="41" cy="52" r="3"/><circle cx="59" cy="52" r="3"/></g>
+  <g fill="none" stroke="#8a5a10" stroke-width="2.2" stroke-linecap="round">
+    <path d="M39 44 Q42.5 41 46 44"/><path d="M54 44 Q57.5 41 61 44"/>
+    <path d="M42 55 Q50 62 58 55"/></g>`,
+  { cy: 84, rx: 30, ry: 6 });
+
 export const SPRITES = {
   grass, bush, tree, hut, house, mansion, castle, floatingCastle, tripleCastle,
-  megaCastle, kingdom,
+  megaCastle, kingdom, metropolis, skyUtopia,
   bear, tombstone, church, cathedral, treasury, royalVault, treasureHoard, goldPyramid,
+  phoenix, divineSun,
   plate, crystal, rock,
 };
 
@@ -436,8 +550,9 @@ const SUPER_STAR =
   '<path d="M73 11 l2.7 5.6 6.2 .8 -4.6 4.3 1.2 6.1 -5.5-3-5.5 3 1.2-6.1-4.6-4.3 6.2-.8 z" ' +
   'fill="#ffd84a" stroke="#654909" stroke-width="1"/>';
 const SUPER_BASES = ['bush', 'tree', 'hut', 'house', 'mansion', 'castle',
-  'floatingCastle', 'tripleCastle', 'megaCastle', 'kingdom',
-  'church', 'cathedral', 'treasury', 'royalVault', 'treasureHoard', 'goldPyramid'];
+  'floatingCastle', 'tripleCastle', 'megaCastle', 'kingdom', 'metropolis', 'skyUtopia',
+  'church', 'cathedral', 'treasury', 'royalVault', 'treasureHoard', 'goldPyramid',
+  'phoenix', 'divineSun'];
 const PLANT_SUPERS = new Set(['bush', 'tree']);
 for (const base of SUPER_BASES) {
   const decor = PLANT_SUPERS.has(base) ? SUPER_BERRIES : SUPER_STAR;
