@@ -112,7 +112,7 @@ const mansion = svg(`
 // Castle — gothic: pointed slate spires, a rose window, a portcullis gate, a flag.
 const castle = svg(`
   <defs><linearGradient id="castleG" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#bdb8a6"/><stop offset="100%" stop-color="#8b8674"/></linearGradient></defs>
+    <stop offset="0%" stop-color="#cba867"/><stop offset="100%" stop-color="#93713b"/></linearGradient></defs>
   <rect x="18" y="46" width="15" height="40" fill="url(#castleG)" stroke="#22201a" stroke-width="3"/>
   <rect x="67" y="46" width="15" height="40" fill="url(#castleG)" stroke="#22201a" stroke-width="3"/>
   <rect x="34" y="40" width="32" height="46" fill="url(#castleG)" stroke="#22201a" stroke-width="3"/>
@@ -123,8 +123,8 @@ const castle = svg(`
   <circle cx="50" cy="34" r="5" fill="#7bb0cf" stroke="#22201a" stroke-width="2"/>
   <path d="M42 86 L42 62 Q50 52 58 62 L58 86 Z" fill="#2c281f" stroke="#22201a" stroke-width="2"/>
   <g stroke="#6a6456" stroke-width="1.2"><line x1="46" y1="58" x2="46" y2="86"/><line x1="50" y1="55" x2="50" y2="86"/><line x1="54" y1="58" x2="54" y2="86"/><line x1="43" y1="66" x2="57" y2="66"/><line x1="43" y1="76" x2="57" y2="76"/></g>
-  <path d="M22 62 L22 55 Q25.5 51 29 55 L29 62 Z" fill="#f0d878"/>
-  <path d="M71 62 L71 55 Q74.5 51 78 55 L78 62 Z" fill="#f0d878"/>`, { cy: 89, rx: 30, ry: 6.5 });
+  <path d="M22 62 L22 55 Q25.5 51 29 55 L29 62 Z" fill="#b5462e"/>
+  <path d="M71 62 L71 55 Q74.5 51 78 55 L78 62 Z" fill="#b5462e"/>`, { cy: 89, rx: 30, ry: 6.5 });
 
 // A floating island (cloud + rock spike) shared by the Floating & Triple Castle,
 // so both read as grander, elevated structures.

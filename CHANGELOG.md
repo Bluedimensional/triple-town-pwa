@@ -3,6 +3,19 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.30.0] - 2026-08-04 (v54)
+
+### Changed
+- **Castle no longer looks like the gray churches.** Its walls changed from
+  gray-tan stone (`#bdb8a6`→`#8b8674`) to **warm honey sandstone**
+  (`#cba867`→`#93713b`), and the little side-tower pennants went from gold (which
+  would have vanished on the new walls) to the castle's **crimson** flag colour.
+  With its purple gothic roofs it now reads clearly apart from the gray-stone
+  Church/Cathedral line.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v54`.
+
 ## [0.29.0] - 2026-08-04 (v53)
 
 ### Changed
