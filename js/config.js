@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v57';
+export const VERSION = 'v58';
 
 // The organic path edges are now baked into the path GEOMETRY (each outer edge
 // bulges outward — see buildPathShape in render.js), so there is NO runtime SVG
@@ -98,6 +98,15 @@ export const CRYSTAL_CHANCE = 0.06;
 // Per-game crystal density: the player picks one of these multipliers on the
 // crystal spawn rate when starting a game (1x = normal, 2x, 3x).
 export const CRYSTAL_MULTS = [1, 2, 3];
+
+// --- Bombs (the long-press special) ------------------------------------------
+// You EARN a Bomb whenever a merge creates a high-tier piece — Castle-tier or
+// above, i.e. worth at least BOMB_EARN_MIN_POINTS. Long-press the held piece (or
+// tap the 💣 button) to ARM it, then tap a Rock or Bear to blow it up. It's a
+// FREE action: it clears the tile but does NOT use up the piece in your hand.
+export const BOMB_EARN_MIN_POINTS = 2000;   // Castle / Cathedral tier and up
+export const BOMB_TARGETS = ['rock', 'bear'];
+export const MAX_BOMBS = 9;                 // cap kept in hand (keeps it occasional)
 
 // Bear spawn chance ramps up over the game.
 export const BEAR_BASE_CHANCE = 0.06;

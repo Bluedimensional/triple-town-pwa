@@ -23,6 +23,9 @@ export const state = {
   levelCelebrate: null, // one-shot {level}: fire the full-screen level-up celebration
   undos: 0,         // undos available (earned one per level completed)
   undoStack: [],    // snapshots of state before recent placements, for undo
+  bombs: 0,         // bombs available (earned on big merges); long-press to arm
+  bombArmed: false, // transient: held piece armed as a bomb, awaiting a target
+  bombBlast: null,  // one-shot {r,c}: a tile was just bombed, for the blast anim
   grassStreak: 0,   // consecutive grass pieces handed out (caps long streaks)
   storeBought: {},  // tile type -> times purchased (drives rising prices)
   over: false,
@@ -62,6 +65,9 @@ export function resetGame() {
   state.levelCelebrate = null;
   state.undos = 0;
   state.undoStack = [];
+  state.bombs = 0;
+  state.bombArmed = false;
+  state.bombBlast = null;
   state.grassStreak = 0;
   state.storeBought = {};
   state.over = false;

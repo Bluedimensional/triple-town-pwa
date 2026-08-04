@@ -78,6 +78,7 @@ export function save() {
       goal: state.goal,
       undos: state.undos,
       undoStack: state.undoStack,
+      bombs: state.bombs,
       grassStreak: state.grassStreak,
       storeBought: state.storeBought,
       over: state.over,
@@ -128,6 +129,9 @@ export function load() {
     state.goal = data.goal || goalForLevel(state.level);
     state.undos = data.undos || 0;
     state.undoStack = Array.isArray(data.undoStack) ? data.undoStack : [];
+    state.bombs = data.bombs || 0;
+    state.bombArmed = false;
+    state.bombBlast = null;
     state.grassStreak = data.grassStreak || 0;
     state.storeBought = data.storeBought || {};
     state.over = !!data.over;

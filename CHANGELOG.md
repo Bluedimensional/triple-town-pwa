@@ -3,6 +3,24 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.34.0] - 2026-08-04 (v58)
+
+### Added
+- **Bombs — a new long-press special.** You **earn a Bomb** whenever a merge creates
+  a Castle-tier-or-higher piece (a 💣 icon + count sits next to the undo button;
+  capped at 9). **Long-press the held piece** — or tap the 💣 button — to **arm** it:
+  the piece glows red, every Rock and Bear on the board lights up as a target, and a
+  hint appears. **Tap a Rock or Bear to blow it up.** It's a *free* action — it clears
+  the tile but does **not** use up the piece in your hand, draw a new one, or count a
+  turn. Tapping anything else (or the 💣 again) cancels. Buildings can't be bombed.
+  Bombs persist across reloads and are taken back correctly by undo.
+- **Close the Game Over screen without starting a new game.** A corner **✕** and a
+  **"✕ Close & view my board"** button both dismiss the popup so you can study the
+  finished board; the New-game buttons (in the popup and the toolbar) still restart.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v58`.
+
 ## [0.33.0] - 2026-08-04 (v57)
 
 ### Added

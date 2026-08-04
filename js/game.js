@@ -5,7 +5,7 @@ import {
   SPAWN_WEIGHTS, MAX_GRASS_STREAK, CRYSTAL_CHANCE, POINTS,
   BEAR_BASE_CHANCE, BEAR_CHANCE_PER_TURN, BEAR_MAX_CHANCE,
   PREFILL_MIN, PREFILL_MAX, PREFILL_WEIGHTS, PREFILL_BEARS, PREFILL_TOMB_CHANCE,
-  goalForLevel,
+  goalForLevel, BOMB_TARGETS,
 } from './config.js';
 import { recordScore } from './persistence.js';
 import { resolveMerges, crystalResolve } from './match.js';
@@ -121,8 +121,44 @@ function snapshot() {
     reserves: state.reserves, score: state.score, coins: state.coins,
     turns: state.turns, level: state.level, goal: state.goal,
     grassStreak: state.grassStreak, storeBought: state.storeBought,
-    crystalMult: state.crystalMult, over: state.over,
+    crystalMult: state.crystalMult, bombs: state.bombs, over: state.over,
   });
+}
+
+// --- Bombs (long-press special) ----------------------------------------------
+// Arm the held piece as a bomb (needs at least one banked bomb). Returns whether
+// it armed. Disarm/toggle just flip the transient armed flag.
+export function armBomb() {
+  if (state.over || state.bombs <= 0 || state.bombArmed) return false;
+  state.bombArmed = true;
+  return true;
+}
+export function disarmBomb() {
+  if (!state.bombArmed) return false;
+  state.bombArmed = false;
+  return true;
+}
+export function toggleBomb() {
+  return state.bombArmed ? disarmBomb() : armBomb();
+}
+
+// Detonate an armed bomb at (r,c). Only Rocks and Bears can be destroyed. It's a
+// FREE action — it clears the tile but does NOT consume the held piece, draw a
+// new one, ramp bears, or end the turn. Tapping a non-target just cancels.
+// Returns true if a tile was destroyed.
+export function bombAt(r, c) {
+  if (!state.bombArmed) return false;
+  const t = state.board[r][c];
+  if (state.bombs > 0 && BOMB_TARGETS.includes(t)) {
+    state.board[r][c] = null;
+    state.bombs--;
+    state.bombArmed = false;
+    state.bombBlast = { r, c };
+    save();
+    return true;
+  }
+  state.bombArmed = false;   // tapped something that can't be bombed — cancel
+  return false;
 }
 
 // Take back the last placement (spends one earned undo).
@@ -134,6 +170,7 @@ export function undoMove() {
   // Clear one-shot animation markers so nothing replays on the restored board.
   state.lastCreated = null; state.bearMoves = []; state.mergeSlides = [];
   state.floatPoints = null; state.levelFlash = false; state.levelCelebrate = null;
+  state.bombArmed = false; state.bombBlast = null;
   save();
   return true;
 }

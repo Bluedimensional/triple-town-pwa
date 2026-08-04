@@ -241,6 +241,66 @@ body[data-field="ocean"] {
 .undo-btn:not(:disabled):active { transform: scale(0.95); }
 .undo-count { font-variant-numeric: tabular-nums; }
 
+/* Bomb button — mirrors the undo button. Glows amber when you have one ready and
+   red while armed (aim mode). */
+.bomb-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 2px 9px;
+  cursor: pointer;
+}
+.bomb-btn:disabled { opacity: 0.32; cursor: default; }
+.bomb-btn.ready { border-color: #e6b23a; background: rgba(230, 178, 58, 0.24); }
+.bomb-btn.armed {
+  border-color: #e8635e;
+  background: rgba(232, 99, 94, 0.32);
+  animation: bombPulse 0.9s ease-in-out infinite;
+}
+.bomb-btn:not(:disabled):active { transform: scale(0.95); }
+.bomb-count { font-variant-numeric: tabular-nums; }
+@keyframes bombPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232, 99, 94, 0.55); }
+  50% { box-shadow: 0 0 0 5px rgba(232, 99, 94, 0); }
+}
+
+/* Bomb aim mode: the held piece reads as a live bomb, and valid targets pulse. */
+.cell.bomb-armed { z-index: 6; }
+.cell.bomb-armed svg { filter: drop-shadow(0 0 5px #e8635e) drop-shadow(0 0 9px rgba(232, 99, 94, 0.8)); }
+.cell.bomb-target {
+  z-index: 5;
+  border-radius: 14%;
+  box-shadow: inset 0 0 0 3px #ffd24a, 0 0 8px rgba(232, 99, 94, 0.8);
+  animation: bombTarget 0.85s ease-in-out infinite;
+}
+@keyframes bombTarget {
+  0%, 100% { box-shadow: inset 0 0 0 3px #ffd24a, 0 0 6px rgba(232, 99, 94, 0.7); }
+  50% { box-shadow: inset 0 0 0 3px #ff8a3a, 0 0 12px rgba(232, 99, 94, 0.95); }
+}
+
+/* The 💥 burst when a bomb destroys a tile. */
+.bomb-blast {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 9;
+  animation: bombBlast 0.6s ease-out forwards;
+}
+@keyframes bombBlast {
+  0% { transform: scale(0.3); opacity: 0; }
+  30% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
 /* ---- Level-up celebration (full-screen, non-blocking) ---- */
 .level-celebrate {
   position: fixed;
@@ -622,6 +682,7 @@ body[data-field="ocean"] {
 }
 .overlay.show { display: flex; }
 .overlay-card {
+  position: relative;
   background: #f4f9ec;
   color: #2f4a1c;
   border-radius: 18px;
@@ -629,6 +690,38 @@ body[data-field="ocean"] {
   text-align: center;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
 }
+/* Corner ✕ to close the game-over card and look at the finished board. */
+.overlay-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
+  color: #5c7a3f;
+  background: rgba(0, 0, 0, 0.06);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.overlay-close:active { transform: scale(0.92); }
+/* Text button under the New buttons — explicit "close to view board". */
+.over-view-btn {
+  margin-top: 14px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: #5c7a3f;
+  background: transparent;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.over-view-btn:active { transform: scale(0.97); }
 .overlay-card h1 { margin: 0 0 4px; color: var(--accent); }
 .overlay-card p { margin: 2px 0; color: #5c7a3f; }
 .final { font-size: 40px !important; font-weight: 800; color: #2f4a1c !important; }

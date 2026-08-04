@@ -37,6 +37,7 @@
       <div class="goal-info">
         <span class="goal-level" id="goal-level">Level 1</span>
         <button class="undo-btn" id="undo-btn" type="button" title="Undo your last move — you earn one each level" disabled>↩<span class="undo-count" id="undo-count">0</span></button>
+        <button class="bomb-btn" id="bomb-btn" type="button" title="Bomb — earned on big merges. Arm it (or long-press the held piece), then tap a rock or bear to blow it up." disabled>💣<span class="bomb-count" id="bomb-count">0</span></button>
         <span class="goal-target" id="goal-target">20,000 to level 2</span>
       </div>
       <div class="goal-track"><div class="goal-fill" id="goal-fill"></div></div>
@@ -74,6 +75,7 @@
 
     <div id="gameover" class="overlay">
       <div class="overlay-card">
+        <button class="overlay-close" id="over-close" type="button" aria-label="Close and view your final board">✕</button>
         <h1>Game Over</h1>
         <p class="over-reason">No room left — final score</p>
         <p id="final-score" class="final">0</p>
@@ -84,6 +86,7 @@
           <button class="size-btn primary" data-cols="8" data-rows="8">8×8</button>
           <button class="size-btn primary" data-cols="7" data-rows="8">7×8</button>
         </div>
+        <button class="over-view-btn" id="over-view" type="button">✕ Close &amp; view my board</button>
       </div>
     </div>
 

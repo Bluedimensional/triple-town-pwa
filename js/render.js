@@ -28,6 +28,9 @@ export function cacheDom() {
   el.goalFill = document.getElementById('goal-fill');
   el.undoBtn = document.getElementById('undo-btn');
   el.undoCount = document.getElementById('undo-count');
+  el.bombBtn = document.getElementById('bomb-btn');
+  el.bombCount = document.getElementById('bomb-count');
+  el.hint = document.querySelector('#toolbar .hint');
   el.celebrate = document.getElementById('level-celebrate');
   el.scoresModal = document.getElementById('scores-modal');
   el.scoresCols = document.getElementById('scores-cols');
@@ -63,7 +66,9 @@ function cobblePattern() {
 }
 
 // Build the 6x6 grid once; cells are updated in place afterward.
-export function buildBoard(onCellTap) {
+// onCellTap(r,c): place / bomb-target. onArm(): long-press on the held piece
+// (fires after ~450ms) arms a bomb, when one is banked and not already armed.
+export function buildBoard(onCellTap, onArm) {
   el.board.innerHTML = '';
   // Set columns/rows on the stack so the board and the storage row (which share
   // the same grid columns) update together, and the board keeps square cells.
@@ -102,6 +107,9 @@ export function buildBoard(onCellTap) {
   // the path-layer SVG, so index math on board.children would be off by one.
   el.cells = [];
   el.cellKeys = [];   // last sprite content per cell, to skip needless re-parses
+  // Long-press state, shared across cells (only one pointer interacts at a time).
+  let lpTimer = null, lpFired = false, lpCell = null;
+  const clearLP = () => { if (lpTimer) { clearTimeout(lpTimer); lpTimer = null; } };
   for (let r = 0; r < state.rows; r++) {
     for (let c = 0; c < state.cols; c++) {
       const cell = document.createElement('button');
@@ -111,7 +119,27 @@ export function buildBoard(onCellTap) {
       cell.setAttribute('aria-label', `row ${r + 1} column ${c + 1}`);
       // Respond on press (pointerdown), not click — click fires on release after
       // a tap-disambiguation delay, which is the "tiny delay" that felt laggy.
-      cell.addEventListener('pointerdown', (e) => { if (e.button === 0) onCellTap(r, c); });
+      // Exception: pressing the HELD piece while you have a bomb starts a
+      // long-press timer (arm on hold, place on a quick tap) instead.
+      cell.addEventListener('pointerdown', (e) => {
+        if (e.button !== 0) return;
+        const cr = +cell.dataset.r, cc = +cell.dataset.c;
+        const held = state.activePos && state.activePos.r === cr && state.activePos.c === cc;
+        if (held && state.bombs > 0 && !state.bombArmed && !state.over && onArm) {
+          lpFired = false; lpCell = { r: cr, c: cc }; clearLP();
+          lpTimer = setTimeout(() => { lpFired = true; lpTimer = null; onArm(); }, 450);
+          return;   // wait for pointerup to tell tap (place) from hold (arm)
+        }
+        onCellTap(cr, cc);
+      });
+      cell.addEventListener('pointerup', () => {
+        if (!lpCell) return;
+        clearLP();
+        const { r: cr, c: cc } = lpCell; lpCell = null;
+        if (!lpFired) onCellTap(cr, cc);   // quick tap on the held piece → place it here
+      });
+      cell.addEventListener('pointercancel', () => { clearLP(); lpCell = null; });
+      cell.addEventListener('pointerleave', () => { if (lpCell) { clearLP(); lpCell = null; } });
       el.board.appendChild(cell);
       el.cells.push(cell);
     }
@@ -278,6 +306,13 @@ function paintBoard() {
         }
         cell.title = type ? NAMES[type] : '';
       }
+      // Bomb aim mode: the held piece glows as a bomb, and every Rock/Bear on the
+      // board lights up as a valid target.
+      if (state.bombArmed) {
+        if (isActive(r, c)) cls += ' bomb-armed';
+        const bt = state.board[r][c];
+        if (bt === 'rock' || bt === 'bear') cls += ' bomb-target';
+      }
       cell.className = cls;
     }
   }
@@ -325,6 +360,41 @@ function paintGoal() {
 function paintUndo() {
   el.undoCount.textContent = state.undos;
   el.undoBtn.disabled = state.undos <= 0 || state.undoStack.length === 0;
+}
+
+// The bomb button: how many bombs are banked (earned on big merges), whether it's
+// currently armed, and — while armed — a hint telling you what to tap. Also lights
+// the button when a bomb is available so it's discoverable.
+const DEFAULT_HINT = 'Tap to place · slots above = storage';
+function paintBombs() {
+  el.bombCount.textContent = state.bombs;
+  el.bombBtn.disabled = (state.bombs <= 0 && !state.bombArmed) || state.over;
+  el.bombBtn.classList.toggle('armed', state.bombArmed);
+  el.bombBtn.classList.toggle('ready', state.bombs > 0 && !state.bombArmed && !state.over);
+  if (el.hint) el.hint.textContent = state.bombArmed
+    ? '💣 Tap a rock or bear to blow it up (tap 💣 again to cancel)'
+    : DEFAULT_HINT;
+  document.body.classList.toggle('bomb-aiming', state.bombArmed);
+}
+
+// A quick blast burst where a bomb just destroyed a tile.
+function renderBombBlast() {
+  const b = state.bombBlast;
+  state.bombBlast = null;
+  if (!b) return;
+  const cellSize = el.board.clientWidth / state.cols;
+  const el2 = document.createElement('div');
+  el2.className = 'bomb-blast';
+  el2.textContent = '💥';
+  el2.style.left = (b.c * cellSize) + 'px';
+  el2.style.top = (b.r * cellSize) + 'px';
+  el2.style.width = cellSize + 'px';
+  el2.style.height = cellSize + 'px';
+  el2.style.fontSize = (cellSize * 0.6) + 'px';
+  const done = () => el2.remove();
+  el2.addEventListener('animationend', done);
+  setTimeout(done, 650);
+  el.board.appendChild(el2);
 }
 
 // A full-screen, non-blocking celebration when a level is completed: a gold
@@ -493,9 +563,11 @@ export function render({ onBuy, onSwap }) {
   paintBoard();
   renderMergeSlides();
   renderPointFloat();
+  renderBombBlast();
   paintHud();
   paintGoal();
   paintUndo();
+  paintBombs();
   renderLevelCelebrate();
   paintTheme();
   paintStorage(onSwap);
