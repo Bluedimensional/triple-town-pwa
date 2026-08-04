@@ -372,10 +372,55 @@ const kingdom = svg(`
   <path d="M46 86 L46 60 Q50 54 54 60 L54 86 Z" fill="#3a2a08"/>`,
   { cy: 90, rx: 35, ry: 7 });
 
+// --- tomb line, above Royal Vault --------------------------------------------
+
+// Treasure Hoard — the tier above Royal Vault: the treasure has burst its chest
+// into a grand overflowing MOUND of gold, gems, and a crown perched on top.
+const treasureHoard = svg(`
+  <defs><linearGradient id="thGold" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#ffe487"/><stop offset="100%" stop-color="#d19a24"/></linearGradient></defs>
+  <path d="M12 84 Q14 60 50 56 Q86 60 88 84 Z" fill="url(#thGold)" stroke="#49370b" stroke-width="3" stroke-linejoin="round"/>
+  <g fill="#f4d768" stroke="#8a6412" stroke-width="1.3">
+    <circle cx="24" cy="78" r="5"/><circle cx="37" cy="80" r="5"/><circle cx="50" cy="79" r="5"/>
+    <circle cx="63" cy="80" r="5"/><circle cx="76" cy="78" r="4.8"/>
+    <circle cx="31" cy="70" r="4.6"/><circle cx="44" cy="68" r="4.6"/><circle cx="57" cy="68" r="4.6"/><circle cx="69" cy="70" r="4.6"/>
+    <circle cx="38" cy="61" r="4.2"/><circle cx="51" cy="61" r="4.2"/><circle cx="62" cy="62" r="4"/></g>
+  <g stroke="#8a6412" stroke-width="1"><line x1="24" y1="75" x2="24" y2="81"/><line x1="50" y1="76" x2="50" y2="82"/><line x1="76" y1="75" x2="76" y2="81"/></g>
+  <path d="M43 74 l3.2 -4 3.2 4 -3.2 4.2 Z" fill="#e34b8a" stroke="#5a1330" stroke-width="1"/>
+  <path d="M58 74 l3 -3.8 3 3.8 -3 4 Z" fill="#4a9be0" stroke="#123a5a" stroke-width="1"/>
+  <path d="M31 76 l2.6 -3.4 2.6 3.4 -2.6 3.4 Z" fill="#4fbf6a" stroke="#134a24" stroke-width="1"/>
+  <path d="M39 56 L42.5 45 L47 52 L50 43 L53 52 L57.5 45 L61 56 Z" fill="#ffd94d" stroke="#654909" stroke-width="1.7" stroke-linejoin="round"/>
+  <circle cx="50" cy="47.5" r="2.2" fill="#e34b8a" stroke="#654909" stroke-width="0.8"/>`,
+  { cy: 88, rx: 36, ry: 7 });
+
+// Golden Pyramid — the ultimate tomb-line tier: a monument of solid gold with a
+// jewelled capstone, radiant glow, and sun rays. The riches of the dead, made eternal.
+const goldPyramid = svg(`
+  <defs>
+    <linearGradient id="gpFace" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffe487"/><stop offset="100%" stop-color="#d6a12c"/></linearGradient>
+    <linearGradient id="gpSide" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d6a12c"/><stop offset="100%" stop-color="#a97c1c"/></linearGradient>
+    <radialGradient id="gpGlow" cx="50%" cy="44%" r="56%">
+      <stop offset="0%" stop-color="#fff4c0" stop-opacity="0.5"/><stop offset="100%" stop-color="#fff4c0" stop-opacity="0"/></radialGradient>
+  </defs>
+  <ellipse cx="50" cy="50" rx="47" ry="44" fill="url(#gpGlow)"/>
+  <g stroke="#ffe487" stroke-width="2.4" stroke-linecap="round" opacity="0.7">
+    <line x1="50" y1="20" x2="50" y2="10"/><line x1="30" y1="28" x2="24" y2="20"/><line x1="70" y1="28" x2="76" y2="20"/>
+    <line x1="20" y1="46" x2="10" y2="44"/><line x1="80" y1="46" x2="90" y2="44"/></g>
+  <path d="M50 22 L20 82 L50 82 Z" fill="url(#gpFace)" stroke="#49370b" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M50 22 L80 82 L50 82 Z" fill="url(#gpSide)" stroke="#49370b" stroke-width="3" stroke-linejoin="round"/>
+  <g stroke="#8a6412" stroke-width="1" opacity="0.55">
+    <line x1="34" y1="52" x2="66" y2="52"/><line x1="27" y1="67" x2="73" y2="67"/><line x1="50" y1="22" x2="50" y2="82"/></g>
+  <path d="M50 12 L44 24 L50 30 L56 24 Z" fill="#7bd0ff" stroke="#123a5a" stroke-width="1.6" stroke-linejoin="round"/>
+  <path d="M44 24 L56 24 L50 30 Z" fill="#4a9be0" stroke="#123a5a" stroke-width="1"/>`,
+  { cy: 85, rx: 34, ry: 7 });
+
 export const SPRITES = {
   grass, bush, tree, hut, house, mansion, castle, floatingCastle, tripleCastle,
   megaCastle, kingdom,
-  bear, tombstone, church, cathedral, treasury, royalVault, plate, crystal, rock,
+  bear, tombstone, church, cathedral, treasury, royalVault, treasureHoard, goldPyramid,
+  plate, crystal, rock,
 };
 
 // --- "super" variants (made by matching 4+) ----------------------------------
@@ -392,7 +437,7 @@ const SUPER_STAR =
   'fill="#ffd84a" stroke="#654909" stroke-width="1"/>';
 const SUPER_BASES = ['bush', 'tree', 'hut', 'house', 'mansion', 'castle',
   'floatingCastle', 'tripleCastle', 'megaCastle', 'kingdom',
-  'church', 'cathedral', 'treasury', 'royalVault'];
+  'church', 'cathedral', 'treasury', 'royalVault', 'treasureHoard', 'goldPyramid'];
 const PLANT_SUPERS = new Set(['bush', 'tree']);
 for (const base of SUPER_BASES) {
   const decor = PLANT_SUPERS.has(base) ? SUPER_BERRIES : SUPER_STAR;

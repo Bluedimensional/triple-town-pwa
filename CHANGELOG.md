@@ -3,6 +3,27 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.31.0] - 2026-08-04 (v55)
+
+### Added
+- **Tomb line keeps going past Royal Vault.** Two new top tiers extend the bear /
+  tombstone chain: **Treasure Hoard** (the treasure bursts its chest into a grand
+  overflowing gold mound with gems and a crown; 50,000 pts / 1,000 coins) and, above
+  it, the ultimate **Golden Pyramid** (a radiant two-faced gold monument with a
+  jewelled capstone; 120,000 pts / 2,500 coins). Full chain is now
+  Tombstone → Church → Cathedral → Treasury → Royal Vault → Treasure Hoard → Golden
+  Pyramid. Both have Super (match-4+) variants. Merge engine verified end-to-end.
+
+### Note
+- Royal Vault → Treasure Hoard needs 3 Royal Vaults, and Treasure Hoard → Golden
+  Pyramid needs 3 Treasure Hoards, so these sit deep in the endgame (mostly reachable
+  via crystal wildcards or very long runs). Verified 3 Treasuries **do** correctly
+  merge into a Royal Vault — that merge was never broken; connected (orthogonal, not
+  diagonal) placement is required.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v55`.
+
 ## [0.30.0] - 2026-08-04 (v54)
 
 ### Changed
