@@ -3,6 +3,22 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.26.1] - 2026-07-24 (v50)
+
+### Changed
+- **Darker outlines on every piece** (~40% darker), for the crisp, defined border
+  look of the original. Light highlight strokes were left alone.
+- **Deeper drop shadow** — a touch darker and slightly larger, so pieces feel more
+  grounded.
+
+### Added
+- **Scores are now more durable** — the game requests *persistent storage* on
+  load, so the browser won't evict your saved scores/progress. (On iPhone this is
+  most reliable when the game is **added to the Home Screen** as an app.)
+
+### Migration
+- Service-worker cache bumped to `tripletown-v50`.
+
 ## [0.26.0] - 2026-07-24 (v49)
 
 ### Changed

@@ -106,7 +106,14 @@ function boot() {
   draw();
   markCurrentSize();
   startGestures(bearCells);   // bears fidget in place between placements
+  requestPersistentStorage(); // ask the browser not to evict our saved scores
   registerServiceWorker();
+}
+
+// Ask the browser to keep our localStorage (scores + save) persistent so it
+// isn't evicted — most reliably granted when installed to the home screen.
+function requestPersistentStorage() {
+  try { navigator.storage?.persist?.(); } catch (e) { /* not supported — ignore */ }
 }
 
 function registerServiceWorker() {
