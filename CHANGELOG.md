@@ -3,6 +3,21 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.29.0] - 2026-08-04 (v53)
+
+### Changed
+- **Path edges refined toward the original's look.** The old version bulged every
+  grass-facing side *outward* by the same amount, which read as uniform, "robotic"
+  scallops pushing into the field. Now each grass-facing side is pulled *in* by a
+  small **grass margin** (padding all around the path), straight runs stay straight
+  instead of scalloping per-cell, and only true **outer corners** round — each with
+  a **per-corner varied** radius (deterministic, so it never jitters) that is
+  **shallower** than before. Sides shared with another path tile still sit on the
+  cell boundary, so connected tiles fuse with no seam and the path reads continuous.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v53`.
+
 ## [0.28.0] - 2026-07-24 (v52)
 
 ### Added

@@ -145,40 +145,53 @@ function wob(a, b) {
   return (h - Math.floor(h)) * 2 - 1;
 }
 
-// The path region drawn as an ORGANIC shape — filter-free. Each cell is emitted
-// as a closed subpath (unioned by the fill); an edge that borders a non-path cell
-// bulges gently OUTWARD (a quadratic curve), while an edge shared with another
-// path cell stays straight so the cells tile seamlessly. A lone cell becomes a
-// soft blob; runs of cells flow with wavy borders. Pure vector, no SVG filter —
-// so it can't cause the iOS rasterization lag the old turbulence filter did.
+// The path region drawn as an ORGANIC shape — filter-free. Each cell is a closed
+// rounded-rectangle subpath (the fills union into one blob). A side shared with
+// another path cell sits on the cell boundary, so connected cells fuse with no
+// seam and the path reads continuous. A side facing GRASS is pulled IN by a small
+// padding, so the path never quite reaches the cell edge (a thin grass margin all
+// around). Only a true OUTER corner — where both of its sides face grass — gets
+// rounded, and its radius VARIES per corner (a deterministic hash) so the rounding
+// looks hand-drawn rather than stamped. Shallow on purpose. Pure vector, no SVG
+// filter — so it can't cause the iOS rasterization lag the old turbulence filter did.
 function isP(r, c) {
   return r >= 0 && r < state.rows && c >= 0 && c < state.cols && isPathCell(r, c);
 }
 function buildPathShape() {
   let d = '';
-  const AMP = 0.12;                       // max outward bulge, in cell units
+  const PAD = 0.075;                       // grass margin pulled off each open side
+  const f = (n) => n.toFixed(3);
   for (let r = 0; r < state.rows; r++) {
     for (let c = 0; c < state.cols; c++) {
       if (!isPathCell(r, c)) continue;
-      const cx = c + 0.5, cy = r + 0.5;
-      const corner = [[c, r], [c + 1, r], [c + 1, r + 1], [c, r + 1]];
-      // open[e] = the neighbour across edge e is NOT a path cell (an outer edge).
-      const open = [!isP(r - 1, c), !isP(r, c + 1), !isP(r + 1, c), !isP(r, c - 1)];
-      d += `M${corner[0][0]} ${corner[0][1]}`;
-      for (let e = 0; e < 4; e++) {
-        const [ex, ey] = corner[(e + 1) % 4];
-        if (open[e]) {
-          const [sx, sy] = corner[e];
-          const mx = (sx + ex) / 2, my = (sy + ey) / 2;
-          let nx = mx - cx, ny = my - cy;
-          const len = Math.hypot(nx, ny) || 1; nx /= len; ny /= len;
-          const amp = AMP * (0.65 + 0.5 * Math.abs(wob(mx * 3.7, my * 2.3)));
-          const bx = (mx + nx * amp * 2).toFixed(3), by = (my + ny * amp * 2).toFixed(3);
-          d += `Q${bx} ${by} ${ex} ${ey}`;
-        } else {
-          d += `L${ex} ${ey}`;
-        }
-      }
+      // A side is "open" when the neighbour across it is NOT a path cell.
+      const up = !isP(r - 1, c), rt = !isP(r, c + 1),
+            dn = !isP(r + 1, c), lf = !isP(r, c - 1);
+      // Inset the rectangle on every OPEN side; closed sides stay on the cell
+      // boundary so neighbouring path cells share an exact edge and fuse.
+      const x0 = c + (lf ? PAD : 0), x1 = c + 1 - (rt ? PAD : 0);
+      const y0 = r + (up ? PAD : 0), y1 = r + 1 - (dn ? PAD : 0);
+      // Round a corner only when BOTH its sides face grass. Radius varies per
+      // corner (deterministic, so it never jitters) between ~0.10 and ~0.22.
+      const rad = (on, a, b) => (on ? 0.10 + 0.12 * Math.abs(wob(a, b)) : 0);
+      let rTL = rad(up && lf, c * 1.7 + 0.3, r * 2.3 + 0.7);
+      let rTR = rad(up && rt, (c + 1) * 1.9 + 0.5, r * 2.1 + 0.2);
+      let rBR = rad(dn && rt, (c + 1) * 1.3 + 0.9, (r + 1) * 1.8 + 0.4);
+      let rBL = rad(dn && lf, c * 2.2 + 0.6, (r + 1) * 1.5 + 0.8);
+      // Never let two radii on the same short side overlap.
+      const cap = Math.min(x1 - x0, y1 - y0) * 0.5;
+      rTL = Math.min(rTL, cap); rTR = Math.min(rTR, cap);
+      rBR = Math.min(rBR, cap); rBL = Math.min(rBL, cap);
+      // Walk clockwise, starting just past the top-left corner.
+      d += `M${f(x0 + rTL)} ${f(y0)}`;
+      d += `L${f(x1 - rTR)} ${f(y0)}`;
+      if (rTR) d += `Q${f(x1)} ${f(y0)} ${f(x1)} ${f(y0 + rTR)}`;
+      d += `L${f(x1)} ${f(y1 - rBR)}`;
+      if (rBR) d += `Q${f(x1)} ${f(y1)} ${f(x1 - rBR)} ${f(y1)}`;
+      d += `L${f(x0 + rBL)} ${f(y1)}`;
+      if (rBL) d += `Q${f(x0)} ${f(y1)} ${f(x0)} ${f(y1 - rBL)}`;
+      d += `L${f(x0)} ${f(y0 + rTL)}`;
+      if (rTL) d += `Q${f(x0)} ${f(y0)} ${f(x0 + rTL)} ${f(y0)}`;
       d += 'Z';
     }
   }
