@@ -552,6 +552,11 @@ body[data-field="ocean"] {
 .cell.gesture-wiggle svg  { animation: bearWiggle 900ms ease-in-out; }
 .cell.gesture-scratch svg { animation: bearScratch 1300ms ease-in-out; }
 .cell.gesture-stamp svg   { animation: bearStamp 800ms ease-in-out; }
+.cell.gesture-hop svg     { animation: bearHop 680ms ease-in-out; }
+.cell.gesture-spin svg    { transform-origin: 50% 60%; animation: bearSpin 780ms ease-in-out; }
+.cell.gesture-bounce svg  { animation: bearBounce 820ms ease-in-out; }
+.cell.gesture-look svg    { animation: bearLook 1300ms ease-in-out; }
+.cell.gesture-nod svg     { animation: bearNod 1000ms ease-in-out; }
 
 @keyframes bearLean {
   0%, 100% { transform: rotate(0deg); }
@@ -580,6 +585,44 @@ body[data-field="ocean"] {
   30%      { transform: translateY(-9%) scale(0.97, 1.05); }
   55%      { transform: translateY(0) scale(1.08, 0.9); }
   78%      { transform: translateY(0) scale(0.99, 1.02); }
+}
+
+/* A little jump: crouch, spring up with a stretch, land with a squash. */
+@keyframes bearHop {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  18%      { transform: translateY(2%) scale(1.06, 0.94); }
+  50%      { transform: translateY(-17%) scale(0.95, 1.07); }
+  76%      { transform: translateY(0) scale(1.07, 0.93); }
+  90%      { transform: translateY(0) scale(0.99, 1.01); }
+}
+/* A playful full twirl (pivots higher, around the body's middle). */
+@keyframes bearSpin {
+  0%   { transform: rotate(0deg) scale(1); }
+  50%  { transform: rotate(180deg) scale(0.9); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+/* Excited double bounce in place. */
+@keyframes bearBounce {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  20%      { transform: translateY(-13%) scale(0.97, 1.05); }
+  40%      { transform: translateY(0) scale(1.05, 0.95); }
+  62%      { transform: translateY(-8%) scale(0.98, 1.04); }
+  82%      { transform: translateY(0) scale(1.03, 0.97); }
+}
+/* Glances around — a gentle head/body sway both ways. */
+@keyframes bearLook {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(5deg); }
+  55%      { transform: rotate(-5deg); }
+  80%      { transform: rotate(3deg); }
+}
+/* A couple of quick nods — a forward dip and back. */
+@keyframes bearNod {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  22%      { transform: translateY(4%) scale(1.03, 0.95); }
+  44%      { transform: translateY(0) scale(1, 1); }
+  66%      { transform: translateY(4%) scale(1.03, 0.95); }
+  84%      { transform: translateY(0) scale(1, 1); }
 }
 
 /* Bears blink: eyes briefly squeeze shut. */

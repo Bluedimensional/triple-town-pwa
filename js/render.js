@@ -482,7 +482,7 @@ function paintStorage(onSwap) {
     slot.innerHTML = `<span class="sh-plate">${SPRITES.plate}</span>` +
       (open && piece ? `<span class="sh-item">${sprite(piece)}</span>` : '');
     slot.title = !open
-      ? `Storage slot ${i + 1} — unlocks at level ${i + 1}`
+      ? `Storage slot ${i + 1} — unlocks at level ${i}`
       : (piece ? NAMES[piece] + ' — tap to swap' : `Storage slot ${i + 1} — tap to store`);
     slot.addEventListener('pointerdown', (e) => { if (e.button === 0 && !slot.disabled) onSwap(i); });
     el.storage.appendChild(slot);

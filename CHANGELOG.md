@@ -3,6 +3,22 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.35.0] - 2026-08-04 (v59)
+
+### Changed
+- **Start with 2 storage slots** (was 1). The whole unlock schedule shifts up by
+  one: 2 from the start, a 3rd at level 2, a 4th at level 3 (`MAX_STORAGE` 3 → 4,
+  `unlockedStorage = min(4, level+1)`). In-progress games pick this up on reload.
+- **Bears are much livelier.** Added **five** new idle gestures — **hop, spin,
+  bounce, look, nod** — for **nine** in total (with lean, wiggle, scratch, stamp).
+  A new gesture now starts every **~1–2.8s** (was 2–4.5s) and **up to 3 bears can
+  fidget at once** (was strictly one at a time), so a crowded board reads as busy
+  and alive like the original. Still transform-only (cheap on phones) and paused
+  while the tab is hidden. All cadence/concurrency values are tunable.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v59`.
+
 ## [0.34.0] - 2026-08-04 (v58)
 
 ### Added

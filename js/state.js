@@ -36,9 +36,10 @@ export const state = {
   floatPoints: null, // {r,c,points} points earned by the last placement, floats up
 };
 
-// How many storage slots are unlocked at the current level (1 / 2 / 3).
+// How many storage slots are unlocked at the current level: 2 at level 1, then
+// one more each level (3 at L2, 4 at L3), capped at MAX_STORAGE.
 export function unlockedStorage() {
-  return Math.min(MAX_STORAGE, state.level);
+  return Math.min(MAX_STORAGE, state.level + 1);
 }
 
 export function emptyBoard() {

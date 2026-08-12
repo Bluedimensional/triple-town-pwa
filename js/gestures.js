@@ -1,33 +1,28 @@
 // gestures.js — bears fidget in place, like the original game.
 //
-// In the original, a bear every so often scratches an itch, stamps the ground,
-// throws a little karate move, or leans about. Timing comes from play
-// observation: a gesture every 5-15s, at random within that range.
+// In the original the board is ALIVE: bears constantly scratch, stamp, hop,
+// spin, bounce, look around, nod, and lean, and several move at once. So this is
+// deliberately lively — a fresh gesture starts every ~1-2.8s (board-wide), a
+// random idle bear gets it, and up to MAX_CONCURRENT bears animate at the same
+// time (each doing its own thing, which reads as a busy scene, not a glitch).
 //
-// The 5-15s cadence is BOARD-WIDE, not per-bear: one bear fidgets, then nothing
-// happens anywhere for another 5-15s. Giving every bear its own countdown makes
-// a crowded board twitch constantly (measured: ~2.8s between gestures with five
-// bears) and lets two animate at once, which reads as a glitch.
-//
-// The countdown is also global rather than attached to a DOM cell, because bears
+// The countdown is global rather than attached to a DOM cell, because bears
 // shuffle to a new tile on every placement — a cell-bound timer would reset
 // constantly and rarely survive long enough to fire.
 
-const GESTURES = ['lean', 'wiggle', 'scratch', 'stamp'];
+const GESTURES = ['lean', 'wiggle', 'scratch', 'stamp',
+  'hop', 'spin', 'bounce', 'look', 'nod'];
 const GESTURE_CLASSES = GESTURES.map((g) => 'gesture-' + g);
 
-// TESTING CADENCE: sped up so gestures are easy to observe. The original
-// game's feel is ~5-15s (restore to 5000/15000 when done testing).
-export const GESTURE_MIN_MS = 2000;
-export const GESTURE_MAX_MS = 4500;
+// How often a new gesture starts, board-wide (random within the range).
+export const GESTURE_MIN_MS = 1000;
+export const GESTURE_MAX_MS = 2800;
+
+// Up to this many bears may fidget at the same time (a lively, busy board).
+const MAX_CONCURRENT = 3;
 
 const LONGEST_MS = 1500;   // longest gesture animation, for the cleanup fallback
-const TICK_MS = 400;
-
-// If a gesture is somehow still running when the next is due, wait this long and
-// retry rather than starting a second one. (Only ever one bear fidgets at a
-// time — two at once reads as a glitch rather than as characters.)
-const HOLD_MS = 700;
+const TICK_MS = 300;
 
 function randomDelay() {
   return GESTURE_MIN_MS + Math.random() * (GESTURE_MAX_MS - GESTURE_MIN_MS);
@@ -56,18 +51,13 @@ function tick(getBearCells) {
   if (now < nextAt) return;
 
   const cells = getBearCells();
-  // Never overlap: if a gesture is somehow still running, wait a beat and retry
-  // rather than starting a second one.
+  const busy = cells.filter(isGesturing).length;
   const idle = cells.filter((c) => !isGesturing(c));
-  if (idle.length !== cells.length || !idle.length) {
-    nextAt = now + HOLD_MS;
-    return;
+  // Start one more, as long as we're under the concurrency cap and someone's free.
+  if (idle.length && busy < MAX_CONCURRENT) {
+    play(idle[Math.floor(Math.random() * idle.length)]);
   }
-
-  play(idle[Math.floor(Math.random() * idle.length)]);
-  // Count the 5-15s from when this gesture FINISHES, so the still period the
-  // player actually sees is the full 5-15s rather than 5-15s minus the animation.
-  nextAt = now + LONGEST_MS + randomDelay();
+  nextAt = now + randomDelay();   // keep it lively — overlapping gestures welcome
 }
 
 // getBearCells() returns the cells holding a settled bear (see render.js).

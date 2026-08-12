@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v58';
+export const VERSION = 'v59';
 
 // The organic path edges are now baked into the path GEOMETRY (each outer edge
 // bulges outward — see buildPathShape in render.js), so there is NO runtime SVG
@@ -134,8 +134,8 @@ export function goalForLevel(level) {
 }
 
 // Storage: reserve slots in a row above the board (swap-only, never match).
-// Slots unlock by level — 1 from the start, a 2nd at level 2, a 3rd at level 3.
-export const MAX_STORAGE = 3;
+// You START with 2 slots; a 3rd unlocks at level 2 and a 4th at level 3.
+export const MAX_STORAGE = 4;
 
 // Swappable asset map: tile type -> glyph. Swap these for <img> paths later
 // (see render.js) without touching any game logic. Grass is a leafy tuft,
