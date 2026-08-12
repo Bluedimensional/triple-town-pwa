@@ -3,6 +3,18 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.36.0] - 2026-08-04 (v60)
+
+### Changed
+- **Cathedral no longer looks like the Church.** They shared gray walls, purple
+  roofs, and a plain blue window. The Cathedral's twin spires are now **weathered
+  copper-green** (`#4f9d8a`) with a **gold trim band** across the wall top and a
+  **gold-ringed** rose window, so it clearly reads as a grander step up from the
+  purple-roofed Church while both keep the gray-stone church-line identity.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v60`.
+
 ## [0.35.0] - 2026-08-04 (v59)
 
 ### Changed

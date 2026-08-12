@@ -243,13 +243,17 @@ const church = svg(`
   <path d="M43 86 L43 62 Q50 54 57 62 L57 86 Z" fill="#5a4632"/>
   <circle cx="50" cy="52" r="5" fill="#8fbcd8" stroke="#2c2a20" stroke-width="2"/>`, { cy: 89, rx: 24, ry: 5.5 });
 
+// Cathedral — twin copper-green (weathered) spires with gold finials and a
+// gold-ringed rose window, so it reads clearly apart from the purple-roofed Church.
 const cathedral = svg(`
   <rect x="24" y="46" width="52" height="40" fill="#a3a29a" stroke="#292924" stroke-width="3"/>
-  <path d="M24 46 L34 22 L44 46 Z" fill="#6f4f78" stroke="#231c28" stroke-width="2.5" stroke-linejoin="round"/>
-  <path d="M56 46 L66 22 L76 46 Z" fill="#6f4f78" stroke="#231c28" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M24 46 L34 22 L44 46 Z" fill="#4f9d8a" stroke="#173b33" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M56 46 L66 22 L76 46 Z" fill="#4f9d8a" stroke="#173b33" stroke-width="2.5" stroke-linejoin="round"/>
   <rect x="31" y="14" width="5" height="9" fill="#caa02c"/><rect x="63" y="14" width="5" height="9" fill="#caa02c"/>
+  <rect x="24" y="45" width="52" height="4" fill="#caa02c" stroke="#5a4310" stroke-width="1"/>
   <path d="M42 86 L42 60 Q50 52 58 60 L58 86 Z" fill="#5a4632"/>
-  <circle cx="50" cy="40" r="7" fill="#8fbcd8" stroke="#2c2a20" stroke-width="2"/>`, { cy: 89, rx: 28, ry: 6.5 });
+  <circle cx="50" cy="40" r="7.5" fill="#8fbcd8" stroke="#caa02c" stroke-width="2.5"/>
+  <circle cx="50" cy="40" r="7.5" fill="none" stroke="#2c2a20" stroke-width="0.8"/>`, { cy: 89, rx: 28, ry: 6.5 });
 
 const treasury = svg(`
   <rect x="26" y="52" width="48" height="34" rx="4" fill="#7a5324" stroke="#261a0b" stroke-width="3"/>
