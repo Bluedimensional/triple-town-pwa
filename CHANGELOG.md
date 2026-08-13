@@ -3,6 +3,17 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.37.0] - 2026-08-04 (v61)
+
+### Changed
+- **Kept out of search engines (link-only sharing).** Added `<meta name="robots"
+  content="noindex, nofollow">` to `index.html` and a `robots.txt` (`Disallow: /`).
+  This does NOT restrict access — anyone with the URL can still play; it just keeps
+  the site from appearing in Google/Bing results.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v61`.
+
 ## [0.36.0] - 2026-08-04 (v60)
 
 ### Changed
