@@ -235,22 +235,24 @@ const tombstone = svg(`
 
 // --- tomb chain ---------------------------------------------------------
 
+// Church — the smaller holy building: plain purple roof, no topper (no cross,
+// no star), so it reads as the simpler tier below the star-crowned Cathedral.
 const church = svg(`
   <rect x="30" y="46" width="40" height="40" fill="#a3a29a" stroke="#292924" stroke-width="3"/>
   <path d="M26 48 L50 28 L74 48 Z" fill="#7d5a86" stroke="#231c28" stroke-width="3" stroke-linejoin="round"/>
-  <rect x="47" y="12" width="6" height="18" fill="#caa02c"/>
-  <rect x="42" y="17" width="16" height="6" fill="#caa02c"/>
   <path d="M43 86 L43 62 Q50 54 57 62 L57 86 Z" fill="#5a4632"/>
   <circle cx="50" cy="52" r="5" fill="#8fbcd8" stroke="#2c2a20" stroke-width="2"/>`, { cy: 89, rx: 24, ry: 5.5 });
 
-// Cathedral — twin copper-green (weathered) spires with gold finials and a
-// gold-ringed rose window, so it reads clearly apart from the purple-roofed Church.
+// Cathedral — twin copper-green (weathered) spires with gold finials, a gold
+// trim band, a gold-ringed rose window, and a crowning gold STAR on top. Reads
+// clearly apart from (and grander than) the plain purple-roofed Church.
 const cathedral = svg(`
   <rect x="24" y="46" width="52" height="40" fill="#a3a29a" stroke="#292924" stroke-width="3"/>
   <path d="M24 46 L34 22 L44 46 Z" fill="#4f9d8a" stroke="#173b33" stroke-width="2.5" stroke-linejoin="round"/>
   <path d="M56 46 L66 22 L76 46 Z" fill="#4f9d8a" stroke="#173b33" stroke-width="2.5" stroke-linejoin="round"/>
   <rect x="31" y="14" width="5" height="9" fill="#caa02c"/><rect x="63" y="14" width="5" height="9" fill="#caa02c"/>
   <rect x="24" y="45" width="52" height="4" fill="#caa02c" stroke="#5a4310" stroke-width="1"/>
+  <path d="M50 4 L51.9 9.3 L57.6 9.5 L53.1 13 L54.7 18.5 L50 15.3 L45.3 18.5 L46.9 13 L42.4 9.5 L48.1 9.3 Z" fill="#ffd84a" stroke="#654909" stroke-width="1.2" stroke-linejoin="round"/>
   <path d="M42 86 L42 60 Q50 52 58 60 L58 86 Z" fill="#5a4632"/>
   <circle cx="50" cy="40" r="7.5" fill="#8fbcd8" stroke="#caa02c" stroke-width="2.5"/>
   <circle cx="50" cy="40" r="7.5" fill="none" stroke="#2c2a20" stroke-width="0.8"/>`, { cy: 89, rx: 28, ry: 6.5 });

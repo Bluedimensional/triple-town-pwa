@@ -14,12 +14,13 @@ const GESTURES = ['lean', 'wiggle', 'scratch', 'stamp',
   'hop', 'spin', 'bounce', 'look', 'nod'];
 const GESTURE_CLASSES = GESTURES.map((g) => 'gesture-' + g);
 
-// How often a new gesture starts, board-wide (random within the range).
-export const GESTURE_MIN_MS = 1000;
-export const GESTURE_MAX_MS = 2800;
+// How often a new gesture starts, board-wide (random within the range). The wide
+// min→max spread keeps the timing from feeling metronomic even though it's frequent.
+export const GESTURE_MIN_MS = 600;
+export const GESTURE_MAX_MS = 1900;
 
-// Up to this many bears may fidget at the same time (a lively, busy board).
-const MAX_CONCURRENT = 3;
+// Up to this many bears may fidget at the same time (a busy, lively board).
+const MAX_CONCURRENT = 4;
 
 const LONGEST_MS = 1500;   // longest gesture animation, for the cleanup fallback
 const TICK_MS = 300;

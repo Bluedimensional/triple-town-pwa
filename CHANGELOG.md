@@ -3,6 +3,21 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.38.0] - 2026-08-14 (v62)
+
+### Changed
+- **Church vs Cathedral toppers.** The Church lost its cross topper — it's now a
+  plain purple-roofed building (no cross, no star). The Cathedral keeps its
+  copper-green look and gains a **crowning gold star** on top, so the two read as
+  clearly different tiers. (The small corner star on match-4 "Super" pieces is a
+  separate badge and is unchanged.)
+- **Bears are busier still.** New idle gestures now start every **~0.6–1.9s** (was
+  1–2.8s) and **up to 4 bears** animate at once (was 3) — more constant movement,
+  with the wide timing spread keeping it from feeling metronomic.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v62`.
+
 ## [0.37.0] - 2026-08-04 (v61)
 
 ### Changed
