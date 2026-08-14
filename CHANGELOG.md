@@ -3,6 +3,20 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.39.0] - 2026-08-14 (v63)
+
+### Added
+- **Townsfolk.** Little villagers now stroll out of your buildings. Every few
+  seconds a small figure emerges from a residential building (hut, house, mansion,
+  castle, mega castle, kingdom, metropolis — super variants too), walks onto an
+  adjacent open path tile with a walking bounce, pauses, and heads back inside.
+  Up to 2 at once, each with a random look (tunic/skin/hair). Purely decorative —
+  overlay only, never touches gameplay, pauses when the tab is hidden. New module
+  `js/villagers.js` (+ precached in the service worker).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v63`.
+
 ## [0.38.0] - 2026-08-14 (v62)
 
 ### Changed

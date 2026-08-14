@@ -8,6 +8,7 @@ import { buyItem } from './store.js';
 import { save, load } from './persistence.js';
 import { cacheDom, buildBoard, render, bearCells, openScores, closeScores } from './render.js';
 import { startGestures } from './gestures.js';
+import { startVillagers } from './villagers.js';
 
 function draw() {
   render({ onBuy, onSwap });
@@ -129,6 +130,7 @@ function boot() {
   draw();
   markCurrentSize();
   startGestures(bearCells);   // bears fidget in place between placements
+  startVillagers(() => document.getElementById('board'));   // townsfolk stroll about
   requestPersistentStorage(); // ask the browser not to evict our saved scores
   registerServiceWorker();
 }
