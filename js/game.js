@@ -5,7 +5,7 @@ import {
   SPAWN_WEIGHTS, MAX_GRASS_STREAK, CRYSTAL_CHANCE, POINTS,
   BEAR_BASE_CHANCE, BEAR_CHANCE_PER_TURN, BEAR_MAX_CHANCE,
   PREFILL_MIN, PREFILL_MAX, PREFILL_WEIGHTS, PREFILL_BEARS, PREFILL_TOMB_CHANCE,
-  goalForLevel, BOMB_TARGETS,
+  goalForLevel, BOMB_TARGETS, GRAVE_TARGETS,
 } from './config.js';
 import { recordScore } from './persistence.js';
 import { resolveMerges, crystalResolve } from './match.js';
@@ -121,43 +121,53 @@ function snapshot() {
     reserves: state.reserves, score: state.score, coins: state.coins,
     turns: state.turns, level: state.level, goal: state.goal,
     grassStreak: state.grassStreak, storeBought: state.storeBought,
-    crystalMult: state.crystalMult, bombs: state.bombs, over: state.over,
+    crystalMult: state.crystalMult, bombs: state.bombs, graveBombs: state.graveBombs,
+    over: state.over,
   });
 }
 
-// --- Bombs (long-press special) ----------------------------------------------
-// Arm the held piece as a bomb (needs at least one banked bomb). Returns whether
-// it armed. Disarm/toggle just flip the transient armed flag.
-export function armBomb() {
-  if (state.over || state.bombs <= 0 || state.bombArmed) return false;
-  state.bombArmed = true;
+// --- Bombs (the long-press / button special) ---------------------------------
+// Two kinds share this machinery:
+//   'bomb'  — earned on big merges; destroys a Rock or Bear.
+//   'grave' — rarer; destroys a Tombstone (a grave left by a trapped bear).
+// state.armed holds which kind is currently aimed (null | 'bomb' | 'grave').
+function countOf(kind) { return kind === 'grave' ? state.graveBombs : state.bombs; }
+function targetsOf(kind) { return kind === 'grave' ? GRAVE_TARGETS : BOMB_TARGETS; }
+
+// Arm a bomb of the given kind (needs at least one banked). Returns whether it armed.
+export function armBomb(kind = 'bomb') {
+  if (state.over || countOf(kind) <= 0) return false;
+  state.armed = kind;
   return true;
 }
 export function disarmBomb() {
-  if (!state.bombArmed) return false;
-  state.bombArmed = false;
+  if (!state.armed) return false;
+  state.armed = null;
   return true;
 }
-export function toggleBomb() {
-  return state.bombArmed ? disarmBomb() : armBomb();
+// Tap a bomb button: arm that kind, or disarm if it's already the aimed one.
+export function toggleBomb(kind = 'bomb') {
+  if (state.armed === kind) { state.armed = null; return false; }
+  return armBomb(kind);
 }
 
-// Detonate an armed bomb at (r,c). Only Rocks and Bears can be destroyed. It's a
-// FREE action — it clears the tile but does NOT consume the held piece, draw a
-// new one, ramp bears, or end the turn. Tapping a non-target just cancels.
-// Returns true if a tile was destroyed.
+// Detonate the armed bomb at (r,c) — destroys a valid target for the aimed kind.
+// A FREE action: clears the tile but does NOT consume the held piece, draw a new
+// one, ramp bears, or end the turn. Tapping a non-target just cancels. Returns
+// true if a tile was destroyed.
 export function bombAt(r, c) {
-  if (!state.bombArmed) return false;
+  const kind = state.armed;
+  if (!kind) return false;
   const t = state.board[r][c];
-  if (state.bombs > 0 && BOMB_TARGETS.includes(t)) {
+  if (countOf(kind) > 0 && targetsOf(kind).includes(t)) {
     state.board[r][c] = null;
-    state.bombs--;
-    state.bombArmed = false;
+    if (kind === 'grave') state.graveBombs--; else state.bombs--;
+    state.armed = null;
     state.bombBlast = { r, c };
     save();
     return true;
   }
-  state.bombArmed = false;   // tapped something that can't be bombed — cancel
+  state.armed = null;   // tapped something that can't be bombed — cancel
   return false;
 }
 
@@ -170,7 +180,7 @@ export function undoMove() {
   // Clear one-shot animation markers so nothing replays on the restored board.
   state.lastCreated = null; state.bearMoves = []; state.mergeSlides = [];
   state.floatPoints = null; state.levelFlash = false; state.levelCelebrate = null;
-  state.bombArmed = false; state.bombBlast = null;
+  state.armed = null; state.bombBlast = null;
   save();
   return true;
 }

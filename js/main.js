@@ -18,13 +18,13 @@ function draw() {
 // on anything else); otherwise it places the held piece there.
 function onCellTap(r, c) {
   if (state.over) return;
-  if (state.bombArmed) { bombAt(r, c); draw(); return; }
+  if (state.armed) { bombAt(r, c); draw(); return; }
   if (placePiece(r, c)) draw();
 }
 
-// Long-press on the held piece arms a bomb (when one is banked).
+// Long-press on the held piece arms a regular bomb (when one is banked).
 function onArm() {
-  if (armBomb()) draw();
+  if (armBomb('bomb')) draw();
 }
 
 // Tapping an (unlocked) storage slot swaps/stashes the held piece.
@@ -119,11 +119,18 @@ function boot() {
     if (undoMove()) draw();
   });
 
-  // Bomb button: arm/disarm bomb-aim mode (an alternative to long-pressing the
+  // Bomb button: arm/disarm regular bomb-aim mode (also via long-press on the
   // held piece). While armed, tap a Rock or Bear on the board to blow it up.
   document.getElementById('bomb-btn').addEventListener('pointerdown', (e) => {
     e.preventDefault();
-    toggleBomb();
+    toggleBomb('bomb');
+    draw();
+  });
+
+  // Grave-bomb button: arm/disarm grave-aim mode; then tap a Tombstone to clear it.
+  document.getElementById('grave-btn').addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    toggleBomb('grave');
     draw();
   });
 

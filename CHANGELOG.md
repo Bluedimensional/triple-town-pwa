@@ -3,6 +3,21 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.41.0] - 2026-08-14 (v65)
+
+### Added
+- **Grave bombs 🪦.** A second, rarer special that clears a stuck **Tombstone** (a
+  grave left when bears run out of room). Regular 💣 bombs can't touch graves; only
+  grave bombs can (and grave bombs can't touch rocks/bears). Earned **less often**
+  than regular bombs — a bigger merge is needed (Floating Castle / Treasury tier,
+  `GRAVE_BOMB_EARN_MIN_POINTS = 5000`; cap 5). A separate slate/violet 🪦 counter
+  sits next to the bomb button; tap to arm, then tap a grave to clear it (free
+  action, doesn't consume your piece). Persists across reloads; undo restores it.
+  Internally the two bombs now share one aim system (`state.armed` = 'bomb'|'grave').
+
+### Migration
+- Service-worker cache bumped to `tripletown-v65`.
+
 ## [0.40.0] - 2026-08-14 (v64)
 
 ### Changed

@@ -30,6 +30,8 @@ export function cacheDom() {
   el.undoCount = document.getElementById('undo-count');
   el.bombBtn = document.getElementById('bomb-btn');
   el.bombCount = document.getElementById('bomb-count');
+  el.graveBtn = document.getElementById('grave-btn');
+  el.graveCount = document.getElementById('grave-count');
   el.hint = document.querySelector('#toolbar .hint');
   el.celebrate = document.getElementById('level-celebrate');
   el.scoresModal = document.getElementById('scores-modal');
@@ -125,7 +127,7 @@ export function buildBoard(onCellTap, onArm) {
         if (e.button !== 0) return;
         const cr = +cell.dataset.r, cc = +cell.dataset.c;
         const held = state.activePos && state.activePos.r === cr && state.activePos.c === cc;
-        if (held && state.bombs > 0 && !state.bombArmed && !state.over && onArm) {
+        if (held && state.bombs > 0 && !state.armed && !state.over && onArm) {
           lpFired = false; lpCell = { r: cr, c: cc }; clearLP();
           lpTimer = setTimeout(() => { lpFired = true; lpTimer = null; onArm(); }, 450);
           return;   // wait for pointerup to tell tap (place) from hold (arm)
@@ -306,12 +308,15 @@ function paintBoard() {
         }
         cell.title = type ? NAMES[type] : '';
       }
-      // Bomb aim mode: the held piece glows as a bomb, and every Rock/Bear on the
-      // board lights up as a valid target.
-      if (state.bombArmed) {
+      // Bomb aim mode: the held piece glows, and every valid target for the aimed
+      // bomb lights up — Rocks/Bears for a regular bomb, Tombstones for a grave bomb.
+      if (state.armed) {
         if (isActive(r, c)) cls += ' bomb-armed';
         const bt = state.board[r][c];
-        if (bt === 'rock' || bt === 'bear') cls += ' bomb-target';
+        const isTarget = state.armed === 'grave'
+          ? bt === 'tombstone'
+          : (bt === 'rock' || bt === 'bear');
+        if (isTarget) cls += ' bomb-target';
       }
       cell.className = cls;
     }
@@ -362,19 +367,28 @@ function paintUndo() {
   el.undoBtn.disabled = state.undos <= 0 || state.undoStack.length === 0;
 }
 
-// The bomb button: how many bombs are banked (earned on big merges), whether it's
-// currently armed, and — while armed — a hint telling you what to tap. Also lights
-// the button when a bomb is available so it's discoverable.
+// The bomb buttons: how many of each are banked, which (if any) is aimed, and —
+// while aimed — a hint telling you what to tap. Buttons light up when available.
 const DEFAULT_HINT = 'Tap to place · slots above = storage';
 function paintBombs() {
+  // Regular bomb (rock / bear).
   el.bombCount.textContent = state.bombs;
-  el.bombBtn.disabled = (state.bombs <= 0 && !state.bombArmed) || state.over;
-  el.bombBtn.classList.toggle('armed', state.bombArmed);
-  el.bombBtn.classList.toggle('ready', state.bombs > 0 && !state.bombArmed && !state.over);
-  if (el.hint) el.hint.textContent = state.bombArmed
-    ? '💣 Tap a rock or bear to blow it up (tap 💣 again to cancel)'
-    : DEFAULT_HINT;
-  document.body.classList.toggle('bomb-aiming', state.bombArmed);
+  el.bombBtn.disabled = (state.bombs <= 0 && state.armed !== 'bomb') || state.over;
+  el.bombBtn.classList.toggle('armed', state.armed === 'bomb');
+  el.bombBtn.classList.toggle('ready', state.bombs > 0 && state.armed !== 'bomb' && !state.over);
+  // Grave bomb (tombstone).
+  el.graveCount.textContent = state.graveBombs;
+  el.graveBtn.disabled = (state.graveBombs <= 0 && state.armed !== 'grave') || state.over;
+  el.graveBtn.classList.toggle('armed', state.armed === 'grave');
+  el.graveBtn.classList.toggle('ready', state.graveBombs > 0 && state.armed !== 'grave' && !state.over);
+
+  if (el.hint) {
+    el.hint.textContent =
+      state.armed === 'bomb' ? '💣 Tap a rock or bear to blow it up (tap 💣 again to cancel)'
+      : state.armed === 'grave' ? '🪦 Tap a grave to clear it (tap 🪦 again to cancel)'
+      : DEFAULT_HINT;
+  }
+  document.body.classList.toggle('bomb-aiming', !!state.armed);
 }
 
 // A quick blast burst where a bomb just destroyed a tile.
