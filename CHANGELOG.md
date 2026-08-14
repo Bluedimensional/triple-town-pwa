@@ -3,6 +3,20 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.40.0] - 2026-08-14 (v64)
+
+### Changed
+- **Villagers refined.** They're now **~half the height** and drawn **waist-up (no
+  legs)** — a compact bust. Their behavior got much more varied: each trip is a
+  **random walk** of 1–3 tiles with **mixed x/y directions and lengths**, they
+  **linger outside for a random amount of time** (some stay out much longer than
+  others), and **occasionally they stroll into a *different* nearby building**
+  instead of heading back home. Motion is now built per-villager via the Web
+  Animations API, so no two trips match. Honors reduced-motion (a simple fade).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v64`.
+
 ## [0.39.0] - 2026-08-14 (v63)
 
 ### Added
