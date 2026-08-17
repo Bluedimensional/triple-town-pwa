@@ -165,7 +165,7 @@ body[data-field="ocean"] {
   letter-spacing: 0.05em;
   color: var(--ink-soft);
 }
-.size-btn, .crys-btn {
+.size-btn, .crys-btn, .time-btn {
   background: rgba(255,255,255,0.12);
   color: var(--ink);
   border: 1px solid transparent;
@@ -175,15 +175,15 @@ body[data-field="ocean"] {
   font-size: 13px;
   font-variant-numeric: tabular-nums;
 }
-.size-btn.current, .crys-btn.current { border-color: var(--accent); background: rgba(107,160,58,0.28); }
-/* Crystal-density chooser (toolbar). */
-#crystal-controls {
+.size-btn.current, .crys-btn.current, .time-btn.current { border-color: var(--accent); background: rgba(107,160,58,0.28); }
+/* Crystal-density + timed-mode choosers (toolbar). */
+#crystal-controls, #time-controls {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
 }
-#crystal-controls .crys-btn { padding: 7px 9px; }
+#crystal-controls .crys-btn, #time-controls .time-btn { padding: 7px 9px; }
 .size-btn.primary {
   background: var(--accent);
   color: #fff;
@@ -222,6 +222,19 @@ body[data-field="ocean"] {
 }
 .goal-level { font-weight: 700; color: var(--ink); }
 .goal-target { color: var(--ink-soft); flex: 1; text-align: right; }
+/* Countdown clock (timed mode). Sits where the goal target would; turns red and
+   pulses in the last 30s. */
+.clock {
+  flex: 1;
+  text-align: right;
+  font-weight: 800;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.clock[hidden] { display: none; }
+.clock.low { color: #ff7a6e; animation: clockLow 1s ease-in-out infinite; }
+@keyframes clockLow { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
 .undo-btn {
   display: inline-flex;
   align-items: center;
@@ -394,8 +407,22 @@ body[data-field="ocean"] {
 }
 
 /* ---- High-scores modal ---- */
-.scores-card { min-width: min(92vw, 520px); }
-.scores-cols { display: flex; gap: 14px; margin: 16px 0; }
+.scores-card { min-width: min(92vw, 520px); max-height: 82vh; display: flex; flex-direction: column; }
+/* Time-mode tabs across the top of the modal. */
+.scores-tabs { display: flex; gap: 6px; justify-content: center; margin: 10px 0 4px; flex-wrap: wrap; }
+.sc-tab {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #5c7a3f;
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 5px 12px;
+  cursor: pointer;
+}
+.sc-tab.active { color: #fff; background: var(--accent); border-color: var(--accent); }
+.scores-cols { display: flex; gap: 14px; margin: 12px 0; overflow-y: auto; }
 .scores-col { flex: 1; }
 .scores-col h2 { margin: 0 0 8px; font-size: 16px; color: var(--accent); }
 .scores-col ol {

@@ -4,11 +4,12 @@
 // edit sprites.js — nothing here or in the game logic assumes how a tile looks.
 
 import { state, unlockedStorage } from './state.js';
-import { NAMES, STORE_ITEMS, ORGANIC_PATH, BOARDS, MAX_STORAGE, boardKey, goalForLevel } from './config.js';
+import { NAMES, STORE_ITEMS, ORGANIC_PATH, BOARDS, MAX_STORAGE, boardKey, goalForLevel,
+  TIME_MODES, timeModeLabel } from './config.js';
 import { SPRITES } from './sprites.js';
 import { priceOf } from './store.js';
 import { previewMergeGroup } from './match.js';
-import { loadScores } from './persistence.js';
+import { loadScores, scoreKey } from './persistence.js';
 
 const el = {};
 
@@ -26,6 +27,7 @@ export function cacheDom() {
   el.goalLevel = document.getElementById('goal-level');
   el.goalTarget = document.getElementById('goal-target');
   el.goalFill = document.getElementById('goal-fill');
+  el.clock = document.getElementById('clock');
   el.undoBtn = document.getElementById('undo-btn');
   el.undoCount = document.getElementById('undo-count');
   el.bombBtn = document.getElementById('bomb-btn');
@@ -36,6 +38,8 @@ export function cacheDom() {
   el.celebrate = document.getElementById('level-celebrate');
   el.scoresModal = document.getElementById('scores-modal');
   el.scoresCols = document.getElementById('scores-cols');
+  el.scoresTabs = document.getElementById('scores-tabs');
+  el.overReason = document.querySelector('#gameover .over-reason');
 }
 
 function sprite(type) {
@@ -340,10 +344,29 @@ function paintTheme() {
 // The level goal bar: current level, how many points to the next level, and a
 // fill bar showing progress within the current level. Levels are milestones you
 // pass while playing — reaching one just ticks this up.
+// 'M:SS' from milliseconds (never negative).
+function fmtClock(ms) {
+  const s = Math.max(0, Math.ceil(ms / 1000));
+  return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+}
+
+// The countdown clock (timed mode only). Cheap — safe to call every tick. In
+// endless mode it's hidden and the "to next level" target shows instead.
+export function paintClock() {
+  if (!el.clock) return;
+  const timed = state.timeMode > 0 && state.timeLeftMs != null;
+  el.clock.hidden = !timed;
+  if (el.goalTarget) el.goalTarget.style.display = timed ? 'none' : '';
+  if (!timed) { el.clock.classList.remove('low'); return; }
+  el.clock.textContent = '⏱ ' + fmtClock(state.timeLeftMs);
+  el.clock.classList.toggle('low', !state.over && state.timeLeftMs <= 30000);
+}
+
 function paintGoal() {
   el.goalLevel.textContent = 'Level ' + state.level;
   const toNext = Math.max(0, state.goal - state.score);
   el.goalTarget.textContent = toNext.toLocaleString() + ' to level ' + (state.level + 1);
+  paintClock();
   // Progress from the previous threshold to this level's goal (fills within-level).
   const prevGoal = state.level > 1 ? goalForLevel(state.level - 1) : 0;
   const span = Math.max(1, state.goal - prevGoal);
@@ -443,14 +466,18 @@ function renderLevelCelebrate() {
   }, 2000);
 }
 
-// Build the high-scores modal: one column per board size, each listing its top
-// five scores with the date earned. Call openScores() to show it.
-export function openScores() {
+// Which timed mode's scores the modal is currently showing (defaults to the mode
+// of the game you're in / just finished).
+let scoresTabMode = 0;
+
+// Render the board columns for the currently-selected time mode: one column per
+// board size, each listing its top 10 scores with level + date.
+function renderScoresCols() {
   const scores = loadScores();
   el.scoresCols.innerHTML = BOARDS.map((b) => {
-    const list = scores[boardKey(b.cols, b.rows)] || [];
+    const list = scores[scoreKey(b.cols, b.rows, scoresTabMode)] || [];
     const rows = list.length
-      ? list.slice(0, 3).map((e, i) => {
+      ? list.slice(0, 10).map((e, i) => {
           const meta = [e.l ? 'Lv ' + e.l : '', formatDate(e.d)].filter(Boolean).join(' · ');
           return `<li><span class="sc-rank">${i + 1}</span>` +
             `<span class="sc-body"><span class="sc-score">${e.s.toLocaleString()}</span>` +
@@ -459,6 +486,31 @@ export function openScores() {
       : '<li class="sc-empty">No scores yet</li>';
     return `<div class="scores-col"><h2>${b.label}</h2><ol>${rows}</ol></div>`;
   }).join('');
+}
+
+function renderScoresTabs() {
+  el.scoresTabs.innerHTML = TIME_MODES.map((m) =>
+    `<button class="sc-tab${m === scoresTabMode ? ' active' : ''}" data-mode="${m}">` +
+    `${m ? m + ' min' : '∞ Endless'}</button>`).join('');
+}
+
+// Build & show the high-scores modal, opening on the current game's mode. Top 10
+// per board size, with time-mode tabs across the top.
+export function openScores() {
+  scoresTabMode = TIME_MODES.includes(state.timeMode) ? state.timeMode : 0;
+  renderScoresTabs();
+  renderScoresCols();
+  // Tab switching (wired once; the container persists).
+  if (!el.scoresTabs.dataset.wired) {
+    el.scoresTabs.dataset.wired = '1';
+    el.scoresTabs.addEventListener('pointerdown', (e) => {
+      const btn = e.target.closest('.sc-tab');
+      if (!btn) return;
+      scoresTabMode = Number(btn.dataset.mode);
+      renderScoresTabs();
+      renderScoresCols();
+    });
+  }
   el.scoresModal.classList.add('show');
 }
 
@@ -523,6 +575,12 @@ function paintOverlay() {
   // Shown when the game is over, until the player taps outside the card.
   if (state.over && !state.overlayDismissed) {
     el.finalScore.textContent = state.score.toLocaleString();
+    // Time's up vs board-full, and note the mode played.
+    if (el.overReason) {
+      el.overReason.textContent = (state.timeMode > 0 && (state.timeLeftMs != null && state.timeLeftMs <= 0))
+        ? `Time's up (${timeModeLabel(state.timeMode)}) — final score`
+        : 'No room left — final score';
+    }
     el.overLevel.textContent = 'Reached level ' + state.level;
     el.overlay.classList.add('show');
   } else {

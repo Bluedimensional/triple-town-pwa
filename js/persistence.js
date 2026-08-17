@@ -3,12 +3,18 @@
 // service worker cache for state).
 
 import { state, emptyBoard } from './state.js';
-import { BOARD_SIZE, MAX_STORAGE, boardKey, goalForLevel } from './config.js';
+import { BOARD_SIZE, MAX_STORAGE, boardKey, goalForLevel, timeModeKey } from './config.js';
 
 const KEY = 'tripletown.save.v2';
 const BEST_KEY = 'tripletown.best.v1';        // legacy single best (pre per-mode)
-const SCORES_KEY = 'tripletown.scores.v1';    // per-board leaderboard
-const TOP_N = 5;                              // scores kept per board
+const SCORES_KEY = 'tripletown.scores.v1';    // per-board(+time-mode) leaderboard
+const TOP_N = 10;                             // scores kept per board+mode
+
+// Leaderboard key for a board of the given size and timed mode. Endless (mode 0)
+// keeps the bare board key so pre-timed-mode scores stay put.
+export function scoreKey(cols, rows, mode = 0) {
+  return boardKey(cols, rows) + timeModeKey(mode);
+}
 
 // --- Per-board leaderboard ---------------------------------------------------
 // Shape: { "6x6": [{s, l, d}], "7x8": [...] } — each list is the top 5 scores
@@ -34,8 +40,8 @@ export function loadScores() {
   }
 }
 
-export function bestFor(cols, rows) {
-  const list = loadScores()[boardKey(cols, rows)] || [];
+export function bestFor(cols, rows, mode = 0) {
+  const list = loadScores()[scoreKey(cols, rows, mode)] || [];
   return list.length ? list[0].s : 0;
 }
 
@@ -45,10 +51,10 @@ function todayISO() {
   return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
 }
 
-// Insert a finished run (score + level reached) into its board's leaderboard;
-// keep the top 5 by score. Returns the best score for that board.
-export function recordScore(cols, rows, score, level) {
-  const key = boardKey(cols, rows);
+// Insert a finished run (score + level reached) into its board+mode leaderboard;
+// keep the top 10 by score. Returns the best score for that board+mode.
+export function recordScore(cols, rows, score, level, mode = 0) {
+  const key = scoreKey(cols, rows, mode);
   const scores = loadScores();
   const list = scores[key] || [];
   list.push({ s: score, l: level, d: todayISO() });
@@ -74,6 +80,9 @@ export function save() {
       turns: state.turns,
       crystalMult: state.crystalMult,
       pendingCrystalMult: state.pendingCrystalMult,
+      timeMode: state.timeMode,
+      pendingTimeMode: state.pendingTimeMode,
+      timeLeftMs: state.timeLeftMs,
       level: state.level,
       goal: state.goal,
       undos: state.undos,
@@ -109,8 +118,8 @@ export function load() {
     state.rows = data.rows || data.size || data.board.length || BOARD_SIZE;
     state.pendingCols = data.pendingCols || data.pendingSize || state.cols;
     state.pendingRows = data.pendingRows || data.pendingSize || state.rows;
-    // Best is the top score recorded for this board (legacy value as backup).
-    state.best = bestFor(state.cols, state.rows) || parseInt(localStorage.getItem(BEST_KEY) || '0', 10) || 0;
+    // Best is the top score recorded for this board+mode (legacy value as backup).
+    state.best = bestFor(state.cols, state.rows, data.timeMode || 0) || parseInt(localStorage.getItem(BEST_KEY) || '0', 10) || 0;
     state.board = data.board;
     state.current = data.current ?? null;
     state.activePos = data.activePos ?? null;
@@ -126,6 +135,9 @@ export function load() {
     state.turns = data.turns || 0;
     state.crystalMult = data.crystalMult || 1;
     state.pendingCrystalMult = data.pendingCrystalMult || state.crystalMult || 1;
+    state.timeMode = data.timeMode || 0;
+    state.pendingTimeMode = data.pendingTimeMode ?? state.timeMode;
+    state.timeLeftMs = (typeof data.timeLeftMs === 'number') ? data.timeLeftMs : null;
     state.level = data.level || 1;
     state.goal = data.goal || goalForLevel(state.level);
     state.undos = data.undos || 0;

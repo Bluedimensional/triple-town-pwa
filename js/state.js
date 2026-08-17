@@ -17,6 +17,9 @@ export const state = {
   turns: 0,         // pieces placed so far (drives bear ramp)
   crystalMult: 1,   // this game's crystal-density multiplier (1x / 2x / 3x)
   pendingCrystalMult: 1, // the multiplier a new game will use (player's choice)
+  timeMode: 0,      // this game's timed mode: 0 = endless, else minutes (2 / 5)
+  pendingTimeMode: 0, // the timed mode a new game will use (player's choice)
+  timeLeftMs: null, // ms left in a timed game; null in endless (no clock)
   level: 1,         // current level — a score milestone, for score-keeping only
   goal: 0,          // score needed to reach the next level
   levelFlash: false, // one-shot: briefly highlight the goal bar when the level ticks up
@@ -63,6 +66,8 @@ export function resetGame() {
   state.turns = 0;
   state.level = 1;
   state.goal = 0;
+  state.timeMode = 0;
+  state.timeLeftMs = null;
   state.levelFlash = false;
   state.levelCelebrate = null;
   state.undos = 0;

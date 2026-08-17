@@ -3,6 +3,27 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.42.0] - 2026-08-14 (v66)
+
+### Added
+- **Timed mode.** A new ⏱ chooser in the toolbar picks the length for your next
+  game: **∞ Endless** (the classic, default), **2 min**, or **5 min**. In a timed
+  game a countdown clock shows in the goal bar (turns red and pulses in the last
+  30s); when it hits zero the game ends and records your score. The clock counts
+  real time while you're playing and **pauses when the app is off-screen** (and a
+  reload resumes where it left off), so backgrounding the app doesn't burn time.
+- **Top 10 scores, per mode.** The leaderboard now keeps the **best 10** (was 5)
+  and tracks each timed mode on its **own board** (so 2-min scores compare to
+  2-min, not to endless). The High Scores modal gained **∞ / 2 min / 5 min tabs**
+  and opens on the mode you just played.
+
+### Notes
+- Scores persist across updates exactly as before (localStorage, untouched by the
+  service worker); existing Endless high scores are preserved under their same keys.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v66`.
+
 ## [0.41.0] - 2026-08-14 (v65)
 
 ### Added

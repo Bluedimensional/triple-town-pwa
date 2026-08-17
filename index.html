@@ -42,6 +42,7 @@
         <button class="undo-btn" id="undo-btn" type="button" title="Undo your last move — you earn one each level" disabled>↩<span class="undo-count" id="undo-count">0</span></button>
         <button class="bomb-btn" id="bomb-btn" type="button" title="Bomb — earned on big merges. Arm it (or long-press the held piece), then tap a rock or bear to blow it up." disabled>💣<span class="bomb-count" id="bomb-count">0</span></button>
         <button class="bomb-btn grave-btn" id="grave-btn" type="button" title="Grave bomb — rarer, earned on bigger merges. Arm it, then tap a grave (tombstone) to clear it." disabled>🪦<span class="bomb-count" id="grave-count">0</span></button>
+        <span class="clock" id="clock" hidden>⏱ 2:00</span>
         <span class="goal-target" id="goal-target">20,000 to level 2</span>
       </div>
       <div class="goal-track"><div class="goal-fill" id="goal-fill"></div></div>
@@ -62,6 +63,12 @@
         <button class="crys-btn" data-mult="1" title="Normal crystal rate">1×</button>
         <button class="crys-btn" data-mult="2" title="Twice as many crystals">2×</button>
         <button class="crys-btn" data-mult="3" title="Three times as many crystals">3×</button>
+      </div>
+      <div id="time-controls" title="Timed mode — applies when you start a new game">
+        <span class="new-label">⏱</span>
+        <button class="time-btn" data-time="0" title="Endless — no timer (classic)">∞</button>
+        <button class="time-btn" data-time="2" title="2-minute timed game">2m</button>
+        <button class="time-btn" data-time="5" title="5-minute timed game">5m</button>
       </div>
     </section>
 
@@ -99,6 +106,7 @@
     <div id="scores-modal" class="overlay">
       <div class="overlay-card scores-card">
         <h1>High Scores</h1>
+        <div id="scores-tabs" class="scores-tabs"></div>
         <div id="scores-cols" class="scores-cols"></div>
         <button id="scores-close" class="primary-btn">Close</button>
       </div>

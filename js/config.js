@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v65';
+export const VERSION = 'v66';
 
 // The organic path edges are now baked into the path GEOMETRY (each outer edge
 // bulges outward — see buildPathShape in render.js), so there is NO runtime SVG
@@ -98,6 +98,14 @@ export const CRYSTAL_CHANCE = 0.06;
 // Per-game crystal density: the player picks one of these multipliers on the
 // crystal spawn rate when starting a game (1x = normal, 2x, 3x).
 export const CRYSTAL_MULTS = [1, 2, 3];
+
+// Timed mode: score as much as you can before the clock runs out. 0 = Endless
+// (the classic no-timer, board-fills-up game). Other values are minutes.
+export const TIME_MODES = [0, 2, 5];
+export const timeModeLabel = (m) => (m ? m + ' min' : 'Endless');
+// Leaderboard key suffix so each timed mode is ranked on its OWN board — Endless
+// keeps the bare board key (e.g. "6x6") so existing high scores are preserved.
+export const timeModeKey = (m) => (m ? '·' + m + 'm' : '');
 
 // --- Bombs (the long-press special) ------------------------------------------
 // You EARN a Bomb whenever a merge creates a high-tier piece — Castle-tier or

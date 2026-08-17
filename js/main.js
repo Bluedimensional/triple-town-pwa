@@ -2,11 +2,11 @@
 
 import { state } from './state.js';
 import { VERSION } from './config.js';
-import { placePiece, newGame, undoMove, armBomb, toggleBomb, bombAt } from './game.js';
+import { placePiece, newGame, undoMove, armBomb, toggleBomb, bombAt, expireTimer } from './game.js';
 import { swapReserve } from './storehouse.js';
 import { buyItem } from './store.js';
 import { save, load } from './persistence.js';
-import { cacheDom, buildBoard, render, bearCells, openScores, closeScores } from './render.js';
+import { cacheDom, buildBoard, render, bearCells, openScores, closeScores, paintClock } from './render.js';
 import { startGestures } from './gestures.js';
 import { startVillagers } from './villagers.js';
 
@@ -66,6 +66,31 @@ function markCrystal() {
   });
 }
 
+// Highlight the timed-mode button matching the pending choice.
+function markTime() {
+  document.querySelectorAll('#time-controls .time-btn').forEach((b) => {
+    b.classList.toggle('current', Number(b.dataset.time) === state.pendingTimeMode);
+  });
+}
+
+// The countdown clock for timed games. Ticks in real time while the game is
+// active and the tab is visible; pauses when hidden. Ends the game at zero.
+let lastClockTick = 0;
+function clockTick() {
+  const now = performance.now();
+  const dt = now - lastClockTick;
+  lastClockTick = now;
+  if (document.hidden || state.over || !state.timeMode || state.timeLeftMs == null) return;
+  state.timeLeftMs -= dt;
+  if (state.timeLeftMs <= 0) {
+    state.timeLeftMs = 0;
+    expireTimer();   // ends the game, records the score, saves
+    draw();          // full re-render to show the game-over overlay
+  } else {
+    paintClock();    // lightweight HUD update between placements
+  }
+}
+
 function boot() {
   cacheDom();
   document.getElementById('version').textContent = VERSION;
@@ -96,6 +121,16 @@ function boot() {
     });
   });
   markCrystal();
+
+  // Timed-mode buttons: choose the length for the NEXT new game (0 = endless).
+  document.querySelectorAll('#time-controls .time-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      state.pendingTimeMode = Number(btn.dataset.time);
+      save();
+      markTime();
+    });
+  });
+  markTime();
 
   // Dismiss the game-over popup — the backdrop, the ✕, or the "view my board"
   // button all just hide it so you can look at the finished board. Starting a new
@@ -138,6 +173,16 @@ function boot() {
   markCurrentSize();
   startGestures(bearCells);   // bears fidget in place between placements
   startVillagers(() => document.getElementById('board'));   // townsfolk stroll about
+
+  // Timed-mode countdown: tick in real time; pause & save when the tab hides so
+  // no time is spent off-screen (and a reload resumes where it left off).
+  lastClockTick = performance.now();
+  setInterval(clockTick, 250);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) save();
+    else lastClockTick = performance.now();   // don't count time spent hidden
+  });
+
   requestPersistentStorage(); // ask the browser not to evict our saved scores
   registerServiceWorker();
 }

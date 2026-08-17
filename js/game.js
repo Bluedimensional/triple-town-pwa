@@ -7,7 +7,7 @@ import {
   PREFILL_MIN, PREFILL_MAX, PREFILL_WEIGHTS, PREFILL_BEARS, PREFILL_TOMB_CHANCE,
   goalForLevel, BOMB_TARGETS, GRAVE_TARGETS,
 } from './config.js';
-import { recordScore } from './persistence.js';
+import { recordScore, bestFor } from './persistence.js';
 import { resolveMerges, crystalResolve } from './match.js';
 import { moveBears } from './bears.js';
 import { save } from './persistence.js';
@@ -83,9 +83,19 @@ function boardFull() {
 function endGame() {
   state.over = true;
   state.activePos = null;
-  // Record the run (score + level reached) in this board size's leaderboard and
+  // Record the run (score + level reached) in this board+mode leaderboard and
   // refresh the shown best.
-  state.best = recordScore(state.cols, state.rows, state.score, state.level);
+  state.best = recordScore(state.cols, state.rows, state.score, state.level, state.timeMode);
+}
+
+// Called by the clock when a timed game's time runs out. Ends the game (records
+// the score), just like the board filling up. Returns true if it ended the game.
+export function expireTimer() {
+  if (state.over || state.timeMode === 0) return false;
+  state.timeLeftMs = 0;
+  endGame();
+  save();
+  return true;
 }
 
 // The game is perpetual — it only ends when the board is genuinely full (no
@@ -267,6 +277,9 @@ export function newGame(cols, rows) {
   state.pendingRows = state.rows;
   resetGame();      // rebuilds an empty board at state.cols x state.rows
   state.crystalMult = state.pendingCrystalMult;   // lock in the chosen density
+  state.timeMode = state.pendingTimeMode;         // lock in the chosen timed mode
+  state.timeLeftMs = state.timeMode ? state.timeMode * 60000 : null;
+  state.best = bestFor(state.cols, state.rows, state.timeMode);  // best for this board+mode
   state.level = 1;
   state.goal = goalForLevel(1);
   prefill();
