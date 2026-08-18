@@ -3,6 +3,19 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.42.1] - 2026-08-14 (v67)
+
+### Fixed
+- **Long-pressing the held piece with no bombs no longer places it.** Before, the
+  bomb-arm long-press only engaged when you *had* a bomb, so holding with an empty
+  count fell through and dropped the piece. Now the hold is always recognized: with
+  no bombs it does **not** place and instead flashes the 💣 counter — a one-cycle
+  scale-out-and-back pulse with a red tint — to say "no bombs". A quick tap still
+  places as normal.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v67`.
+
 ## [0.42.0] - 2026-08-14 (v66)
 
 ### Added

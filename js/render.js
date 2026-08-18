@@ -131,10 +131,16 @@ export function buildBoard(onCellTap, onArm) {
         if (e.button !== 0) return;
         const cr = +cell.dataset.r, cc = +cell.dataset.c;
         const held = state.activePos && state.activePos.r === cr && state.activePos.c === cc;
-        if (held && state.bombs > 0 && !state.armed && !state.over && onArm) {
+        // Long-press the held piece: arm a bomb if you have one; if you have NONE,
+        // don't place — flash the 💣 counter to say "no bombs". A quick tap places.
+        if (held && !state.armed && !state.over && onArm) {
           lpFired = false; lpCell = { r: cr, c: cc }; clearLP();
-          lpTimer = setTimeout(() => { lpFired = true; lpTimer = null; onArm(); }, 450);
-          return;   // wait for pointerup to tell tap (place) from hold (arm)
+          lpTimer = setTimeout(() => {
+            lpFired = true; lpTimer = null;
+            if (state.bombs > 0) onArm();
+            else flashNoBomb();
+          }, 450);
+          return;   // wait for pointerup to tell a tap (place) from a hold
         }
         onCellTap(cr, cc);
       });
@@ -412,6 +418,17 @@ function paintBombs() {
       : DEFAULT_HINT;
   }
   document.body.classList.toggle('bomb-aiming', !!state.armed);
+}
+
+// Feedback for a long-press with no bombs: a one-cycle scale pulse + red flash on
+// the 💣 counter that says "no bombs" — without placing your piece.
+function flashNoBomb() {
+  if (!el.bombBtn) return;
+  el.bombBtn.classList.remove('nobomb');
+  void el.bombBtn.offsetWidth;                 // restart the animation
+  el.bombBtn.classList.add('nobomb');
+  el.bombBtn.addEventListener('animationend',
+    () => el.bombBtn.classList.remove('nobomb'), { once: true });
 }
 
 // A quick blast burst where a bomb just destroyed a tile.
