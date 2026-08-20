@@ -3,6 +3,19 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.44.0] - 2026-08-14 (v69)
+
+### Added
+- **Crystal choice.** When you place a crystal (wildcard) where it could complete
+  **more than one different merge** — e.g. it's next to both a pair of bushes and a
+  pair of grass — the game now **pauses and asks which to make**, showing each
+  possible result piece by name. Pick one and that merge resolves. When only one
+  merge is possible (or none), it still resolves automatically as before (a lone
+  crystal with no match still becomes a rock).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v69`.
+
 ## [0.43.0] - 2026-08-14 (v68)
 
 ### Added

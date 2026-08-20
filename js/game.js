@@ -9,7 +9,7 @@ import {
   ZAP_TRIGGER, ZAP_NEED_MIN, ZAP_NEED_MAX, MAX_ZAPS,
 } from './config.js';
 import { recordScore, bestFor } from './persistence.js';
-import { resolveMerges, crystalResolve } from './match.js';
+import { resolveMerges, crystalResolve, crystalOptions } from './match.js';
 import { moveBears } from './bears.js';
 import { save } from './persistence.js';
 
@@ -224,13 +224,14 @@ export function undoMove() {
   state.lastCreated = null; state.bearMoves = []; state.mergeSlides = [];
   state.floatPoints = null; state.levelFlash = false; state.levelCelebrate = null;
   state.armed = null; state.bombBlast = null; state.zapGrant = false;
+  state.crystalChoice = null;
   save();
   return true;
 }
 
 // Place the held piece at (r,c). Returns true if the move was legal.
 export function placePiece(r, c) {
-  if (state.over) return false;
+  if (state.over || state.crystalChoice) return false;   // busy waiting on a choice
   if (state.current === null) return false;
   if (state.board[r][c] !== null) return false; // must place on an empty tile
 
@@ -248,26 +249,48 @@ export function placePiece(r, c) {
   state.score += POINTS[piece] || 0;
 
   if (piece === 'crystal') {
-    crystalResolve(r, c);       // wildcard: completes the best merge, or -> rock
+    const opts = crystalOptions(r, c);
+    // More than one DIFFERENT merge is possible → let the player choose which.
+    // Pause the turn: the crystal sits on the board and the choice overlay shows;
+    // chooseCrystal() finishes the turn. (No save here — a reload just re-hands
+    // the crystal, avoiding a mid-choice soft-lock.)
+    if (opts.length >= 2) {
+      state.crystalChoice = { r, c, options: opts, scoreBefore };
+      state.activePos = null;       // hide the held preview while choosing
+      return true;
+    }
+    crystalResolve(r, c);           // 0 or 1 option: resolve automatically (rock if none)
   } else if (piece !== 'bear') {
-    resolveMerges(r, c);        // bears never merge; everything else can cascade
+    resolveMerges(r, c);            // bears never merge; everything else can cascade
   }
 
-  // Points this placement earned (base + any merge), to float up from the tile.
+  finishTurn(r, c, scoreBefore);
+  return true;
+}
+
+// Everything after a placement resolves: float the points, tick the level, move
+// bears, draw the next piece, check for game over, save.
+function finishTurn(r, c, scoreBefore) {
   state.floatPoints = { r, c, points: state.score - scoreBefore };
-
-  // Reaching a goal ticks the level up (no interruption, no game-over).
   maybeLevelUp();
-
-  // Bears already on the board react to your move.
   moveBears();
-
-  // Draw the next piece and decide where it appears.
   spawnNext();
   state.activePos = pickActivePos(r, c);
   checkGameOver();
-
   save();
+}
+
+// Resolve a paused crystal choice: turn the crystal into the picked type, run the
+// merge, then finish the turn as usual.
+export function chooseCrystal(type) {
+  const ch = state.crystalChoice;
+  if (!ch) return false;
+  const { r, c, scoreBefore } = ch;
+  state.crystalChoice = null;
+  state.board[r][c] = type;
+  state.lastCreated = { r, c };
+  resolveMerges(r, c);
+  finishTurn(r, c, scoreBefore);
   return true;
 }
 

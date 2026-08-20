@@ -75,21 +75,31 @@ export function previewMergeGroup() {
   return group.length >= rule.need ? group : [];
 }
 
+// The distinct merges a crystal at (r,c) could complete — one per base type it
+// could become, each yielding a different result (`next`). Restores the crystal
+// afterward (pure query). Used to offer a choice when there's more than one.
+export function crystalOptions(r, c) {
+  const opts = [];
+  for (const type in MERGE) {
+    state.board[r][c] = type;                 // pretend the crystal is this type
+    const group = floodFill(r, c, type);
+    if (group.length >= MERGE[type].need) {
+      opts.push({ type, next: MERGE[type].next, count: group.length, points: POINTS[MERGE[type].next] || 0 });
+    }
+  }
+  state.board[r][c] = 'crystal';              // restore (the caller decides what to do)
+  return opts.sort((a, b) => b.points - a.points);
+}
+
 // Place a crystal (wildcard) at (r,c): it becomes whichever type completes the
 // highest-value merge with its neighbours, then that merge resolves (and
 // cascades). If no type completes a match, the crystal turns into a rock.
-// Returns the resulting type at (r,c).
+// Returns the resulting type at (r,c). (When several DIFFERENT merges are
+// possible the game asks the player to choose instead — see game.js.)
 export function crystalResolve(r, c) {
-  let best = null, bestPts = -1;
-  for (const type in MERGE) {
-    state.board[r][c] = type;                 // pretend the crystal is this type
-    if (floodFill(r, c, type).length >= MERGE[type].need) {
-      const pts = POINTS[MERGE[type].next] || 0;
-      if (pts > bestPts) { bestPts = pts; best = type; }
-    }
-  }
-  if (best) {
-    state.board[r][c] = best;
+  const opts = crystalOptions(r, c);
+  if (opts.length) {
+    state.board[r][c] = opts[0].type;         // highest-value by default
     resolveMerges(r, c);
     return state.board[r][c];
   }

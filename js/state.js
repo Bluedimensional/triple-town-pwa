@@ -34,6 +34,8 @@ export const state = {
   zapGrant: false,  // one-shot: a zap was just granted — fire the surprise explosion
   armed: null,      // transient: which special is aimed — null | 'bomb' | 'grave' | 'zap'
   bombBlast: null,  // one-shot {r,c}: a tile was just bombed/zapped, for the blast anim
+  crystalChoice: null, // transient {r,c,options,scoreBefore}: a placed crystal could
+                       // complete >1 different merge — waiting for the player to pick
   grassStreak: 0,   // consecutive grass pieces handed out (caps long streaks)
   storeBought: {},  // tile type -> times purchased (drives rising prices)
   over: false,
@@ -84,6 +86,7 @@ export function resetGame() {
   state.zapGrant = false;
   state.armed = null;
   state.bombBlast = null;
+  state.crystalChoice = null;
   state.grassStreak = 0;
   state.storeBought = {};
   state.over = false;

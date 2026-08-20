@@ -912,3 +912,32 @@ body[data-field="ocean"] {
   font-size: 16px;
   font-weight: 700;
 }
+
+/* ---- Crystal "which merge?" chooser ---- */
+.cc-card { min-width: min(88vw, 420px); }
+.cc-opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 16px;
+}
+.cc-opt {
+  flex: 1 1 96px;
+  max-width: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 10px;
+  background: rgba(107, 160, 58, 0.14);
+  border: 2px solid var(--accent);
+  border-radius: 14px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.cc-opt:active { transform: scale(0.96); }
+.cc-sprite { width: 62px; height: 62px; }
+.cc-sprite svg { width: 100%; height: 100%; display: block; }
+.cc-name { font-size: 14px; font-weight: 700; color: #2f4a1c; }
+.cc-super { color: #c98a1a; font-weight: 800; }

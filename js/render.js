@@ -43,6 +43,8 @@ export function cacheDom() {
   el.scoresCols = document.getElementById('scores-cols');
   el.scoresTabs = document.getElementById('scores-tabs');
   el.overReason = document.querySelector('#gameover .over-reason');
+  el.crystalChoice = document.getElementById('crystal-choice');
+  el.crystalOpts = document.getElementById('crystal-opts');
 }
 
 function sprite(type) {
@@ -628,6 +630,29 @@ function paintStore(onBuy) {
   }
 }
 
+// When a placed crystal could complete more than one DIFFERENT merge, show a modal
+// asking which to make. Each option shows the RESULT piece + its name; the key is
+// the option's base `type` (passed to chooseCrystal). Rebuilt only when it changes.
+function paintCrystalChoice() {
+  const ch = state.crystalChoice;
+  if (!ch) {
+    el.crystalChoice.classList.remove('show');
+    el.crystalChoiceKey = null;
+    return;
+  }
+  const key = ch.options.map((o) => o.type).join('|');
+  if (el.crystalChoiceKey !== key) {
+    el.crystalChoiceKey = key;
+    el.crystalOpts.innerHTML = ch.options.map((o) => {
+      const superNote = o.count > 3 ? ' <span class="cc-super">Super!</span>' : '';
+      return `<button class="cc-opt" data-type="${o.type}" title="Make a ${NAMES[o.next]}">` +
+        `<span class="cc-sprite">${sprite(o.next)}</span>` +
+        `<span class="cc-name">${NAMES[o.next]}${superNote}</span></button>`;
+    }).join('');
+  }
+  el.crystalChoice.classList.add('show');
+}
+
 function paintOverlay() {
   // Shown when the game is over, until the player taps outside the card.
   if (state.over && !state.overlayDismissed) {
@@ -702,6 +727,7 @@ export function render({ onBuy, onSwap }) {
   paintTheme();
   paintStorage(onSwap);
   paintStore(onBuy);
+  paintCrystalChoice();
   paintOverlay();
   state.lastCreated = null; // consume the one-shot pop marker
   state.bearMoves = [];     // consume the one-shot hop markers

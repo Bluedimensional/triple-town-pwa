@@ -2,7 +2,7 @@
 
 import { state } from './state.js';
 import { VERSION } from './config.js';
-import { placePiece, newGame, undoMove, armBomb, toggleBomb, bombAt, expireTimer } from './game.js';
+import { placePiece, newGame, undoMove, armBomb, toggleBomb, bombAt, expireTimer, chooseCrystal } from './game.js';
 import { swapReserve } from './storehouse.js';
 import { buyItem } from './store.js';
 import { save, load } from './persistence.js';
@@ -174,6 +174,13 @@ function boot() {
     e.preventDefault();
     toggleBomb('zap');
     draw();
+  });
+
+  // Crystal-choice overlay: tap an option to complete that merge.
+  document.getElementById('crystal-opts').addEventListener('pointerdown', (e) => {
+    const btn = e.target.closest('.cc-opt');
+    if (!btn) return;
+    if (chooseCrystal(btn.dataset.type)) draw();
   });
 
   draw();
