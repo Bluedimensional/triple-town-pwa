@@ -80,14 +80,17 @@ function clockTick() {
   const now = performance.now();
   const dt = now - lastClockTick;
   lastClockTick = now;
-  if (document.hidden || state.over || !state.timeMode || state.timeLeftMs == null) return;
-  state.timeLeftMs -= dt;
-  if (state.timeLeftMs <= 0) {
-    state.timeLeftMs = 0;
-    expireTimer();   // ends the game, records the score, saves
-    draw();          // full re-render to show the game-over overlay
-  } else {
-    paintClock();    // lightweight HUD update between placements
+  if (document.hidden || state.over) return;
+  state.elapsedMs = (state.elapsedMs || 0) + dt;   // active play time (both modes)
+  if (state.timeMode && state.timeLeftMs != null) {
+    state.timeLeftMs -= dt;
+    if (state.timeLeftMs <= 0) {
+      state.timeLeftMs = 0;
+      expireTimer();   // ends the game, records the score, saves
+      draw();          // full re-render to show the game-over overlay
+    } else {
+      paintClock();    // lightweight HUD update between placements
+    }
   }
 }
 

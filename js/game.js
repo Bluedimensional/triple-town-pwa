@@ -105,9 +105,13 @@ function boardFull() {
 function endGame() {
   state.over = true;
   state.activePos = null;
-  // Record the run (score + level reached) in this board+mode leaderboard and
-  // refresh the shown best.
-  state.best = recordScore(state.cols, state.rows, state.score, state.level, state.timeMode);
+  // Snapshot the final board (a plain grid copy) + play duration, then record the
+  // run in this board+mode leaderboard and refresh the shown best. Captured now,
+  // before the game-over overlay shows, so the snapshot is just the board.
+  const boardCopy = state.board.map((row) => row.slice());
+  const dur = Math.round((state.elapsedMs || 0) / 1000);
+  state.best = recordScore(state.cols, state.rows, state.score, state.level,
+    state.timeMode, boardCopy, dur);
 }
 
 // Called by the clock when a timed game's time runs out. Ends the game (records

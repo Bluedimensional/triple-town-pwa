@@ -51,13 +51,17 @@ function todayISO() {
   return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
 }
 
-// Insert a finished run (score + level reached) into its board+mode leaderboard;
-// keep the top 10 by score. Returns the best score for that board+mode.
-export function recordScore(cols, rows, score, level, mode = 0) {
+// Insert a finished run into its board+mode leaderboard; keep the top 10 by score.
+// Each entry also stores the final board grid (`b`) and duration seconds (`dur`)
+// so the modal can show a snapshot. Returns the best score for that board+mode.
+export function recordScore(cols, rows, score, level, mode = 0, board = null, dur = 0) {
   const key = scoreKey(cols, rows, mode);
   const scores = loadScores();
   const list = scores[key] || [];
-  list.push({ s: score, l: level, d: todayISO() });
+  const entry = { s: score, l: level, d: todayISO() };
+  if (board) entry.b = board;
+  if (dur) entry.dur = dur;
+  list.push(entry);
   list.sort((a, b) => b.s - a.s);
   scores[key] = list.slice(0, TOP_N);
   try { localStorage.setItem(SCORES_KEY, JSON.stringify(scores)); } catch (e) { /* ignore */ }
@@ -83,6 +87,7 @@ export function save() {
       timeMode: state.timeMode,
       pendingTimeMode: state.pendingTimeMode,
       timeLeftMs: state.timeLeftMs,
+      elapsedMs: state.elapsedMs,
       level: state.level,
       goal: state.goal,
       undos: state.undos,
@@ -141,6 +146,7 @@ export function load() {
     state.timeMode = data.timeMode || 0;
     state.pendingTimeMode = data.pendingTimeMode ?? state.timeMode;
     state.timeLeftMs = (typeof data.timeLeftMs === 'number') ? data.timeLeftMs : null;
+    state.elapsedMs = data.elapsedMs || 0;
     state.level = data.level || 1;
     state.goal = data.goal || goalForLevel(state.level);
     state.undos = data.undos || 0;

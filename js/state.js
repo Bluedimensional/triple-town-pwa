@@ -20,6 +20,7 @@ export const state = {
   timeMode: 0,      // this game's timed mode: 0 = endless, else minutes (2 / 5)
   pendingTimeMode: 0, // the timed mode a new game will use (player's choice)
   timeLeftMs: null, // ms left in a timed game; null in endless (no clock)
+  elapsedMs: 0,     // active play time this game (pauses when hidden) — for duration
   level: 1,         // current level — a score milestone, for score-keeping only
   goal: 0,          // score needed to reach the next level
   levelFlash: false, // one-shot: briefly highlight the goal bar when the level ticks up
@@ -74,6 +75,7 @@ export function resetGame() {
   state.goal = 0;
   state.timeMode = 0;
   state.timeLeftMs = null;
+  state.elapsedMs = 0;
   state.levelFlash = false;
   state.levelCelebrate = null;
   state.undos = 0;

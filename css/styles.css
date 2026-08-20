@@ -498,6 +498,8 @@ body[data-field="ocean"] {
 }
 .sc-tab.active { color: #fff; background: var(--accent); border-color: var(--accent); }
 .scores-cols { display: flex; gap: 14px; margin: 12px 0; overflow-y: auto; }
+/* `hidden` must win over the display rules above when toggling list vs snapshot. */
+.scores-tabs[hidden], .scores-cols[hidden], .scores-snapshot[hidden] { display: none; }
 .scores-col { flex: 1; }
 .scores-col h2 { margin: 0 0 8px; font-size: 16px; color: var(--accent); }
 .scores-col ol {
@@ -521,6 +523,57 @@ body[data-field="ocean"] {
 .sc-meta { color: #7a8a5f; font-size: 11px; }
 .sc-empty { color: #9aa88a; font-style: italic; }
 .over-level { font-weight: 700; }
+/* Each score is a button that opens its end-of-game board snapshot. */
+.sc-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  font-family: inherit;
+  font-size: 13px;
+  color: #2f4a1c;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 3px 4px;
+  cursor: pointer;
+}
+.sc-row:active { background: rgba(107, 160, 58, 0.16); }
+.sc-row .sc-body { flex: 1; }
+.sc-cam { color: #9ab07a; font-size: 12px; }
+
+/* ---- Score snapshot (the saved end-of-game board) ---- */
+.scores-snapshot { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 8px 0; overflow-y: auto; }
+.snap-back {
+  align-self: flex-start;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px 0;
+}
+.snap-meta { text-align: center; }
+.snap-score { display: block; font-size: 30px; font-weight: 800; color: #2f4a1c; font-variant-numeric: tabular-nums; }
+.snap-sub { display: block; font-size: 12px; color: #7a8a5f; }
+.snap-board {
+  width: min(78vw, 340px);
+  aspect-ratio: var(--sc) / var(--sr);
+  display: grid;
+  grid-template-columns: repeat(var(--sc), 1fr);
+  grid-template-rows: repeat(var(--sr), 1fr);
+  gap: 0;
+  background: #46632f;
+  border-radius: 10px;
+  padding: 4px;
+  box-shadow: inset 0 0 0 2px rgba(0,0,0,0.15);
+}
+.snap-cell { display: flex; align-items: center; justify-content: center; }
+.snap-cell svg { width: 100%; height: 100%; display: block; }
+.snap-none { color: #9aa88a; font-style: italic; padding: 20px; }
 
 /* ---- Board ---- */
 #board-wrap {

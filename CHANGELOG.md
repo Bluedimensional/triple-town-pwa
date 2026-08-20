@@ -3,6 +3,21 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.45.0] - 2026-08-14 (v71)
+
+### Added
+- **Board snapshots on high scores.** Every finished game now saves its **final
+  board** and **play duration** with the score. In the High Scores modal, tap any
+  score (▸) to see that game's whole board re-rendered from the pieces — no
+  game-over overlay — along with the score, level, duration, mode, and date. Tap
+  **← Back** to return to the list. The snapshot is captured the moment the game
+  ends, before the popup. (Only games played from now on have snapshots; older
+  scores show "No snapshot".) Stored compactly as the tile grid (not an image), so
+  it's easy on storage and persists across updates like the rest of the scores.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v71`.
+
 ## [0.44.1] - 2026-08-14 (v70)
 
 ### Changed

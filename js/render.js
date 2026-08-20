@@ -42,6 +42,7 @@ export function cacheDom() {
   el.scoresModal = document.getElementById('scores-modal');
   el.scoresCols = document.getElementById('scores-cols');
   el.scoresTabs = document.getElementById('scores-tabs');
+  el.scoresSnapshot = document.getElementById('scores-snapshot');
   el.overReason = document.querySelector('#gameover .over-reason');
   el.crystalChoice = document.getElementById('crystal-choice');
   el.crystalOpts = document.getElementById('crystal-opts');
@@ -530,21 +531,69 @@ function renderZapGrant() {
 let scoresTabMode = 0;
 
 // Render the board columns for the currently-selected time mode: one column per
-// board size, each listing its top 10 scores with level + date.
+// board size, each listing its top 10 scores. Each score is a button that opens
+// its end-of-game board snapshot.
 function renderScoresCols() {
   const scores = loadScores();
   el.scoresCols.innerHTML = BOARDS.map((b) => {
-    const list = scores[scoreKey(b.cols, b.rows, scoresTabMode)] || [];
+    const key = scoreKey(b.cols, b.rows, scoresTabMode);
+    const list = scores[key] || [];
     const rows = list.length
       ? list.slice(0, 10).map((e, i) => {
           const meta = [e.l ? 'Lv ' + e.l : '', formatDate(e.d)].filter(Boolean).join(' · ');
-          return `<li><span class="sc-rank">${i + 1}</span>` +
+          const cam = e.b ? '<span class="sc-cam">▸</span>' : '';
+          return `<li><button class="sc-row" data-key="${key}" data-i="${i}">` +
+            `<span class="sc-rank">${i + 1}</span>` +
             `<span class="sc-body"><span class="sc-score">${e.s.toLocaleString()}</span>` +
-            `<span class="sc-meta">${meta}</span></span></li>`;
+            `<span class="sc-meta">${meta}</span></span>${cam}</button></li>`;
         }).join('')
       : '<li class="sc-empty">No scores yet</li>';
     return `<div class="scores-col"><h2>${b.label}</h2><ol>${rows}</ol></div>`;
   }).join('');
+}
+
+// Seconds -> "M:SS" (or "SSs" under a minute).
+function fmtDur(sec) {
+  if (sec < 60) return sec + 's';
+  return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+}
+
+// A saved board grid drawn as a mini board of sprites (empty cells show the field).
+function boardSnapshotHTML(b, cols, rows) {
+  if (!b) return '<div class="snap-none">No snapshot (from an older game)</div>';
+  let cells = '';
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const t = b[r] && b[r][c];
+      cells += `<div class="snap-cell">${t ? sprite(t) : ''}</div>`;
+    }
+  }
+  return `<div class="snap-board" style="--sc:${cols};--sr:${rows}">${cells}</div>`;
+}
+
+// Show a single score's end-of-game snapshot: the final board + score/level/date/
+// duration. `key` is the board+mode leaderboard key, `i` the rank index.
+function showSnapshot(key, i) {
+  const e = (loadScores()[key] || [])[i];
+  if (!e) return;
+  const [cols, rows] = key.split('·')[0].split('x').map(Number);
+  const modeSuffix = key.includes('·') ? key.split('·')[1].replace('m', ' min') : 'Endless';
+  const bits = [e.l ? 'Level ' + e.l : '', e.dur ? fmtDur(e.dur) : '', modeSuffix, formatDate(e.d)]
+    .filter(Boolean).join(' · ');
+  el.scoresSnapshot.innerHTML =
+    '<button class="snap-back" id="snap-back">← Back</button>' +
+    `<div class="snap-meta"><span class="snap-score">${e.s.toLocaleString()}</span>` +
+    `<span class="snap-sub">${bits}</span></div>` +
+    boardSnapshotHTML(e.b, cols, rows);
+  el.scoresTabs.hidden = true;
+  el.scoresCols.hidden = true;
+  el.scoresSnapshot.hidden = false;
+}
+
+function closeSnapshot() {
+  el.scoresSnapshot.hidden = true;
+  el.scoresTabs.hidden = false;
+  el.scoresCols.hidden = false;
 }
 
 function renderScoresTabs() {
@@ -559,7 +608,8 @@ export function openScores() {
   scoresTabMode = TIME_MODES.includes(state.timeMode) ? state.timeMode : 0;
   renderScoresTabs();
   renderScoresCols();
-  // Tab switching (wired once; the container persists).
+  closeSnapshot();                 // always open on the list, not a stale snapshot
+  // Handlers wired once; the containers persist.
   if (!el.scoresTabs.dataset.wired) {
     el.scoresTabs.dataset.wired = '1';
     el.scoresTabs.addEventListener('pointerdown', (e) => {
@@ -568,6 +618,14 @@ export function openScores() {
       scoresTabMode = Number(btn.dataset.mode);
       renderScoresTabs();
       renderScoresCols();
+    });
+    // Tap a score row -> its snapshot; tap Back -> the list.
+    el.scoresCols.addEventListener('pointerdown', (e) => {
+      const row = e.target.closest('.sc-row');
+      if (row) showSnapshot(row.dataset.key, Number(row.dataset.i));
+    });
+    el.scoresSnapshot.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('#snap-back')) closeSnapshot();
     });
   }
   el.scoresModal.classList.add('show');
