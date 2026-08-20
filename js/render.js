@@ -203,9 +203,16 @@ function wob(a, b) {
 function isP(r, c) {
   return r >= 0 && r < state.rows && c >= 0 && c < state.cols && isPathCell(r, c);
 }
+// The grass margin pulled off an open side VARIES across the board (a smooth
+// deterministic field) so the outer boundary undulates in and out instead of
+// sitting a uniform distance from the cell edges — that uniform offset is what
+// made the path read as rounded rectangles. Sampled at each open edge's midpoint.
+const PAD_MIN = 0.035, PAD_MAX = 0.17;
+function padAt(x, y) {
+  return PAD_MIN + (PAD_MAX - PAD_MIN) * (0.5 + 0.5 * wob(x * 0.9 + 4.1, y * 0.9 + 2.7));
+}
 function buildPathShape() {
   let d = '';
-  const PAD = 0.075;                       // grass margin pulled off each open side
   const f = (n) => n.toFixed(3);
   for (let r = 0; r < state.rows; r++) {
     for (let c = 0; c < state.cols; c++) {
@@ -213,10 +220,14 @@ function buildPathShape() {
       // A side is "open" when the neighbour across it is NOT a path cell.
       const up = !isP(r - 1, c), rt = !isP(r, c + 1),
             dn = !isP(r + 1, c), lf = !isP(r, c - 1);
-      // Inset the rectangle on every OPEN side; closed sides stay on the cell
-      // boundary so neighbouring path cells share an exact edge and fuse.
-      const x0 = c + (lf ? PAD : 0), x1 = c + 1 - (rt ? PAD : 0);
-      const y0 = r + (up ? PAD : 0), y1 = r + 1 - (dn ? PAD : 0);
+      // Inset each OPEN side by a VARYING amount (organic, non-uniform boundary);
+      // closed sides stay on the cell boundary so neighbouring path cells fuse.
+      const iT = up ? padAt(c + 0.5, r) : 0;
+      const iB = dn ? padAt(c + 0.5, r + 1) : 0;
+      const iL = lf ? padAt(c, r + 0.5) : 0;
+      const iR = rt ? padAt(c + 1, r + 0.5) : 0;
+      const x0 = c + iL, x1 = c + 1 - iR;
+      const y0 = r + iT, y1 = r + 1 - iB;
       // Round a corner only when BOTH its sides face grass. Radius varies per
       // corner (deterministic, so it never jitters) between ~0.10 and ~0.22.
       const rad = (on, a, b) => (on ? 0.10 + 0.12 * Math.abs(wob(a, b)) : 0);

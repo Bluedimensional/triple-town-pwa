@@ -3,6 +3,18 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.45.1] - 2026-08-14 (v72)
+
+### Changed
+- **Path looks more organic.** The grass margin around the path used to be a
+  uniform inset, which read as rounded rectangles. Now the inset **varies smoothly
+  across the board** (a deterministic field, ~0.035–0.17 of a cell) so the outer
+  boundary undulates in and out — a more natural, irregular shape — while connected
+  cells still fuse seamlessly and corners keep their varied rounding.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v72`.
+
 ## [0.45.0] - 2026-08-14 (v71)
 
 ### Added
