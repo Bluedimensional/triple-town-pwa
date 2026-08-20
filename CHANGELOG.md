@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.44.1] - 2026-08-14 (v70)
+
+### Changed
+- **Crystal-choice popup is now minimal.** Dropped the white card, the "Which one?"
+  title, and the explanatory sentence — it's just each possible result piece in its
+  own box, floating over the dimmed board. The choice is obvious from the pieces.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v70`.
+
 ## [0.44.0] - 2026-08-14 (v69)
 
 ### Added

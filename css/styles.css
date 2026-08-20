@@ -913,31 +913,25 @@ body[data-field="ocean"] {
   font-weight: 700;
 }
 
-/* ---- Crystal "which merge?" chooser ---- */
-.cc-card { min-width: min(88vw, 420px); }
+/* ---- Crystal "which merge?" chooser — just the result pieces, each in a box ---- */
 .cc-opts {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 18px;
   justify-content: center;
-  margin-top: 16px;
 }
 .cc-opt {
-  flex: 1 1 96px;
-  max-width: 140px;
+  width: clamp(88px, 26vw, 120px);
+  aspect-ratio: 1 / 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 12px 10px;
-  background: rgba(107, 160, 58, 0.14);
+  justify-content: center;
+  padding: 10px;
+  background: #f4f9ec;
   border: 2px solid var(--accent);
-  border-radius: 14px;
+  border-radius: 18px;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45);
   cursor: pointer;
-  font-family: inherit;
 }
-.cc-opt:active { transform: scale(0.96); }
-.cc-sprite { width: 62px; height: 62px; }
-.cc-sprite svg { width: 100%; height: 100%; display: block; }
-.cc-name { font-size: 14px; font-weight: 700; color: #2f4a1c; }
-.cc-super { color: #c98a1a; font-weight: 800; }
+.cc-opt:active { transform: scale(0.94); }
+.cc-opt svg { width: 100%; height: 100%; display: block; }

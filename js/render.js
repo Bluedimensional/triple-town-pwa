@@ -643,12 +643,11 @@ function paintCrystalChoice() {
   const key = ch.options.map((o) => o.type).join('|');
   if (el.crystalChoiceKey !== key) {
     el.crystalChoiceKey = key;
-    el.crystalOpts.innerHTML = ch.options.map((o) => {
-      const superNote = o.count > 3 ? ' <span class="cc-super">Super!</span>' : '';
-      return `<button class="cc-opt" data-type="${o.type}" title="Make a ${NAMES[o.next]}">` +
-        `<span class="cc-sprite">${sprite(o.next)}</span>` +
-        `<span class="cc-name">${NAMES[o.next]}${superNote}</span></button>`;
-    }).join('');
+    // Just each possible result piece in its own box — no card, no text (it's
+    // obvious you're picking which merge to make).
+    el.crystalOpts.innerHTML = ch.options.map((o) =>
+      `<button class="cc-opt" data-type="${o.type}" aria-label="Make a ${NAMES[o.next]}" title="Make a ${NAMES[o.next]}">${sprite(o.next)}</button>`
+    ).join('');
   }
   el.crystalChoice.classList.add('show');
 }
