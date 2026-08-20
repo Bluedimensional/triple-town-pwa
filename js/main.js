@@ -169,6 +169,13 @@ function boot() {
     draw();
   });
 
+  // Zap button: arm/disarm zap-aim mode; then tap ANY tile to delete it.
+  document.getElementById('zap-btn').addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    toggleBomb('zap');
+    draw();
+  });
+
   draw();
   markCurrentSize();
   startGestures(bearCells);   // bears fidget in place between placements

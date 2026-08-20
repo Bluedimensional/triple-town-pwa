@@ -6,6 +6,7 @@ import {
   BEAR_BASE_CHANCE, BEAR_CHANCE_PER_TURN, BEAR_MAX_CHANCE,
   PREFILL_MIN, PREFILL_MAX, PREFILL_WEIGHTS, PREFILL_BEARS, PREFILL_TOMB_CHANCE,
   goalForLevel, BOMB_TARGETS, GRAVE_TARGETS,
+  ZAP_TRIGGER, ZAP_NEED_MIN, ZAP_NEED_MAX, MAX_ZAPS,
 } from './config.js';
 import { recordScore, bestFor } from './persistence.js';
 import { resolveMerges, crystalResolve } from './match.js';
@@ -58,6 +59,27 @@ export function spawnNext({ countTurn = true } = {}) {
   }
   state.grassStreak = state.current === 'grass' ? state.grassStreak + 1 : 0;
   if (countTurn) state.turns++;
+  chargeZap();
+}
+
+// A random number of ZAP_TRIGGER spawns needed for the next Zap.
+function rollZapGoal() {
+  return ZAP_NEED_MIN + Math.floor(Math.random() * (ZAP_NEED_MAX - ZAP_NEED_MIN + 1));
+}
+
+// Called after each spawn: if it was the trigger (a bear), charge the Zap meter,
+// and once it fills, grant a Zap as a surprise (fires the explosion in render).
+function chargeZap() {
+  if (state.current !== ZAP_TRIGGER) return;
+  if (state.zaps >= MAX_ZAPS) return;   // at the cap — freeze the meter, don't overfill
+  if (!state.zapGoal) state.zapGoal = rollZapGoal();
+  state.zapCharge++;
+  if (state.zapCharge >= state.zapGoal) {
+    state.zaps++;
+    state.zapCharge = 0;
+    state.zapGoal = rollZapGoal();
+    state.zapGrant = true;      // one-shot: render fires the ⚡ surprise explosion
+  }
 }
 
 // Choose where the current piece is previewed: an empty cell next to the last
@@ -132,17 +154,26 @@ function snapshot() {
     turns: state.turns, level: state.level, goal: state.goal,
     grassStreak: state.grassStreak, storeBought: state.storeBought,
     crystalMult: state.crystalMult, bombs: state.bombs, graveBombs: state.graveBombs,
+    zaps: state.zaps, zapCharge: state.zapCharge, zapGoal: state.zapGoal,
     over: state.over,
   });
 }
 
-// --- Bombs (the long-press / button special) ---------------------------------
-// Two kinds share this machinery:
+// --- Bombs & Zap (the long-press / button specials) --------------------------
+// Three kinds share this machinery:
 //   'bomb'  — earned on big merges; destroys a Rock or Bear.
 //   'grave' — rarer; destroys a Tombstone (a grave left by a trapped bear).
-// state.armed holds which kind is currently aimed (null | 'bomb' | 'grave').
-function countOf(kind) { return kind === 'grave' ? state.graveBombs : state.bombs; }
-function targetsOf(kind) { return kind === 'grave' ? GRAVE_TARGETS : BOMB_TARGETS; }
+//   'zap'   — rarest; deletes ANYTHING on the board.
+// state.armed holds which kind is currently aimed (null | 'bomb' | 'grave' | 'zap').
+function countOf(kind) {
+  return kind === 'grave' ? state.graveBombs : kind === 'zap' ? state.zaps : state.bombs;
+}
+// Can the aimed kind destroy the tile `t`? Zap hits any occupied tile.
+function canHit(kind, t) {
+  if (t === null) return false;
+  if (kind === 'zap') return true;
+  return (kind === 'grave' ? GRAVE_TARGETS : BOMB_TARGETS).includes(t);
+}
 
 // Arm a bomb of the given kind (needs at least one banked). Returns whether it armed.
 export function armBomb(kind = 'bomb') {
@@ -169,15 +200,17 @@ export function bombAt(r, c) {
   const kind = state.armed;
   if (!kind) return false;
   const t = state.board[r][c];
-  if (countOf(kind) > 0 && targetsOf(kind).includes(t)) {
+  if (countOf(kind) > 0 && canHit(kind, t)) {
     state.board[r][c] = null;
-    if (kind === 'grave') state.graveBombs--; else state.bombs--;
+    if (kind === 'grave') state.graveBombs--;
+    else if (kind === 'zap') state.zaps--;
+    else state.bombs--;
     state.armed = null;
     state.bombBlast = { r, c };
     save();
     return true;
   }
-  state.armed = null;   // tapped something that can't be bombed — cancel
+  state.armed = null;   // tapped something that can't be hit — cancel
   return false;
 }
 
@@ -190,7 +223,7 @@ export function undoMove() {
   // Clear one-shot animation markers so nothing replays on the restored board.
   state.lastCreated = null; state.bearMoves = []; state.mergeSlides = [];
   state.floatPoints = null; state.levelFlash = false; state.levelCelebrate = null;
-  state.armed = null; state.bombBlast = null;
+  state.armed = null; state.bombBlast = null; state.zapGrant = false;
   save();
   return true;
 }
@@ -280,6 +313,7 @@ export function newGame(cols, rows) {
   state.timeMode = state.pendingTimeMode;         // lock in the chosen timed mode
   state.timeLeftMs = state.timeMode ? state.timeMode * 60000 : null;
   state.best = bestFor(state.cols, state.rows, state.timeMode);  // best for this board+mode
+  state.zapGoal = rollZapGoal();                  // first zap comes after this many triggers
   state.level = 1;
   state.goal = goalForLevel(1);
   prefill();

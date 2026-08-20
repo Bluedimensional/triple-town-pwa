@@ -42,6 +42,7 @@
         <button class="undo-btn" id="undo-btn" type="button" title="Undo your last move — you earn one each level" disabled>↩<span class="undo-count" id="undo-count">0</span></button>
         <button class="bomb-btn" id="bomb-btn" type="button" title="Bomb — earned on big merges. Arm it (or long-press the held piece), then tap a rock or bear to blow it up." disabled>💣<span class="bomb-count" id="bomb-count">0</span></button>
         <button class="bomb-btn grave-btn" id="grave-btn" type="button" title="Grave bomb — rarer, earned on bigger merges. Arm it, then tap a grave (tombstone) to clear it." disabled>🪦<span class="bomb-count" id="grave-count">0</span></button>
+        <button class="bomb-btn zap-btn" id="zap-btn" type="button" title="Zap — the rarest power. Arm it, then tap ANYTHING to delete it." hidden>⚡<span class="bomb-count" id="zap-count">0</span></button>
         <span class="clock" id="clock" hidden>⏱ 2:00</span>
         <span class="goal-target" id="goal-target">20,000 to level 2</span>
       </div>
@@ -102,6 +103,7 @@
     </div>
 
     <div id="level-celebrate" class="level-celebrate" aria-hidden="true"></div>
+    <div id="zap-celebrate" class="zap-celebrate" aria-hidden="true"></div>
 
     <div id="scores-modal" class="overlay">
       <div class="overlay-card scores-card">

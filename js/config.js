@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v67';
+export const VERSION = 'v68';
 
 // The organic path edges are now baked into the path GEOMETRY (each outer edge
 // bulges outward — see buildPathShape in render.js), so there is NO runtime SVG
@@ -122,6 +122,15 @@ export const MAX_BOMBS = 9;                 // cap kept in hand (keeps it occasi
 export const GRAVE_BOMB_EARN_MIN_POINTS = 5000;  // Floating Castle / Treasury tier and up
 export const GRAVE_TARGETS = ['tombstone'];
 export const MAX_GRAVE_BOMBS = 5;
+
+// Zap — the rarest special: deletes ANYTHING on the board. Unlike bombs (earned
+// from merges), a Zap charges up as you play — every ZAP_TRIGGER spawned adds a
+// charge, and after a RANDOMIZED number of them one arrives as a surprise (with a
+// little explosion + the ⚡ counter appearing). Rarer and fewer than bombs.
+export const ZAP_TRIGGER = 'bear';    // spawning this charges the zap
+export const ZAP_NEED_MIN = 6;        // triggers needed for a zap (randomized each time)
+export const ZAP_NEED_MAX = 12;
+export const MAX_ZAPS = 3;            // cap kept in hand
 
 // Bear spawn chance ramps up over the game.
 export const BEAR_BASE_CHANCE = 0.06;

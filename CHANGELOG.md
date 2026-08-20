@@ -3,6 +3,21 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.43.0] - 2026-08-14 (v68)
+
+### Added
+- **⚡ Zap — a rare surprise power that deletes ANYTHING.** Unlike bombs (earned
+  from merges), a Zap charges up quietly as you play: every **bear** that spawns
+  adds a charge, and after a **randomized 6–12** of them one arrives **unannounced**
+  — a little ⚡ explosion fires and the **⚡ counter appears** in the HUD (it's hidden
+  until you have one). Arm it (electric-cyan button) and tap **any** tile — building,
+  plant, bear, rock, grave, anything — to delete it. Free action, doesn't use your
+  held piece. Rarer and fewer than bombs (cap **3**). Persists across reloads and is
+  restored by undo. Shares the aim system with the bombs (only one armed at a time).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v68`.
+
 ## [0.42.1] - 2026-08-14 (v67)
 
 ### Fixed
