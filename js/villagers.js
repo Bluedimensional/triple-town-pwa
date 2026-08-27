@@ -43,6 +43,42 @@ function villagerSVG([tunic, skin, hair]) {
   </svg>`;
 }
 
+// On the space/cosmic levels the townsfolk suit up: astronauts (white suit + a
+// visored helmet) and little green aliens (antennae + big black eyes).
+function villagerAstronaut() {
+  return `<svg viewBox="0 0 40 42" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="20" cy="39" rx="9.5" ry="2.6" fill="#081405" opacity="0.28"/>
+    <path d="M10.5 39 Q9.5 21 20 21 Q30.5 21 29.5 39 Z" fill="#eef2f6" stroke="#3f4a56" stroke-width="1.4" stroke-linejoin="round"/>
+    <rect x="16" y="26" width="8" height="5" rx="1.2" fill="#c94f3a" stroke="#5a2318" stroke-width="0.8"/>
+    <circle cx="20" cy="12" r="9" fill="#f3f6f9" stroke="#3f4a56" stroke-width="1.6"/>
+    <ellipse cx="20" cy="12.5" rx="6.2" ry="5" fill="#243a52" stroke="#16222f" stroke-width="1"/>
+    <ellipse cx="17.4" cy="10.6" rx="1.9" ry="1.2" fill="#8fc4e8" opacity="0.75"/>
+  </svg>`;
+}
+function villagerAlien() {
+  return `<svg viewBox="0 0 40 42" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="20" cy="39" rx="9.5" ry="2.6" fill="#081405" opacity="0.28"/>
+    <g stroke="#3a6a24" stroke-width="1.4" stroke-linecap="round"><line x1="15.5" y1="6" x2="13.5" y2="1.5"/><line x1="24.5" y1="6" x2="26.5" y2="1.5"/></g>
+    <circle cx="13.5" cy="1.5" r="1.5" fill="#8fd45a" stroke="#3a6a24" stroke-width="0.8"/>
+    <circle cx="26.5" cy="1.5" r="1.5" fill="#8fd45a" stroke="#3a6a24" stroke-width="0.8"/>
+    <path d="M10.5 39 Q9.5 21 20 21 Q30.5 21 29.5 39 Z" fill="#6a5fd0" stroke="#241b40" stroke-width="1.4" stroke-linejoin="round"/>
+    <circle cx="20" cy="13" r="8.4" fill="#84c85a" stroke="#3a6a24" stroke-width="1.4"/>
+    <g fill="#131313"><ellipse cx="16.2" cy="13" rx="2.1" ry="3.3" transform="rotate(-20 16.2 13)"/><ellipse cx="23.8" cy="13" rx="2.1" ry="3.3" transform="rotate(20 23.8 13)"/></g>
+  </svg>`;
+}
+// Pick a look for the current level's theme.
+function villagerHTML() {
+  const field = document.body.dataset.field;
+  if (field === 'space' || field === 'cosmic') {
+    const roll = Math.random();
+    if (roll < 0.45) return villagerAstronaut();
+    if (roll < 0.82) return villagerAlien();
+  }
+  const html = villagerSVG(LOOKS[lookIdx % LOOKS.length]);
+  lookIdx++;
+  return html;
+}
+
 function inBounds(r, c) {
   return r >= 0 && r < state.rows && c >= 0 && c < state.cols;
 }
@@ -114,8 +150,7 @@ function spawn() {
   v.style.top = (r * size) + 'px';
   v.style.width = size + 'px';
   v.style.height = size + 'px';
-  v.innerHTML = villagerSVG(LOOKS[lookIdx % LOOKS.length]);
-  lookIdx++;
+  v.innerHTML = villagerHTML();
 
   const tf = (o, s) => `translate(${o[0].toFixed(1)}px, ${o[1].toFixed(1)}px) scale(${s})`;
   const ORIGIN = [0, 0];

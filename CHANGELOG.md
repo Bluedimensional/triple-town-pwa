@@ -3,6 +3,17 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.48.1] - 2026-08-20 (v76)
+
+### Added
+- **Townsfolk suit up on space levels.** On the **space** and **cosmic** themes the
+  wandering villagers become a mix of **astronauts** (white suit + visored helmet)
+  and little green **aliens** (antennae, big black eyes), with the occasional
+  regular person. On other themes they're normal folk as before.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v76`.
+
 ## [0.48.0] - 2026-08-20 (v75)
 
 ### Changed
