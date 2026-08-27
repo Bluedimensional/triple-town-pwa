@@ -3,6 +3,20 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.47.0] - 2026-08-20 (v74)
+
+### Changed
+- **Levels keep evolving — the field never looks the same twice.** The background
+  theme used to stop changing after level 3. Now there are **12 themes** — grass,
+  desert, jungle, ocean, ice, space, cosmic (a 2nd space), aurora, lava, candy,
+  dusk, moss — that **cycle** as you level up, and **every lap the whole field
+  hue-shifts**, so a repeated theme (e.g. level-13 grass) looks different from the
+  first time. The field now lives on a background layer, so hue-shifting recolours
+  it without tinting the game pieces.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v74`.
+
 ## [0.46.0] - 2026-08-20 (v73)
 
 ### Added

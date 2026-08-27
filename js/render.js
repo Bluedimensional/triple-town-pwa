@@ -362,12 +362,24 @@ function paintHud() {
   el.coins.textContent = state.coins.toLocaleString();
 }
 
-// Field theme per level: level 1 grass, 2 space, 3+ ocean. Everything else stays
-// the same — only the field background changes (see styles.css).
-const FIELD_THEMES = ['grass', 'space', 'ocean'];
+// Field theme per level: the theme CYCLES through the list as you level up, and a
+// per-level HUE shift means it keeps evolving and never looks the same twice (the
+// hue-rotate is on body::before, so pieces aren't tinted — see styles.css). The
+// space/cosmic themes are the "people become astronauts/aliens" ones (villagers.js).
+export const FIELD_THEMES = ['grass', 'desert', 'jungle', 'ocean', 'ice', 'space',
+  'cosmic', 'aurora', 'lava', 'candy', 'dusk', 'moss'];
+export function themeForLevel(level) {
+  return FIELD_THEMES[(Math.max(1, level) - 1) % FIELD_THEMES.length];
+}
 function paintTheme() {
-  const theme = FIELD_THEMES[Math.min(state.level - 1, FIELD_THEMES.length - 1)];
-  if (document.body.dataset.field !== theme) document.body.dataset.field = theme;
+  const theme = themeForLevel(state.level);
+  // First lap (levels 1..N) shows the pristine designs; each lap after that shifts
+  // the hue, so a repeated theme never looks exactly the same (e.g. L13 grass ≠ L1).
+  const cycle = Math.floor((state.level - 1) / FIELD_THEMES.length);
+  const hue = (cycle * 57) % 360;
+  const b = document.body;
+  if (b.dataset.field !== theme) b.dataset.field = theme;
+  b.style.setProperty('--field-hue', hue + 'deg');
 }
 
 // The level goal bar: current level, how many points to the next level, and a

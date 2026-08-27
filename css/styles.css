@@ -37,18 +37,9 @@ html, body {
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: var(--ink);
-  /* Field: scattered darker spots in three sizes (one large, two small and close
-     in size, one of those fainter). Three grids at incommensurate spacings read
-     as random rather than a perfect grid. Colour comes from --field / the dot rgb
-     so the theme can swap it per level (grass; space/ocean bring their own) below. */
+  /* The field itself lives on body::before (below) so a per-level hue-rotate can
+     recolour it without tinting the game pieces. This is just a fallback ground. */
   background-color: var(--field);
-  background-image:
-    radial-gradient(circle, rgba(var(--field-dot-rgb), 0.16) 2.6px, transparent 3px),
-    radial-gradient(circle, rgba(var(--field-dot-rgb), 0.15) 1.5px, transparent 1.9px),
-    radial-gradient(circle, rgba(var(--field-dot-rgb), 0.05) 1.7px, transparent 2.1px);
-  background-size: 89px 97px, 43px 53px, 61px 67px;
-  background-position: 0 0, 19px 31px, 41px 13px;
-  transition: background-color 0.6s ease;   /* smooth swap when the level theme changes */
   padding:
     env(safe-area-inset-top)
     env(safe-area-inset-right)
@@ -59,33 +50,111 @@ body {
   touch-action: manipulation;   /* no double-tap zoom delay on taps */
 }
 
-/* Level field themes: the field changes as you level up, everything else stays
-   the same. Set on <body data-field="..."> from the current level. Grass uses the
-   shared dot pattern (above); space and ocean bring their own background-image. */
-body[data-field="grass"] { --field: #46632f; --field-dot-rgb: 20, 42, 14; }
+/* --- Level field (behind everything) ----------------------------------------
+   The field lives on a fixed pseudo-element so a per-level HUE-ROTATE can vary the
+   colour every level WITHOUT tinting the game pieces. The theme (data-field on
+   <body>) cycles as you level up; --field-hue shifts each level so it never looks
+   exactly the same twice. Default is the grass speckle; "pattern" themes override
+   the image. Set from render.js paintTheme(). */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--field, #46632f);
+  background-image:
+    radial-gradient(circle, rgba(var(--field-dot-rgb, 20,42,14), 0.16) 2.6px, transparent 3px),
+    radial-gradient(circle, rgba(var(--field-dot-rgb, 20,42,14), 0.15) 1.5px, transparent 1.9px),
+    radial-gradient(circle, rgba(var(--field-dot-rgb, 20,42,14), 0.05) 1.7px, transparent 2.1px);
+  background-size: 89px 97px, 43px 53px, 61px 67px;
+  background-position: 0 0, 19px 31px, 41px 13px;
+  filter: hue-rotate(var(--field-hue, 0deg));
+  transition: background-color 0.6s ease, filter 0.6s ease;
+}
 
-/* Level 2 — outer space: dark sky, scattered stars, faint nebula glows. */
-body[data-field="space"] {
-  --field: #0b1026;
+/* Speckle themes — just recolour the shared dot pattern. */
+body[data-field="grass"]  { --field: #46632f; --field-dot-rgb: 20, 42, 14; }
+body[data-field="desert"] { --field: #bd9a56; --field-dot-rgb: 96, 66, 26; }
+body[data-field="jungle"] { --field: #204a2b; --field-dot-rgb: 8, 26, 12; }
+body[data-field="candy"]  { --field: #d98bb2; --field-dot-rgb: 122, 40, 82; }
+body[data-field="dusk"]   { --field: #4b4478; --field-dot-rgb: 22, 16, 46; }
+body[data-field="moss"]   { --field: #5c7342; --field-dot-rgb: 30, 44, 18; }
+
+/* Space — dark sky, stars, purple/blue nebula. */
+body[data-field="space"] { --field: #0b1026; }
+body[data-field="space"]::before {
   background-color: #0b1026;
   background-image:
     radial-gradient(circle, #ffffff 1.1px, transparent 1.7px),
     radial-gradient(circle, #d7e6ff 0.9px, transparent 1.4px),
     radial-gradient(circle, rgba(255,255,255,0.55) 0.7px, transparent 1.1px),
-    radial-gradient(60% 45% at 72% 22%, rgba(104,78,168,0.38), transparent 62%),
-    radial-gradient(55% 42% at 20% 82%, rgba(42,96,158,0.34), transparent 62%);
+    radial-gradient(60% 45% at 72% 22%, rgba(104,78,168,0.40), transparent 62%),
+    radial-gradient(55% 42% at 20% 82%, rgba(42,96,158,0.36), transparent 62%);
   background-size: 137px 149px, 89px 97px, 61px 67px, 100% 100%, 100% 100%;
   background-position: 0 0, 43px 61px, 22px 33px, 0 0, 0 0;
 }
 
-/* Level 3 — deep ocean: blue water with light ripples and a depth gradient. */
-body[data-field="ocean"] {
-  --field: #12597c;
+/* Cosmic — a second space: magenta/pink nebula. */
+body[data-field="cosmic"] { --field: #180a28; }
+body[data-field="cosmic"]::before {
+  background-color: #180a28;
+  background-image:
+    radial-gradient(circle, #ffffff 1.1px, transparent 1.7px),
+    radial-gradient(circle, #ffd9f2 0.9px, transparent 1.4px),
+    radial-gradient(circle, rgba(255,255,255,0.55) 0.7px, transparent 1.1px),
+    radial-gradient(62% 46% at 28% 26%, rgba(198,64,150,0.42), transparent 62%),
+    radial-gradient(56% 44% at 78% 80%, rgba(96,58,180,0.40), transparent 62%);
+  background-size: 137px 149px, 89px 97px, 61px 67px, 100% 100%, 100% 100%;
+  background-position: 0 0, 43px 61px, 22px 33px, 0 0, 0 0;
+}
+
+/* Aurora — dark night with green/teal light bands + faint stars. */
+body[data-field="aurora"] { --field: #0d1f24; }
+body[data-field="aurora"]::before {
+  background-color: #0d1f24;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.8) 0.8px, transparent 1.3px),
+    radial-gradient(70% 40% at 30% 30%, rgba(64,208,150,0.34), transparent 60%),
+    radial-gradient(70% 40% at 70% 65%, rgba(72,150,208,0.30), transparent 60%),
+    linear-gradient(160deg, rgba(40,120,110,0.22), rgba(10,26,32,0.30));
+  background-size: 120px 128px, 100% 100%, 100% 100%, 100% 100%;
+  background-position: 0 0, 0 0, 0 0, 0 0;
+}
+
+/* Lava — dark rock with red/orange glow + embers. */
+body[data-field="lava"] { --field: #2a100a; }
+body[data-field="lava"]::before {
+  background-color: #2a100a;
+  background-image:
+    radial-gradient(circle, rgba(255,150,60,0.7) 1px, transparent 1.6px),
+    radial-gradient(60% 45% at 25% 75%, rgba(224,84,30,0.42), transparent 60%),
+    radial-gradient(55% 42% at 75% 25%, rgba(180,40,20,0.40), transparent 60%),
+    linear-gradient(180deg, rgba(60,20,10,0.2), rgba(20,6,4,0.4));
+  background-size: 80px 88px, 100% 100%, 100% 100%, 100% 100%;
+  background-position: 0 0, 0 0, 0 0, 0 0;
+}
+
+/* Ocean — blue water with light ripples and a depth gradient. */
+body[data-field="ocean"] { --field: #12597c; }
+body[data-field="ocean"]::before {
   background-color: #12597c;
   background-image:
     radial-gradient(circle, rgba(255,255,255,0.12) 2px, transparent 2.7px),
     radial-gradient(circle, rgba(6,44,72,0.40) 1.6px, transparent 2.1px),
     linear-gradient(180deg, rgba(70,158,196,0.28), rgba(6,38,62,0.42));
+  background-size: 72px 62px, 50px 54px, 100% 100%;
+  background-position: 0 0, 26px 32px, 0 0;
+}
+
+/* Ice — pale frosted blue with soft ripples. */
+body[data-field="ice"] { --field: #a9cdda; }
+body[data-field="ice"]::before {
+  background-color: #a9cdda;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.55) 2px, transparent 2.7px),
+    radial-gradient(circle, rgba(120,160,180,0.35) 1.6px, transparent 2.1px),
+    linear-gradient(180deg, rgba(230,244,250,0.4), rgba(150,190,205,0.35));
   background-size: 72px 62px, 50px 54px, 100% 100%;
   background-position: 0 0, 26px 32px, 0 0;
 }
