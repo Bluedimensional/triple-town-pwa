@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.48.2] - 2026-08-20 (v77)
+
+### Changed
+- **Church looks more churchy.** Added a **bell-tower steeple** (with a bell louver)
+  above the roof, so it reads clearly as a church rather than a house — without a
+  cross (that stays the Cathedral's crown).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v77`.
+
 ## [0.48.1] - 2026-08-20 (v76)
 
 ### Added

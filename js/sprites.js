@@ -235,11 +235,15 @@ const tombstone = svg(`
 
 // --- tomb chain ---------------------------------------------------------
 
-// Church — the smaller holy building: plain purple roof, no topper (no cross,
-// no star), so it reads as the simpler tier below the star-crowned Cathedral.
+// Church — the smaller holy building: a bell-tower STEEPLE (with a bell louver)
+// over a purple roof, a rose window, and an arched door. No cross/star (that stays
+// the Cathedral's crown), but the steeple reads clearly as a church, not a house.
 const church = svg(`
   <rect x="30" y="46" width="40" height="40" fill="#a3a29a" stroke="#292924" stroke-width="3"/>
   <path d="M26 48 L50 28 L74 48 Z" fill="#7d5a86" stroke="#231c28" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="45" y="15" width="10" height="15" fill="#9a9992" stroke="#292924" stroke-width="2"/>
+  <path d="M42.5 16 L50 4 L57.5 16 Z" fill="#7d5a86" stroke="#231c28" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M47.5 28 L47.5 22 Q50 19 52.5 22 L52.5 28 Z" fill="#2a2620"/>
   <path d="M43 86 L43 62 Q50 54 57 62 L57 86 Z" fill="#5a4632"/>
   <circle cx="50" cy="52" r="5" fill="#8fbcd8" stroke="#2c2a20" stroke-width="2"/>`, { cy: 89, rx: 24, ry: 5.5 });
 
