@@ -5,6 +5,7 @@ import {
   SPAWN_WEIGHTS, MAX_GRASS_STREAK, CRYSTAL_CHANCE, POINTS,
   BEAR_BASE_CHANCE, BEAR_CHANCE_PER_TURN, BEAR_MAX_CHANCE,
   PREFILL_MIN, PREFILL_MAX, PREFILL_WEIGHTS, PREFILL_BEARS, PREFILL_TOMB_CHANCE,
+  TIMED_PREFILL_WEIGHTS, TIMED_PREFILL_MIN, TIMED_PREFILL_MAX,
   goalForLevel, BOMB_TARGETS, GRAVE_TARGETS,
   ZAP_TRIGGER, ZAP_NEED_MIN, ZAP_NEED_MAX, MAX_ZAPS,
 } from './config.js';
@@ -181,7 +182,7 @@ function canHit(kind, t) {
 
 // Arm a bomb of the given kind (needs at least one banked). Returns whether it armed.
 export function armBomb(kind = 'bomb') {
-  if (state.over || countOf(kind) <= 0) return false;
+  if (state.over || state.crystalChoice || countOf(kind) <= 0) return false;
   state.armed = kind;
   return true;
 }
@@ -228,7 +229,7 @@ export function undoMove() {
   state.lastCreated = null; state.bearMoves = []; state.mergeSlides = [];
   state.floatPoints = null; state.levelFlash = false; state.levelCelebrate = null;
   state.armed = null; state.bombBlast = null; state.zapGrant = false;
-  state.crystalChoice = null;
+  state.crystalChoice = null; state.crystalChoiceOpen = false;
   save();
   return true;
 }
@@ -260,6 +261,7 @@ export function placePiece(r, c) {
     // the crystal, avoiding a mid-choice soft-lock.)
     if (opts.length >= 2) {
       state.crystalChoice = { r, c, options: opts, scoreBefore };
+      state.crystalChoiceOpen = true;
       state.activePos = null;       // hide the held preview while choosing
       return true;
     }
@@ -291,6 +293,7 @@ export function chooseCrystal(type) {
   if (!ch) return false;
   const { r, c, scoreBefore } = ch;
   state.crystalChoice = null;
+  state.crystalChoiceOpen = false;
   state.board[r][c] = type;
   state.lastCreated = { r, c };
   resolveMerges(r, c);
@@ -307,14 +310,19 @@ function prefill() {
     [cells[i], cells[j]] = [cells[j], cells[i]];
   }
   let idx = 0;
-  // Scale the scatter to the board area (6x6 = 36 is the baseline).
+  // Scale the scatter to the board area (6x6 = 36 is the baseline). Timed games
+  // start with MORE and HIGHER-tier pieces (Boom Town style) for fast scoring.
   const scale = (state.cols * state.rows) / 36;
+  const timed = state.timeMode > 0;
+  const weights = timed ? TIMED_PREFILL_WEIGHTS : PREFILL_WEIGHTS;
+  const pmin = timed ? TIMED_PREFILL_MIN : PREFILL_MIN;
+  const pmax = timed ? TIMED_PREFILL_MAX : PREFILL_MAX;
   const plants = Math.min(
-    randInt(Math.round(PREFILL_MIN * scale), Math.round(PREFILL_MAX * scale)),
+    randInt(Math.round(pmin * scale), Math.round(pmax * scale)),
     cells.length);
   for (let k = 0; k < plants && idx < cells.length; k++, idx++) {
     const [r, c] = cells[idx];
-    state.board[r][c] = weightedPick(PREFILL_WEIGHTS);
+    state.board[r][c] = weightedPick(weights);
   }
   const bears = Math.max(1, Math.round(PREFILL_BEARS * scale));
   for (let b = 0; b < bears && idx < cells.length; b++, idx++) {

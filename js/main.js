@@ -18,6 +18,15 @@ function draw() {
 // on anything else); otherwise it places the held piece there.
 function onCellTap(r, c) {
   if (state.over) return;
+  // Paused on a crystal choice: if the chooser was dismissed to peek at the board,
+  // tapping the pending crystal brings it back. Any other tap does nothing.
+  if (state.crystalChoice) {
+    if (!state.crystalChoiceOpen && state.crystalChoice.r === r && state.crystalChoice.c === c) {
+      state.crystalChoiceOpen = true;
+      draw();
+    }
+    return;
+  }
   if (state.armed) { bombAt(r, c); draw(); return; }
   if (placePiece(r, c)) draw();
 }
@@ -48,6 +57,20 @@ function onNewGame(cols, rows) {
   newGame(cols, rows);
   buildBoard(onCellTap, onArm);   // rebuild the DOM grid for the (possibly new) size
   draw();
+  markCurrentSize();
+}
+
+// Switch timed mode = start a fresh game at that length (prompted restart), since
+// a game already underway can't change its clock.
+function onNewTimeMode(mode) {
+  if (mode === state.timeMode && !state.over) return;   // already this mode, nothing to do
+  const label = mode ? mode + '-min' : 'Endless';
+  if (!state.over && !confirm(`Leave this game and start a new ${label} game?`)) return;
+  state.pendingTimeMode = mode;
+  newGame(state.cols, state.rows);
+  buildBoard(onCellTap, onArm);
+  draw();
+  markTime();
   markCurrentSize();
 }
 
@@ -125,13 +148,10 @@ function boot() {
   });
   markCrystal();
 
-  // Timed-mode buttons: choose the length for the NEXT new game (0 = endless).
+  // Timed-mode buttons: changing the timer means a fresh game, so this is a
+  // prompted restart (you can't switch a game already in progress to/from timed).
   document.querySelectorAll('#time-controls .time-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      state.pendingTimeMode = Number(btn.dataset.time);
-      save();
-      markTime();
-    });
+    btn.addEventListener('click', () => onNewTimeMode(Number(btn.dataset.time)));
   });
   markTime();
 
@@ -179,11 +199,16 @@ function boot() {
     draw();
   });
 
-  // Crystal-choice overlay: tap an option to complete that merge.
+  // Crystal-choice overlay: tap an option to complete that merge; tap the dim
+  // backdrop to hide it (peek at the board) — the choice stays pending.
   document.getElementById('crystal-opts').addEventListener('pointerdown', (e) => {
     const btn = e.target.closest('.cc-opt');
     if (!btn) return;
     if (chooseCrystal(btn.dataset.type)) draw();
+  });
+  const crystalOverlay = document.getElementById('crystal-choice');
+  crystalOverlay.addEventListener('pointerdown', (e) => {
+    if (e.target === crystalOverlay) { state.crystalChoiceOpen = false; draw(); }
   });
 
   draw();

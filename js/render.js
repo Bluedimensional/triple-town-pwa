@@ -335,6 +335,12 @@ function paintBoard() {
         }
         cell.title = type ? NAMES[type] : '';
       }
+      // A dismissed-but-pending crystal choice: pulse the crystal so it's clear you
+      // still need to pick (tap it to bring the chooser back).
+      if (state.crystalChoice && !state.crystalChoiceOpen &&
+          state.crystalChoice.r === r && state.crystalChoice.c === c) {
+        cls += ' choice-pending';
+      }
       // Bomb aim mode: the held piece glows, and every valid target for the aimed
       // bomb lights up — Rocks/Bears for a regular bomb, Tombstones for a grave bomb.
       if (state.armed) {
@@ -718,7 +724,12 @@ function paintCrystalChoice() {
       `<button class="cc-opt" data-type="${o.type}" aria-label="Make a ${NAMES[o.next]}" title="Make a ${NAMES[o.next]}">${sprite(o.next)}</button>`
     ).join('');
   }
-  el.crystalChoice.classList.add('show');
+  // Show the overlay only while "open"; tapping outside hides it (to peek at the
+  // board) but leaves the choice pending — the crystal pulses; tap it to re-show.
+  el.crystalChoice.classList.toggle('show', state.crystalChoiceOpen);
+  if (!state.crystalChoiceOpen && el.hint) {
+    el.hint.textContent = '💎 Tap the crystal to pick its merge';
+  }
 }
 
 function paintOverlay() {

@@ -37,6 +37,8 @@ export const state = {
   bombBlast: null,  // one-shot {r,c}: a tile was just bombed/zapped, for the blast anim
   crystalChoice: null, // transient {r,c,options,scoreBefore}: a placed crystal could
                        // complete >1 different merge — waiting for the player to pick
+  crystalChoiceOpen: false, // is the chooser overlay showing? (tap outside hides it
+                       // to peek at the board; tap the pending crystal to re-show)
   grassStreak: 0,   // consecutive grass pieces handed out (caps long streaks)
   storeBought: {},  // tile type -> times purchased (drives rising prices)
   over: false,
@@ -89,6 +91,7 @@ export function resetGame() {
   state.armed = null;
   state.bombBlast = null;
   state.crystalChoice = null;
+  state.crystalChoiceOpen = false;
   state.grassStreak = 0;
   state.storeBought = {};
   state.over = false;

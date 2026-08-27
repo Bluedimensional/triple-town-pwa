@@ -345,6 +345,13 @@ body[data-field="ocean"] {
   0%, 100% { box-shadow: inset 0 0 0 3px #7cf0f7, 0 0 6px rgba(75, 214, 224, 0.7); }
   50% { box-shadow: inset 0 0 0 3px #c0fbff, 0 0 13px rgba(75, 214, 224, 1); }
 }
+/* A crystal whose merge-choice was dismissed: pulse it so you know to tap it. */
+.cell.choice-pending { z-index: 6; }
+.cell.choice-pending svg { animation: choicePulse 0.85s ease-in-out infinite; }
+@keyframes choicePulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 3px #8fd6ff) drop-shadow(0 0 6px rgba(143, 214, 255, 0.6)); }
+  50% { transform: scale(1.1); filter: drop-shadow(0 0 6px #cfefff) drop-shadow(0 0 12px rgba(143, 214, 255, 0.95)); }
+}
 
 /* The 💥 burst when a bomb destroys a tile. */
 .bomb-blast {

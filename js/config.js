@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v72';
+export const VERSION = 'v73';
 
 // The organic path edges are now baked into the path GEOMETRY (each outer edge
 // bulges outward — see buildPathShape in render.js), so there is NO runtime SVG
@@ -143,6 +143,13 @@ export const PREFILL_MAX = 11;                       // most scattered plants
 export const PREFILL_WEIGHTS = { grass: 52, bush: 26, tree: 10 };
 export const PREFILL_BEARS = 1;                      // bears to scatter in
 export const PREFILL_TOMB_CHANCE = 0.5;              // chance of a lone tombstone
+
+// Timed games (Boom Town-style) skip the slow early grass-building: the board
+// STARTS scattered with higher-tier pieces so you can build castles fast in the
+// limited time. Denser + weighted toward mid tiers (huts/houses/trees).
+export const TIMED_PREFILL_WEIGHTS = { bush: 14, tree: 26, hut: 26, house: 18, mansion: 8, grass: 8 };
+export const TIMED_PREFILL_MIN = 12;                 // fewest scattered pieces (timed)
+export const TIMED_PREFILL_MAX = 18;                 // most scattered pieces (timed)
 
 // --- Levels (score milestones) -----------------------------------------------
 // Play is perpetual — the game only ends when the board fills (classic Triple

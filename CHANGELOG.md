@@ -3,6 +3,26 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.46.0] - 2026-08-20 (v73)
+
+### Added
+- **Timed games start with higher-tier pieces** (like the original's 2-minute "Boom
+  Town"). Instead of an empty-ish grass board, a timed game opens with a denser
+  scatter of bushes/trees/huts/houses/mansions so you can build castles fast in the
+  limited time. Endless mode is unchanged.
+
+### Changed
+- **Crystal chooser can be dismissed to peek at the board.** Tap the dim area around
+  the chooser to hide it without picking — the crystal stays put and **pulses**; tap
+  that pulsing crystal (or the hint says so) to bring the chooser back and choose.
+- **Switching the timer is now a prompted restart.** The ⏱ ∞/2m/5m buttons no longer
+  silently change a pending setting mid-game; tapping one asks "Leave this game and
+  start a new … game?" and starts fresh on Yes (a game already underway can't change
+  its own clock).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v73`.
+
 ## [0.45.1] - 2026-08-14 (v72)
 
 ### Changed
