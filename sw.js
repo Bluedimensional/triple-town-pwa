@@ -2,7 +2,7 @@
 //
 // Bump CACHE version whenever shipped files change so clients pick up the update.
 
-const CACHE = 'tripletown-v74';
+const CACHE = 'tripletown-v75';
 
 const SHELL = [
   '.',

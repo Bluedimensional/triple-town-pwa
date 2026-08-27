@@ -3,6 +3,19 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.48.0] - 2026-08-20 (v75)
+
+### Changed
+- **Storage plates moved to the bottom** — the reserve slots now sit *below* the
+  board instead of above it.
+- **Bears no longer blink in unison.** Each bear now has its own blink timing (a
+  per-bear delay and speed), so blinks scatter naturally. Added two more idle
+  gestures (**shiver**, **tip-over**) for 11 in total, so their fidgeting is more
+  varied.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v75`.
+
 ## [0.47.0] - 2026-08-20 (v74)
 
 ### Changed

@@ -11,7 +11,7 @@
 // constantly and rarely survive long enough to fire.
 
 const GESTURES = ['lean', 'wiggle', 'scratch', 'stamp',
-  'hop', 'spin', 'bounce', 'look', 'nod'];
+  'hop', 'spin', 'bounce', 'look', 'nod', 'shiver', 'tip'];
 const GESTURE_CLASSES = GESTURES.map((g) => 'gesture-' + g);
 
 // How often a new gesture starts, board-wide (random within the range). The wide

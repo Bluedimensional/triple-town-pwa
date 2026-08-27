@@ -800,6 +800,8 @@ body[data-field="ice"]::before {
 .cell.gesture-bounce svg  { animation: bearBounce 820ms ease-in-out; }
 .cell.gesture-look svg    { animation: bearLook 1300ms ease-in-out; }
 .cell.gesture-nod svg     { animation: bearNod 1000ms ease-in-out; }
+.cell.gesture-shiver svg  { animation: bearShiver 700ms ease-in-out; }
+.cell.gesture-tip svg     { animation: bearTip 1100ms ease-in-out; }
 
 @keyframes bearLean {
   0%, 100% { transform: rotate(0deg); }
@@ -867,12 +869,30 @@ body[data-field="ice"]::before {
   66%      { transform: translateY(4%) scale(1.03, 0.95); }
   84%      { transform: translateY(0) scale(1, 1); }
 }
+/* A fast little shiver/shudder. */
+@keyframes bearShiver {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  15% { transform: translateX(-2%) rotate(-2deg); }
+  30% { transform: translateX(2%) rotate(2deg); }
+  45% { transform: translateX(-1.6%) rotate(-1.6deg); }
+  60% { transform: translateX(1.6%) rotate(1.6deg); }
+  75% { transform: translateX(-1%) rotate(-1deg); }
+}
+/* Tip over to one side, hold a beat, tip back. */
+@keyframes bearTip {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-13deg); }
+  55% { transform: rotate(-13deg); }
+  80% { transform: rotate(3deg); }
+}
 
-/* Bears blink: eyes briefly squeeze shut. */
+/* Bears blink: eyes briefly squeeze shut. Each bear gets its own delay + duration
+   (set per-cell in render.js) so they don't all blink at the same moment. */
 .bear-eye {
   transform-box: fill-box;
   transform-origin: center;
-  animation: blink 4.2s ease-in-out infinite;
+  animation: blink var(--blink-dur, 4.2s) ease-in-out infinite;
+  animation-delay: var(--blink-delay, 0s);
 }
 @keyframes blink {
   0%, 92%, 100% { transform: scaleY(1); }

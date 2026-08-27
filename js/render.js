@@ -315,6 +315,10 @@ function paintBoard() {
         if (type) {
           if (type === 'bear') {
             cls += ' path bear';     // bears stand on the dirt path, and fidget
+            // Desync the blink: each bear gets its own phase + speed (from its
+            // position) so they don't all blink in unison.
+            cell.style.setProperty('--blink-delay', (-(((r * 5 + c * 7) % 42) / 10)).toFixed(1) + 's');
+            cell.style.setProperty('--blink-dur', (3.4 + ((r * 3 + c * 2) % 20) / 10).toFixed(1) + 's');
             // If this bear just moved, hop it from its old cell to here.
             const m = moved.get(r + ',' + c);
             if (m) {
@@ -433,7 +437,7 @@ function paintUndo() {
 
 // The bomb buttons: how many of each are banked, which (if any) is aimed, and —
 // while aimed — a hint telling you what to tap. Buttons light up when available.
-const DEFAULT_HINT = 'Tap to place · slots above = storage';
+const DEFAULT_HINT = 'Tap to place · slots below = storage';
 function paintBombs() {
   // Regular bomb (rock / bear).
   el.bombCount.textContent = state.bombs;
