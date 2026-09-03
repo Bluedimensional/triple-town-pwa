@@ -192,13 +192,6 @@ function boot() {
     draw();
   });
 
-  // Zap button: arm/disarm zap-aim mode; then tap ANY tile to delete it.
-  document.getElementById('zap-btn').addEventListener('pointerdown', (e) => {
-    e.preventDefault();
-    toggleBomb('zap');
-    draw();
-  });
-
   // Crystal-choice overlay: tap an option to complete that merge; tap the dim
   // backdrop to hide it (peek at the board) — the choice stays pending.
   document.getElementById('crystal-opts').addEventListener('pointerdown', (e) => {

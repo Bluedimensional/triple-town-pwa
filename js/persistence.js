@@ -94,9 +94,6 @@ export function save() {
       undoStack: state.undoStack,
       bombs: state.bombs,
       graveBombs: state.graveBombs,
-      zaps: state.zaps,
-      zapCharge: state.zapCharge,
-      zapGoal: state.zapGoal,
       grassStreak: state.grassStreak,
       storeBought: state.storeBought,
       over: state.over,
@@ -153,10 +150,6 @@ export function load() {
     state.undoStack = Array.isArray(data.undoStack) ? data.undoStack : [];
     state.bombs = data.bombs || 0;
     state.graveBombs = data.graveBombs || 0;
-    state.zaps = data.zaps || 0;
-    state.zapCharge = data.zapCharge || 0;
-    state.zapGoal = data.zapGoal || 0;   // 0 -> re-rolled on the next trigger spawn
-    state.zapGrant = false;
     state.armed = null;
     state.bombBlast = null;
     state.grassStreak = data.grassStreak || 0;

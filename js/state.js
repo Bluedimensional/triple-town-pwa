@@ -29,12 +29,8 @@ export const state = {
   undoStack: [],    // snapshots of state before recent placements, for undo
   bombs: 0,         // regular bombs available (earned on big merges) — hit rock/bear
   graveBombs: 0,    // grave bombs (rarer) — hit a tombstone/grave only
-  zaps: 0,          // zaps (rarest) — delete ANY tile; charged by spawns, not merges
-  zapCharge: 0,     // progress toward the next zap (counts ZAP_TRIGGER spawns)
-  zapGoal: 0,       // randomized number of triggers needed for the next zap
-  zapGrant: false,  // one-shot: a zap was just granted — fire the surprise explosion
-  armed: null,      // transient: which special is aimed — null | 'bomb' | 'grave' | 'zap'
-  bombBlast: null,  // one-shot {r,c}: a tile was just bombed/zapped, for the blast anim
+  armed: null,      // transient: which special is aimed — null | 'bomb' | 'grave'
+  bombBlast: null,  // one-shot {r,c}: a tile was just bombed, for the blast anim
   crystalChoice: null, // transient {r,c,options,scoreBefore}: a placed crystal could
                        // complete >1 different merge — waiting for the player to pick
   crystalChoiceOpen: false, // is the chooser overlay showing? (tap outside hides it
@@ -84,10 +80,6 @@ export function resetGame() {
   state.undoStack = [];
   state.bombs = 0;
   state.graveBombs = 0;
-  state.zaps = 0;
-  state.zapCharge = 0;
-  state.zapGoal = 0;
-  state.zapGrant = false;
   state.armed = null;
   state.bombBlast = null;
   state.crystalChoice = null;

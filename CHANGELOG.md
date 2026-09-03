@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.49.0] - 2026-08-20 (v78)
+
+### Removed
+- **Zap power removed** (it made the game too easy). The ⚡ button, the "delete
+  anything" ability, its charge/grant surprise, and all related state/UI are gone.
+  Bombs (💣 rock/bear) and grave bombs (🪦 tombstones) are unchanged.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v78`.
+
 ## [0.48.2] - 2026-08-20 (v77)
 
 ### Changed

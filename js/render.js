@@ -34,9 +34,6 @@ export function cacheDom() {
   el.bombCount = document.getElementById('bomb-count');
   el.graveBtn = document.getElementById('grave-btn');
   el.graveCount = document.getElementById('grave-count');
-  el.zapBtn = document.getElementById('zap-btn');
-  el.zapCount = document.getElementById('zap-count');
-  el.zapCelebrate = document.getElementById('zap-celebrate');
   el.hint = document.querySelector('#toolbar .hint');
   el.celebrate = document.getElementById('level-celebrate');
   el.scoresModal = document.getElementById('scores-modal');
@@ -350,10 +347,10 @@ function paintBoard() {
       if (state.armed) {
         if (isActive(r, c)) cls += ' bomb-armed';
         const bt = state.board[r][c];
-        const isTarget = state.armed === 'zap' ? bt !== null
-          : state.armed === 'grave' ? bt === 'tombstone'
+        const isTarget = state.armed === 'grave'
+          ? bt === 'tombstone'
           : (bt === 'rock' || bt === 'bear');
-        if (isTarget) cls += (state.armed === 'zap' ? ' zap-target' : ' bomb-target');
+        if (isTarget) cls += ' bomb-target';
       }
       cell.className = cls;
     }
@@ -449,18 +446,11 @@ function paintBombs() {
   el.graveBtn.disabled = (state.graveBombs <= 0 && state.armed !== 'grave') || state.over;
   el.graveBtn.classList.toggle('armed', state.armed === 'grave');
   el.graveBtn.classList.toggle('ready', state.graveBombs > 0 && state.armed !== 'grave' && !state.over);
-  // Zap (any tile). Hidden until you actually have one — so it reads as a surprise.
-  el.zapCount.textContent = state.zaps;
-  el.zapBtn.hidden = !(state.zaps > 0 || state.armed === 'zap');
-  el.zapBtn.disabled = (state.zaps <= 0 && state.armed !== 'zap') || state.over;
-  el.zapBtn.classList.toggle('armed', state.armed === 'zap');
-  el.zapBtn.classList.toggle('ready', state.zaps > 0 && state.armed !== 'zap' && !state.over);
 
   if (el.hint) {
     el.hint.textContent =
       state.armed === 'bomb' ? '💣 Tap a rock or bear to blow it up (tap 💣 again to cancel)'
       : state.armed === 'grave' ? '🪦 Tap a grave to clear it (tap 🪦 again to cancel)'
-      : state.armed === 'zap' ? '⚡ Tap anything to zap it away (tap ⚡ again to cancel)'
       : DEFAULT_HINT;
   }
   document.body.classList.toggle('bomb-aiming', !!state.armed);
@@ -527,36 +517,6 @@ function renderLevelCelebrate() {
     el.celebrate.classList.remove('show');
     el.celebrate.innerHTML = '';
   }, 2000);
-}
-
-// The surprise when a Zap is granted: a cyan flash, a burst of ⚡ bolts, and a
-// "⚡ Zap!" label — non-blocking, then fades. Signals that a new power appeared.
-function renderZapGrant() {
-  if (!state.zapGrant) return;
-  state.zapGrant = false;
-  if (!el.zapCelebrate) return;
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let bolts = '';
-  if (!reduce) {
-    for (let i = 0; i < 14; i++) {
-      const a = Math.random() * Math.PI * 2, dist = 80 + Math.random() * 150;
-      const tx = Math.round(Math.cos(a) * dist), ty = Math.round(Math.sin(a) * dist);
-      const size = Math.round(14 + Math.random() * 20), delay = (Math.random() * 0.12).toFixed(2);
-      bolts += `<span class="zc-bolt" style="--tx:${tx}px;--ty:${ty}px;font-size:${size}px;animation-delay:${delay}s">⚡</span>`;
-    }
-  }
-  el.zapCelebrate.innerHTML =
-    '<div class="zc-flash"></div>' +
-    `<div class="zc-bolts">${bolts}</div>` +
-    '<div class="zc-num">⚡ Zap!</div>';
-  el.zapCelebrate.classList.remove('show');
-  void el.zapCelebrate.offsetWidth;
-  el.zapCelebrate.classList.add('show');
-  clearTimeout(el.zapTimer);
-  el.zapTimer = setTimeout(() => {
-    el.zapCelebrate.classList.remove('show');
-    el.zapCelebrate.innerHTML = '';
-  }, 1600);
 }
 
 // Which timed mode's scores the modal is currently showing (defaults to the mode
@@ -818,7 +778,6 @@ export function render({ onBuy, onSwap }) {
   paintUndo();
   paintBombs();
   renderLevelCelebrate();
-  renderZapGrant();
   paintTheme();
   paintStorage(onSwap);
   paintStore(onBuy);
