@@ -28,6 +28,10 @@ works offline, installs straight from the browser. No App Store, no build step.
 - **Combo multiplier:** merge on consecutive placements to build a chain; the
   longer the chain, the bigger the score multiplier on that turn's merge (up to
   ×3). A 🔥 badge shows the live multiplier. Breaks when a placement merges nothing.
+- **Guardian force-field:** a meter fills as you merge; when full, your next
+  piece is a **giant Guardian**. Place it and the 8 tiles around it repel bears,
+  graves, and rocks for 3 minutes (a 3→0 countdown shows the time left), then it
+  shrinks back to a normal piece.
 - **Game over** when the board fills and nothing can free space.
 
 ## Run locally

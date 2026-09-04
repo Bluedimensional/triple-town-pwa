@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v81';
+export const VERSION = 'v82';
 
 // The organic path edges are now baked into the path GEOMETRY (each outer edge
 // bulges outward — see buildPathShape in render.js), so there is NO runtime SVG
@@ -70,7 +70,7 @@ export const POINTS = {
   megaCastle: 30000, kingdom: 75000, metropolis: 180000, skyUtopia: 400000,
   tombstone: 10, church: 500, cathedral: 2000, treasury: 8000, royalVault: 20000,
   treasureHoard: 50000, goldPyramid: 120000, phoenix: 280000, divineSun: 600000,
-  bear: 0, crystal: 0, rock: 0,
+  bear: 0, crystal: 0, rock: 0, guardian: 0,
 };
 
 // Coins awarded when a merge produces this tier (in-game pretend coins only).
@@ -101,7 +101,7 @@ export const CRYSTAL_MULTS = [1, 2, 3];
 
 // Timed mode: score as much as you can before the clock runs out. 0 = Endless
 // (the classic no-timer, board-fills-up game). Other values are minutes.
-export const TIME_MODES = [0, 2, 5];
+export const TIME_MODES = [0, 5];
 export const timeModeLabel = (m) => (m ? m + ' min' : 'Endless');
 // Leaderboard key suffix so each timed mode is ranked on its OWN board — Endless
 // keeps the bare board key (e.g. "6x6") so existing high scores are preserved.
@@ -138,6 +138,18 @@ export const CHARM_BEAR_MULT = 0.6;         // peaceful: bear chance ×0.6 (40% 
 export const CHARM_CRYSTAL_MULT = 2;        // prospector: crystal chance ×2
 export const CHARM_STORE_MULT = 0.7;        // bargain: store prices ×0.7 (30% off)
 export const CHARM_SCORE_MULT = 1.15;       // highRoller: points ×1.15
+
+// --- Guardian (force-field ward) ---------------------------------------------
+// A meter fills as you MERGE (bigger merges fill it more — it counts the tiles
+// absorbed). When it's full, the NEXT piece you're handed is a giant GUARDIAN of
+// whatever buildable type it would have been. Placing it shields the 8 tiles
+// around it for 3 real minutes: any bear, tombstone, or rock that appears in that
+// zone is vaporized. A countdown ticks 3 → 0 (minutes) beside the meter; when it
+// ends the giant shrinks back to a normal piece of its type. One ward at a time —
+// the meter can't refill while a Guardian is pending or a ward is active.
+export const WARD_DURATION_MS = 3 * 60 * 1000;   // 3 real minutes
+export const WARD_CHARGE_GOAL = 30;              // absorbed tiles to fill the meter
+export const WARD_TARGETS = ['bear', 'tombstone', 'rock']; // vaporized inside the zone
 
 // --- Combo multiplier --------------------------------------------------------
 // Merge on CONSECUTIVE placements to build a combo chain: every placement that
@@ -197,7 +209,7 @@ export const ASSETS = {
   megaCastle: '🏰', kingdom: '👑', metropolis: '🏙️', skyUtopia: '🌈',
   bear: '🐻', tombstone: '🪦', church: '⛪', cathedral: '🕌', treasury: '💰',
   royalVault: '👑', treasureHoard: '💰', goldPyramid: '🔺', phoenix: '🔥', divineSun: '☀️',
-  crystal: '🔷', rock: '🪨',
+  crystal: '🔷', rock: '🪨', guardian: '🛡',
 };
 
 // Human-readable names for the UI.
@@ -210,7 +222,7 @@ export const NAMES = {
   church: 'Church', cathedral: 'Cathedral', treasury: 'Treasury', royalVault: 'Royal Vault',
   treasureHoard: 'Treasure Hoard', goldPyramid: 'Golden Pyramid',
   phoenix: 'Phoenix', divineSun: 'Divine Sun',
-  crystal: 'Crystal', rock: 'Rock',
+  crystal: 'Crystal', rock: 'Rock', guardian: 'Guardian',
 };
 // "Super" variants (matched 4+) get their own tooltip names.
 for (const t of ['bush', 'tree', 'hut', 'house', 'mansion', 'castle',

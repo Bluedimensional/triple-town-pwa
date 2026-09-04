@@ -2,11 +2,11 @@
 
 import { state } from './state.js';
 import { VERSION } from './config.js';
-import { placePiece, newGame, undoMove, armBomb, toggleBomb, bombAt, expireTimer, chooseCrystal, cancelCrystal, chooseCharm } from './game.js';
+import { placePiece, newGame, undoMove, armBomb, toggleBomb, bombAt, expireTimer, chooseCrystal, cancelCrystal, chooseCharm, advanceWard } from './game.js';
 import { swapReserve } from './storehouse.js';
 import { buyItem } from './store.js';
 import { save, load } from './persistence.js';
-import { cacheDom, buildBoard, render, bearCells, openScores, closeScores, paintClock } from './render.js';
+import { cacheDom, buildBoard, render, bearCells, openScores, closeScores, paintClock, paintWard } from './render.js';
 import { startGestures } from './gestures.js';
 import { startVillagers } from './villagers.js';
 
@@ -98,6 +98,13 @@ function clockTick() {
   lastClockTick = now;
   if (document.hidden || state.over) return;
   state.elapsedMs = (state.elapsedMs || 0) + dt;   // active play time (both modes)
+  // Guardian ward runs on real time in BOTH modes. When it expires the giant
+  // shrinks back to a normal tile, which needs a full redraw; otherwise just
+  // refresh the countdown cheaply.
+  if (state.wardMs > 0) {
+    if (advanceWard(dt) === 'expired') draw();
+    else paintWard();
+  }
   if (state.timeMode && state.timeLeftMs != null) {
     state.timeLeftMs -= dt;
     if (state.timeLeftMs <= 0) {

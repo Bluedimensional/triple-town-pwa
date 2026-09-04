@@ -3,6 +3,31 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.53.0] - 2026-09-04 (v82)
+
+### Added
+- **Guardian force-field.** A new meter (under the goal bar) fills as you merge —
+  bigger merges/cascades fill it faster (it counts the tiles absorbed). When it's
+  full, the **next piece you're handed is a giant Guardian** of whatever buildable
+  type it would have been. Place it and the **8 tiles around it become a force
+  field for 3 real minutes**: any bear, tombstone, or rock that appears there is
+  **vaporized** (with a ✨ puff). A countdown ticks **3 → 0** beside the meter;
+  when it ends the giant shrinks back to a normal piece of its type. The giant
+  visibly **overflows its cell** over its neighbours (still visible underneath),
+  and its overflow doesn't block taps on the tiles below it. One ward at a time —
+  the meter can't recharge while a Guardian is pending or a ward is active. Runs
+  in real time in both modes; survives undo and save.
+  - Tunable in `js/config.js`: `WARD_CHARGE_GOAL` (absorbed tiles to fill, 30),
+    `WARD_DURATION_MS` (3 min), `WARD_TARGETS` (bear/tombstone/rock).
+
+### Removed
+- **2-minute Timed mode.** Modes are now just **Endless** and **5-minute** (the
+  3-minute ward fits inside a 5-minute game). Existing 2-minute high scores stay
+  in storage but no longer have a tab.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v82`.
+
 ## [0.52.0] - 2026-09-04 (v81)
 
 ### Added

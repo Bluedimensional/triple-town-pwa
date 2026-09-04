@@ -5,7 +5,8 @@
 
 import { state, unlockedStorage } from './state.js';
 import { NAMES, STORE_ITEMS, ORGANIC_PATH, BOARDS, MAX_STORAGE, boardKey, goalForLevel,
-  TIME_MODES, timeModeLabel, CHARM_BY_ID, comboMultiplier } from './config.js';
+  TIME_MODES, timeModeLabel, CHARM_BY_ID, comboMultiplier,
+  WARD_DURATION_MS, WARD_CHARGE_GOAL } from './config.js';
 import { SPRITES } from './sprites.js';
 import { priceOf } from './store.js';
 import { previewMergeGroup } from './match.js';
@@ -44,10 +45,19 @@ export function cacheDom() {
   el.charmChoice = document.getElementById('charm-choice');
   el.charmOpts = document.getElementById('charm-opts');
   el.comboBadge = document.getElementById('combo-badge');
+  el.ward = document.getElementById('ward');
+  el.wardFill = document.getElementById('ward-fill');
+  el.wardCount = document.getElementById('ward-count');
 }
 
 function sprite(type) {
   return type ? (SPRITES[type] || '') : '';
+}
+
+// A Guardian tile shows the sprite of the buildable type it wraps (grass, bush,
+// …) — the giant look + glow come from the `.guardian` CSS class, not the sprite.
+function spriteFor(type) {
+  return type === 'guardian' ? sprite(state.wardType) : sprite(type);
 }
 
 // Cobblestone path texture: base #75774a with bricks randomly shaded #777b4a or
@@ -288,6 +298,17 @@ function paintBoard() {
   const cellSize = el.board.clientWidth / state.cols; // px (cells are square)
   const moved = new Map();
   for (const m of state.bearMoves) moved.set(m.r + ',' + m.c, m);
+  // The 8 tiles around an active ward render a faint force-field tint.
+  const warded = new Set();
+  if (state.wardMs > 0 && state.wardPos) {
+    const { r: wr, c: wc } = state.wardPos;
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        if (dr === 0 && dc === 0) continue;
+        warded.add((wr + dr) + ',' + (wc + dc));
+      }
+    }
+  }
   // Only rewrite a cell's sprite (an SVG parse) when its content actually
   // changes — most cells are unchanged each placement.
   const setContent = (idx, key, html) => {
@@ -302,16 +323,22 @@ function paintBoard() {
 
       if (isActive(r, c) && state.current) {
         // The waiting piece: sits on the path; white glow + pulse live on the sprite.
-        setContent(idx, 'active:' + state.current, sprite(state.current));
+        const isGuard = state.current === 'guardian';
+        setContent(idx, 'active:' + state.current + ':' + (state.wardType || ''), spriteFor(state.current));
         cls += ' path pulsing lead';
         if (state.current === 'bear') cls += ' bear';   // keep the preview bear's tuned size
+        if (isGuard) cls += ' guardian';
         setLean(cell, r, c);
-        cell.title = NAMES[state.current] + ' — tap any tile to place';
+        cell.title = isGuard
+          ? 'Guardian — place it to shield the 8 tiles around it for 3 minutes'
+          : NAMES[state.current] + ' — tap any tile to place';
       } else {
         const type = state.board[r][c];
-        setContent(idx, 'tile:' + (type || ''), sprite(type));
+        setContent(idx, 'tile:' + (type || '') + (type === 'guardian' ? ':' + (state.wardType || '') : ''), spriteFor(type));
         if (type) {
-          if (type === 'bear') {
+          if (type === 'guardian') {
+            cls += ' filled guardian';       // the giant ward tile, overflowing its cell
+          } else if (type === 'bear') {
             cls += ' path bear';     // bears stand on the dirt path, and fidget
             // Desync the blink: each bear gets its own phase + speed (from its
             // position) so they don't all blink in unison.
@@ -344,6 +371,7 @@ function paintBoard() {
         const bt = state.board[r][c];
         if (bt === 'rock' || bt === 'bear') cls += ' bomb-target';
       }
+      if (warded.has(r + ',' + c)) cls += ' warded';   // force-field tint
       cell.className = cls;
     }
   }
@@ -453,6 +481,47 @@ function flashNoBomb() {
 }
 
 // A quick blast burst where a bomb just destroyed a tile.
+// The Guardian meter + its 3→0 countdown. While charging it fills toward full;
+// when a ward is active the same bar drains and the count shows minutes left.
+// Exported so the real-time tick can refresh it cheaply without a full redraw.
+export function paintWard() {
+  if (!el.ward) return;
+  const active = state.wardMs > 0;
+  if (active) {
+    el.ward.classList.add('active');
+    el.ward.classList.remove('ready');
+    el.wardFill.style.width = Math.max(0, Math.min(100, (state.wardMs / WARD_DURATION_MS) * 100)) + '%';
+    el.wardCount.textContent = Math.ceil(state.wardMs / 60000);   // 3 · 2 · 1
+  } else {
+    el.ward.classList.remove('active');
+    el.ward.classList.toggle('ready', state.wardReady);
+    el.wardFill.style.width = Math.max(0, Math.min(100, (state.wardCharge / WARD_CHARGE_GOAL) * 100)) + '%';
+    el.wardCount.textContent = state.wardReady ? '!' : '';
+  }
+}
+
+// Quick puffs where the ward vaporized a hazard this turn.
+function renderWardPuffs() {
+  const cleared = state.wardVaporized;
+  state.wardVaporized = [];
+  if (!cleared || !cleared.length) return;
+  const cellSize = el.board.clientWidth / state.cols;
+  for (const { r, c } of cleared) {
+    const p = document.createElement('div');
+    p.className = 'ward-puff';
+    p.textContent = '✨';
+    p.style.left = (c * cellSize) + 'px';
+    p.style.top = (r * cellSize) + 'px';
+    p.style.width = cellSize + 'px';
+    p.style.height = cellSize + 'px';
+    p.style.fontSize = (cellSize * 0.5) + 'px';
+    const done = () => p.remove();
+    p.addEventListener('animationend', done);
+    setTimeout(done, 650);
+    el.board.appendChild(p);
+  }
+}
+
 function renderBombBlast() {
   const b = state.bombBlast;
   state.bombBlast = null;
@@ -641,7 +710,7 @@ function paintStorage(onSwap) {
     // Every slot shows its plate (locked ones dimmed via CSS); the held piece
     // only shows on an unlocked slot.
     slot.innerHTML = `<span class="sh-plate">${SPRITES.plate}</span>` +
-      (open && piece ? `<span class="sh-item">${sprite(piece)}</span>` : '');
+      (open && piece ? `<span class="sh-item${piece === 'guardian' ? ' guardian' : ''}">${spriteFor(piece)}</span>` : '');
     slot.title = !open
       ? `Storage slot ${i + 1} — unlocks at level ${i}`
       : (piece ? NAMES[piece] + ' — tap to swap' : `Storage slot ${i + 1} — tap to store`);
@@ -800,6 +869,7 @@ export function render({ onBuy, onSwap }) {
   renderMergeSlides();
   renderPointFloat();
   renderBombBlast();
+  renderWardPuffs();
   paintHud();
   paintGoal();
   paintUndo();
@@ -811,6 +881,7 @@ export function render({ onBuy, onSwap }) {
   paintCrystalChoice();
   paintCharmChoice();
   paintCombo();
+  paintWard();
   paintOverlay();
   state.lastCreated = null; // consume the one-shot pop marker
   state.bearMoves = [];     // consume the one-shot hop markers

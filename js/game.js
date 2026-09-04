@@ -9,6 +9,7 @@ import {
   goalForLevel, BOMB_TARGETS,
   CHARMS, CHARM_CHOICES, CHARM_START_BOMBS, CHARM_BEAR_MULT, CHARM_CRYSTAL_MULT,
   comboMultiplier,
+  WARD_DURATION_MS, WARD_CHARGE_GOAL, WARD_TARGETS,
 } from './config.js';
 import { recordScore, bestFor } from './persistence.js';
 import { resolveMerges, crystalResolve, crystalOptions } from './match.js';
@@ -55,6 +56,17 @@ function crystalCharmMult() {
 // Decide the next piece and place it in hand.
 // countTurn:false is used by the storehouse draw so a swap doesn't ramp bears.
 export function spawnNext({ countTurn = true } = {}) {
+  // Guardian meter full → the next piece is a giant Guardian wrapping a normal
+  // buildable type. It pre-empts the usual bear/crystal/plant roll.
+  if (state.wardReady) {
+    state.wardReady = false;
+    state.wardCharge = 0;
+    state.wardType = weightedPick(SPAWN_WEIGHTS);   // the buildable type it wraps
+    state.current = 'guardian';
+    state.grassStreak = 0;
+    if (countTurn) state.turns++;
+    return;
+  }
   if (Math.random() < bearChance()) {
     state.current = 'bear';
   } else if (Math.random() < CRYSTAL_CHANCE * state.crystalMult * crystalCharmMult()) {
@@ -147,6 +159,8 @@ function snapshot() {
     grassStreak: state.grassStreak, storeBought: state.storeBought,
     crystalMult: state.crystalMult, bombs: state.bombs,
     charm: state.charm, combo: state.combo,
+    wardCharge: state.wardCharge, wardReady: state.wardReady,
+    wardType: state.wardType, wardPos: state.wardPos, wardMs: state.wardMs,
     over: state.over,
   });
 }
@@ -193,6 +207,51 @@ export function bombAt(r, c) {
   return false;
 }
 
+// --- Guardian ward -----------------------------------------------------------
+// Is a Guardian anywhere in play (meter armed, ward active, in hand, or stashed)?
+// While one is, the meter can't recharge — only one ward exists at a time.
+function guardianPending() {
+  return state.wardReady || state.wardMs > 0 ||
+    state.current === 'guardian' || state.reserves.includes('guardian');
+}
+
+// Vaporize any bear/tombstone/rock sitting in the 8 tiles around the active ward.
+// Called on the turn a Guardian is placed and after bears move each later turn.
+function sweepWard() {
+  if (state.wardMs <= 0 || !state.wardPos) return;
+  const { r, c } = state.wardPos;
+  for (let dr = -1; dr <= 1; dr++) {
+    for (let dc = -1; dc <= 1; dc++) {
+      if (dr === 0 && dc === 0) continue;          // the Guardian itself
+      const nr = r + dr;
+      const nc = c + dc;
+      if (nr < 0 || nr >= state.rows || nc < 0 || nc >= state.cols) continue;
+      if (WARD_TARGETS.includes(state.board[nr][nc])) {
+        state.board[nr][nc] = null;
+        state.wardVaporized.push({ r: nr, c: nc });
+      }
+    }
+  }
+}
+
+// Advance the real-time ward clock by dtMs. When it runs out the giant Guardian
+// shrinks back to a normal piece of its type. Returns 'active', 'expired', or
+// 'idle'. Called from the real-time tick in main.js (both game modes).
+export function advanceWard(dtMs) {
+  if (state.wardMs <= 0) return 'idle';
+  state.wardMs -= dtMs;
+  if (state.wardMs > 0) return 'active';
+  state.wardMs = 0;
+  if (state.wardPos) {
+    const { r, c } = state.wardPos;
+    if (state.board[r][c] === 'guardian') state.board[r][c] = state.wardType || 'rock';
+  }
+  state.wardPos = null;
+  state.wardType = null;
+  save();
+  return 'expired';
+}
+
 // Take back the last placement (spends one earned undo).
 export function undoMove() {
   if (state.undos <= 0 || state.undoStack.length === 0) return false;
@@ -224,11 +283,20 @@ export function placePiece(r, c) {
   state.lastCreated = { r, c };
   state.mergeSlides = [];   // collected during this turn's merges, for the animation
   state.mergeEarned = 0;    // reset; resolveMerges sets it if this placement merges
+  state.wardVaporized = []; // reset; sweepWard fills it if the ward clears anything
 
   // Base points for the tile you just set down (grass, bought tiles, etc.).
   state.score += POINTS[piece] || 0;
 
-  if (piece === 'crystal') {
+  if (piece === 'guardian') {
+    // Summon the ward: the 8 surrounding tiles are shielded for 3 real minutes.
+    // The giant sits on the board (it never merges); it reverts to a normal piece
+    // of its type when the timer ends (see advanceWard). Nuke hazards already in
+    // the zone right now, then finish the turn (which sweeps again after bears move).
+    state.wardPos = { r, c };
+    state.wardMs = WARD_DURATION_MS;
+    sweepWard();
+  } else if (piece === 'crystal') {
     const opts = crystalOptions(r, c);
     // More than one DIFFERENT merge is possible → let the player choose which.
     // Pause the turn: the crystal sits on the board and the choice overlay shows;
@@ -262,9 +330,21 @@ function finishTurn(r, c, scoreBefore) {
   } else {
     state.combo = 0;
   }
+  // Guardian meter: charge it by the number of tiles this turn's merges absorbed
+  // (bigger merges / cascades absorb more), but only while no Guardian is pending
+  // or active — one ward at a time. Filling it arms the NEXT spawn as a Guardian.
+  if (!guardianPending()) {
+    state.wardCharge += state.mergeSlides.length;
+    if (state.wardCharge >= WARD_CHARGE_GOAL) {
+      state.wardCharge = WARD_CHARGE_GOAL;
+      state.wardReady = true;             // spawnNext (just below) will hand the Guardian
+    }
+  }
+
   state.floatPoints = { r, c, points: state.score - scoreBefore };
   maybeLevelUp();
   moveBears();
+  sweepWard();                            // vaporize any hazard that entered the zone
   spawnNext();
   state.activePos = pickActivePos(r, c);
   checkGameOver();

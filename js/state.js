@@ -37,6 +37,12 @@ export const state = {
   charmChoices: [], // the ids offered at run start; NON-EMPTY = the chooser is up
   combo: 0,         // consecutive merging placements — drives the combo multiplier
   mergeEarned: 0,   // transient: points the LAST placement's merges earned (combo input)
+  wardCharge: 0,    // Guardian meter progress (tiles absorbed toward WARD_CHARGE_GOAL)
+  wardReady: false, // meter full — the NEXT spawn becomes the giant Guardian
+  wardType: null,   // the buildable tile type the pending/active Guardian wraps
+  wardPos: null,    // {r,c} center of an active ward; its 8 neighbors are shielded
+  wardMs: 0,        // ms left on the active ward (real time, 3 min); 0 = no ward
+  wardVaporized: [],// one-shot [{r,c}]: tiles the ward cleared this turn, for the puff
   grassStreak: 0,   // consecutive grass pieces handed out (caps long streaks)
   storeBought: {},  // tile type -> times purchased (drives rising prices)
   over: false,
@@ -88,6 +94,12 @@ export function resetGame() {
   state.charmChoices = [];
   state.combo = 0;
   state.mergeEarned = 0;
+  state.wardCharge = 0;
+  state.wardReady = false;
+  state.wardType = null;
+  state.wardPos = null;
+  state.wardMs = 0;
+  state.wardVaporized = [];
   state.grassStreak = 0;
   state.storeBought = {};
   state.over = false;
