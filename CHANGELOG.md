@@ -3,6 +3,29 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.54.0] - 2026-09-04 (v83)
+
+### Removed
+- **Guardian force-field (the "super duper" giant) removed** — the whole v82
+  feature: the giant meter-charged tile, its 8-tile ward, the vaporize-zone, the
+  real-time countdown, and its meter. (The 2-minute Timed mode stays removed from
+  v82 — modes are Endless + 5-minute.)
+
+### Added
+- **Green Thumb is now always one of the 3 charms offered** (it's the charm with
+  the new power-up), alongside 2 random others.
+- **Verdant Surge** — Green Thumb's power-up. It always does grass → Tree; on top
+  of that, making **4-of-a-kind ("super") merges** charges a meter (shown under
+  the goal bar, only while Green Thumb is active). Fill it (3 super-merges) and
+  the Surge switches **ON for 10 placements**, during which **bush also merges
+  into a random house** — Hut, House, or Mansion. Then it switches off and the
+  meter recharges. Survives undo and save.
+  - Tunable in `js/config.js`: `SURGE_GOAL` (super-merges to trigger, 3),
+    `SURGE_TURNS` (placements it lasts, 10), `SURGE_BUSH_TARGETS` (the houses).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v83`.
+
 ## [0.53.0] - 2026-09-04 (v82)
 
 ### Added

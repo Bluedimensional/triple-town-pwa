@@ -1030,83 +1030,39 @@ body[data-field="ice"]::before {
   100% { transform: scale(1) rotate(0); }
 }
 
-/* ---- Guardian ward: giant shielded tile, the 8-tile force field, meter ---- */
-/* The giant Guardian overflows its cell, scaled up over its neighbours with a
-   golden/blue aura. .cell has no overflow clip, so it genuinely spills over. */
-.cell.guardian { z-index: 22; overflow: visible; }
-.cell.guardian svg {
-  transform: scale(1.9);
-  pointer-events: none;        /* the overflow must not steal taps from neighbours */
-  animation: guardianPulse 2.2s ease-in-out infinite;
-}
-@keyframes guardianPulse {
-  0%, 100% { filter: drop-shadow(0 0 6px #ffe08a) drop-shadow(0 0 12px rgba(120, 200, 255, 0.9)); transform: scale(1.9); }
-  50% { filter: drop-shadow(0 0 11px #fff2b0) drop-shadow(0 0 22px rgba(120, 200, 255, 1)); transform: scale(2.0); }
-}
-/* Each of the 8 shielded tiles gets a soft cyan force-field behind its contents. */
-.cell.warded::after {
-  content: '';
-  position: absolute;
-  inset: 5%;
-  z-index: -1;                 /* behind the tile's own sprite, above the path */
-  border-radius: 24%;
-  background: radial-gradient(circle at 50% 45%, rgba(120, 210, 255, 0.32), rgba(120, 210, 255, 0.06) 72%);
-  box-shadow: inset 0 0 0 2px rgba(155, 227, 255, 0.55);
-  pointer-events: none;
-  animation: wardShield 2.2s ease-in-out infinite;
-}
-@keyframes wardShield {
-  0%, 100% { opacity: 0.55; }
-  50% { opacity: 0.95; }
-}
-.ward-puff {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  z-index: 21;
-  animation: wardPuff 0.6s ease-out forwards;
-}
-@keyframes wardPuff {
-  0% { transform: scale(0.5); opacity: 0; }
-  30% { transform: scale(1.2); opacity: 1; }
-  100% { transform: scale(1.7); opacity: 0; }
-}
-/* The meter + 3→0 countdown, tucked under the goal bar. */
-.ward {
+/* ---- Verdant Surge meter (Green Thumb power-up), under the goal bar ---- */
+.surge {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-top: 7px;
 }
-.ward-icon { font-size: 15px; line-height: 1; filter: grayscale(0.5); opacity: 0.6; }
-.ward-track {
+.surge-icon { font-size: 15px; line-height: 1; filter: grayscale(0.4); opacity: 0.7; }
+.surge-track {
   flex: 1;
   height: 7px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.12);
   overflow: hidden;
 }
-.ward-fill {
+.surge-fill {
   height: 100%;
   width: 0;
   border-radius: 999px;
-  background: linear-gradient(90deg, #6fb7ff, #a98cff);
+  background: linear-gradient(90deg, #8fd84a, #4fae3a);
   transition: width 0.3s ease;
 }
-.ward-count {
-  min-width: 16px;
+.surge-count {
+  min-width: 26px;
   text-align: center;
   font-weight: 800;
-  font-size: 14px;
-  color: #8fd0ff;
+  font-size: 13px;
+  color: #a7e07a;
 }
-.ward.ready .ward-icon { filter: none; opacity: 1; animation: comboBump 0.7s ease infinite; }
-.ward.ready .ward-fill { background: linear-gradient(90deg, #ffd54a, #ff8a3d); }
-.ward.ready .ward-count { color: #ffcf4a; }
-.ward.active .ward-icon { filter: none; opacity: 1; }
-.ward.active .ward-count { color: #b7a6ff; }
+/* Surge ON: the whole meter goes bright green and the icon pulses. */
+.surge.active .surge-icon { filter: none; opacity: 1; animation: comboBump 0.8s ease infinite; }
+.surge.active .surge-fill { background: linear-gradient(90deg, #b6ff5a, #6ad83a); box-shadow: 0 0 8px rgba(140, 230, 90, 0.7); }
+.surge.active .surge-count { color: #c6ff7a; }
 
 /* ---- Roguelike charm chooser (start of run): 3 stacked perk cards ---- */
 .charm-card { max-width: min(92vw, 420px); }

@@ -96,11 +96,9 @@ export function save() {
       charm: state.charm,
       charmChoices: state.charmChoices,
       combo: state.combo,
-      wardCharge: state.wardCharge,
-      wardReady: state.wardReady,
-      wardType: state.wardType,
-      wardPos: state.wardPos,
-      wardMs: state.wardMs,
+      surgeCharge: state.surgeCharge,
+      surgeActive: state.surgeActive,
+      surgeTurns: state.surgeTurns,
       grassStreak: state.grassStreak,
       storeBought: state.storeBought,
       over: state.over,
@@ -164,14 +162,12 @@ export function load() {
     state.charmChoices = Array.isArray(data.charmChoices) ? data.charmChoices : [];
     state.combo = data.combo || 0;
     state.mergeEarned = 0;
-    // Guardian ward: restore an in-progress ward / pending meter (old saves lack
-    // these → no ward, empty meter).
-    state.wardCharge = data.wardCharge || 0;
-    state.wardReady = !!data.wardReady;
-    state.wardType = data.wardType ?? null;
-    state.wardPos = data.wardPos ?? null;
-    state.wardMs = data.wardMs || 0;
-    state.wardVaporized = [];
+    state.superMerged = false;
+    // Verdant Surge (Green Thumb power-up): restore its meter / active state
+    // (old saves lack these → empty meter, not active).
+    state.surgeCharge = data.surgeCharge || 0;
+    state.surgeActive = !!data.surgeActive;
+    state.surgeTurns = data.surgeTurns || 0;
     state.grassStreak = data.grassStreak || 0;
     state.storeBought = data.storeBought || {};
     state.over = !!data.over;

@@ -1,13 +1,20 @@
 // match.js — connected-group detection (flood fill) and cascading merges.
 
 import { state } from './state.js';
-import { MERGE, POINTS, COINS, BOMB_EARN_MIN_POINTS, MAX_BOMBS, CHARM_SCORE_MULT } from './config.js';
+import { MERGE, POINTS, COINS, BOMB_EARN_MIN_POINTS, MAX_BOMBS, CHARM_SCORE_MULT,
+  SURGE_BUSH_TARGETS } from './config.js';
 
 // The tier a base type turns into when it merges — normally MERGE[base].next, but
-// the Green Thumb charm sends grass straight to Tree (skipping Bush). Kept in one
-// place so resolveMerges and crystalOptions agree on the result.
+// the Green Thumb charm bends it: grass always jumps straight to Tree, and while
+// its Verdant Surge is active bush jumps to a random house. Kept in one place so
+// resolveMerges and crystalOptions agree on the result.
 function mergeNext(base) {
-  if (state.charm === 'greenThumb' && base === 'grass') return 'tree';
+  if (state.charm === 'greenThumb') {
+    if (base === 'grass') return 'tree';
+    if (base === 'bush' && state.surgeActive) {
+      return SURGE_BUSH_TARGETS[Math.floor(Math.random() * SURGE_BUSH_TARGETS.length)];
+    }
+  }
   const rule = MERGE[base];
   return rule ? rule.next : null;
 }
@@ -130,6 +137,7 @@ export function resolveMerges(r, c) {
 
     // Matching MORE than the minimum makes a "super" result worth double points.
     const superResult = group.length > rule.need;
+    if (superResult) state.superMerged = true;   // a 4+ merge — charges the Verdant Surge
     const next = mergeNext(base);           // charm-adjusted result tier
 
     // Collapse the whole group into the next tier at the placement point. Record

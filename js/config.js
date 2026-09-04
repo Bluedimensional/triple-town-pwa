@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v82';
+export const VERSION = 'v83';
 
 // The organic path edges are now baked into the path GEOMETRY (each outer edge
 // bulges outward — see buildPathShape in render.js), so there is NO runtime SVG
@@ -70,7 +70,7 @@ export const POINTS = {
   megaCastle: 30000, kingdom: 75000, metropolis: 180000, skyUtopia: 400000,
   tombstone: 10, church: 500, cathedral: 2000, treasury: 8000, royalVault: 20000,
   treasureHoard: 50000, goldPyramid: 120000, phoenix: 280000, divineSun: 600000,
-  bear: 0, crystal: 0, rock: 0, guardian: 0,
+  bear: 0, crystal: 0, rock: 0,
 };
 
 // Coins awarded when a merge produces this tier (in-game pretend coins only).
@@ -123,7 +123,7 @@ export const MAX_BOMBS = 9;                 // cap kept in hand (keeps it occasi
 // store.js), keyed by its id, so nothing hard-codes a charm's text. Applies to
 // both endless and timed runs.
 export const CHARMS = [
-  { id: 'greenThumb',    icon: '🌱', name: 'Green Thumb',    desc: 'Grass merges skip Bush — straight to Tree.' },
+  { id: 'greenThumb',    icon: '🌱', name: 'Green Thumb',    desc: 'Grass skips to Tree. Make 4-merges to charge a Surge: bush jumps to a house too.' },
   { id: 'demolitionist', icon: '💣', name: 'Demolitionist',  desc: 'Start the run with 3 bombs.' },
   { id: 'peaceful',      icon: '☮️', name: 'Peaceful Valley', desc: 'Bears appear 40% less often.' },
   { id: 'prospector',    icon: '💎', name: 'Prospector',     desc: 'Crystals appear twice as often.' },
@@ -139,17 +139,14 @@ export const CHARM_CRYSTAL_MULT = 2;        // prospector: crystal chance ×2
 export const CHARM_STORE_MULT = 0.7;        // bargain: store prices ×0.7 (30% off)
 export const CHARM_SCORE_MULT = 1.15;       // highRoller: points ×1.15
 
-// --- Guardian (force-field ward) ---------------------------------------------
-// A meter fills as you MERGE (bigger merges fill it more — it counts the tiles
-// absorbed). When it's full, the NEXT piece you're handed is a giant GUARDIAN of
-// whatever buildable type it would have been. Placing it shields the 8 tiles
-// around it for 3 real minutes: any bear, tombstone, or rock that appears in that
-// zone is vaporized. A countdown ticks 3 → 0 (minutes) beside the meter; when it
-// ends the giant shrinks back to a normal piece of its type. One ward at a time —
-// the meter can't refill while a Guardian is pending or a ward is active.
-export const WARD_DURATION_MS = 3 * 60 * 1000;   // 3 real minutes
-export const WARD_CHARGE_GOAL = 30;              // absorbed tiles to fill the meter
-export const WARD_TARGETS = ['bear', 'tombstone', 'rock']; // vaporized inside the zone
+// Verdant Surge — the Green Thumb charm's power-up. Green Thumb always merges
+// grass → tree. On TOP of that, making 4+ (super) merges charges a meter; once
+// full, the Surge switches ON for a few placements, during which BUSH also jumps
+// straight to a random house (hut / house / mansion). Then it switches off and
+// the meter recharges. Only active while the Green Thumb charm is chosen.
+export const SURGE_GOAL = 3;                 // super merges needed to trigger a surge
+export const SURGE_TURNS = 10;               // placements the surge stays ON
+export const SURGE_BUSH_TARGETS = ['hut', 'house', 'mansion']; // bush → random one of these
 
 // --- Combo multiplier --------------------------------------------------------
 // Merge on CONSECUTIVE placements to build a combo chain: every placement that
@@ -209,7 +206,7 @@ export const ASSETS = {
   megaCastle: '🏰', kingdom: '👑', metropolis: '🏙️', skyUtopia: '🌈',
   bear: '🐻', tombstone: '🪦', church: '⛪', cathedral: '🕌', treasury: '💰',
   royalVault: '👑', treasureHoard: '💰', goldPyramid: '🔺', phoenix: '🔥', divineSun: '☀️',
-  crystal: '🔷', rock: '🪨', guardian: '🛡',
+  crystal: '🔷', rock: '🪨',
 };
 
 // Human-readable names for the UI.
@@ -222,7 +219,7 @@ export const NAMES = {
   church: 'Church', cathedral: 'Cathedral', treasury: 'Treasury', royalVault: 'Royal Vault',
   treasureHoard: 'Treasure Hoard', goldPyramid: 'Golden Pyramid',
   phoenix: 'Phoenix', divineSun: 'Divine Sun',
-  crystal: 'Crystal', rock: 'Rock', guardian: 'Guardian',
+  crystal: 'Crystal', rock: 'Rock',
 };
 // "Super" variants (matched 4+) get their own tooltip names.
 for (const t of ['bush', 'tree', 'hut', 'house', 'mansion', 'castle',
