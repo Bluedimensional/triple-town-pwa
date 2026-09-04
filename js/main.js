@@ -2,7 +2,7 @@
 
 import { state } from './state.js';
 import { VERSION } from './config.js';
-import { placePiece, newGame, undoMove, armBomb, toggleBomb, bombAt, expireTimer, chooseCrystal, cancelCrystal } from './game.js';
+import { placePiece, newGame, undoMove, armBomb, toggleBomb, bombAt, expireTimer, chooseCrystal, cancelCrystal, chooseCharm } from './game.js';
 import { swapReserve } from './storehouse.js';
 import { buyItem } from './store.js';
 import { save, load } from './persistence.js';
@@ -19,6 +19,7 @@ function draw() {
 function onCellTap(r, c) {
   if (state.over) return;
   if (state.crystalChoice) return;   // the chooser (modal) handles taps
+  if (state.charmChoices.length) return;   // pick a charm first
   if (state.armed) { bombAt(r, c); draw(); return; }
   if (placePiece(r, c)) draw();
 }
@@ -114,8 +115,11 @@ function boot() {
   document.getElementById('version').textContent = VERSION;
 
   const restored = load();
-  // Start fresh if there's no valid in-progress game to resume.
-  if (!restored || state.current === null || state.activePos === null) {
+  // Start fresh if there's no valid in-progress game to resume — UNLESS a charm
+  // choice is pending (current/activePos are null on purpose until a charm is
+  // picked), in which case the saved chooser is restored as-is.
+  const charmPending = state.charmChoices.length > 0;
+  if (!charmPending && (!restored || state.current === null || state.activePos === null)) {
     if (!state.over) newGame(state.pendingCols, state.pendingRows);
   }
 
@@ -187,6 +191,14 @@ function boot() {
   const crystalOverlay = document.getElementById('crystal-choice');
   crystalOverlay.addEventListener('pointerdown', (e) => {
     if (e.target === crystalOverlay) { cancelCrystal(); draw(); }
+  });
+
+  // Start-of-run charm chooser: tap a card to lock that charm in and deal the
+  // board. No backdrop dismiss — you must pick one to start the run.
+  document.getElementById('charm-opts').addEventListener('pointerdown', (e) => {
+    const btn = e.target.closest('.charm-opt');
+    if (!btn) return;
+    if (chooseCharm(btn.dataset.charm)) draw();
   });
 
   draw();

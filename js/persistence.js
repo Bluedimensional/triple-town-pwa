@@ -93,6 +93,8 @@ export function save() {
       undos: state.undos,
       undoStack: state.undoStack,
       bombs: state.bombs,
+      charm: state.charm,
+      charmChoices: state.charmChoices,
       grassStreak: state.grassStreak,
       storeBought: state.storeBought,
       over: state.over,
@@ -150,6 +152,10 @@ export function load() {
     state.bombs = data.bombs || 0;
     state.armed = null;
     state.bombBlast = null;
+    // Roguelike charm: restore the run's charm and any pending choice. Old saves
+    // (pre-charms) have neither → no charm, chooser not up, game plays normally.
+    state.charm = data.charm ?? null;
+    state.charmChoices = Array.isArray(data.charmChoices) ? data.charmChoices : [];
     state.grassStreak = data.grassStreak || 0;
     state.storeBought = data.storeBought || {};
     state.over = !!data.over;

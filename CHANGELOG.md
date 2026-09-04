@@ -3,6 +3,25 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.51.0] - 2026-09-04 (v80)
+
+### Added
+- **Roguelike Charms.** Every new run (endless AND timed) opens with a "Choose a
+  Charm" screen offering **3 random perks** — pick one and it bends the rules for
+  that whole game (Balatro-style). The board is dealt only after you choose, so
+  charms can shape the opening hand. The six charms:
+  - 🌱 **Green Thumb** — grass merges skip Bush, straight to Tree.
+  - 💣 **Demolitionist** — start the run with 3 bombs.
+  - ☮️ **Peaceful Valley** — bears appear 40% less often (spawns + opening scatter).
+  - 💎 **Prospector** — crystals appear twice as often.
+  - 🏷️ **Bargain Hunter** — store prices 30% cheaper all game (shown price too).
+  - ✨ **High Roller** — every score boosted 15%.
+  The chosen charm persists with the save (a refresh mid-choice restores the
+  chooser); old saves from before this update keep playing with no charm.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v80`.
+
 ## [0.50.0] - 2026-09-04 (v79)
 
 ### Removed

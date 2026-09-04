@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v79';
+export const VERSION = 'v80';
 
 // The organic path edges are now baked into the path GEOMETRY (each outer edge
 // bulges outward — see buildPathShape in render.js), so there is NO runtime SVG
@@ -115,6 +115,29 @@ export const timeModeKey = (m) => (m ? '·' + m + 'm' : '');
 export const BOMB_EARN_MIN_POINTS = 2000;   // Castle / Cathedral tier and up
 export const BOMB_TARGETS = ['rock', 'bear'];
 export const MAX_BOMBS = 9;                 // cap kept in hand (keeps it occasional)
+
+// --- Roguelike Charms --------------------------------------------------------
+// At the START of every run you pick 1 of 3 random charms that bends the rules
+// for that whole game (Balatro-style). This block is DATA ONLY — id, icon, name,
+// and blurb. Each charm's actual EFFECT lives in the logic (game.js / match.js /
+// store.js), keyed by its id, so nothing hard-codes a charm's text. Applies to
+// both endless and timed runs.
+export const CHARMS = [
+  { id: 'greenThumb',    icon: '🌱', name: 'Green Thumb',    desc: 'Grass merges skip Bush — straight to Tree.' },
+  { id: 'demolitionist', icon: '💣', name: 'Demolitionist',  desc: 'Start the run with 3 bombs.' },
+  { id: 'peaceful',      icon: '☮️', name: 'Peaceful Valley', desc: 'Bears appear 40% less often.' },
+  { id: 'prospector',    icon: '💎', name: 'Prospector',     desc: 'Crystals appear twice as often.' },
+  { id: 'bargain',       icon: '🏷️', name: 'Bargain Hunter',  desc: 'Store prices are 30% cheaper, all game.' },
+  { id: 'highRoller',    icon: '✨', name: 'High Roller',     desc: 'Every score is boosted 15%.' },
+];
+export const CHARM_BY_ID = Object.fromEntries(CHARMS.map((c) => [c.id, c]));
+export const CHARM_CHOICES = 3;             // how many charms are offered each run
+// Effect magnitudes, read by the logic that implements each charm.
+export const CHARM_START_BOMBS = 3;         // demolitionist: bombs in hand at start
+export const CHARM_BEAR_MULT = 0.6;         // peaceful: bear chance ×0.6 (40% fewer)
+export const CHARM_CRYSTAL_MULT = 2;        // prospector: crystal chance ×2
+export const CHARM_STORE_MULT = 0.7;        // bargain: store prices ×0.7 (30% off)
+export const CHARM_SCORE_MULT = 1.15;       // highRoller: points ×1.15
 
 // Bear spawn chance ramps up over the game.
 export const BEAR_BASE_CHANCE = 0.06;

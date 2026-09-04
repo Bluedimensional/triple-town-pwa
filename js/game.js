@@ -7,6 +7,7 @@ import {
   PREFILL_MIN, PREFILL_MAX, PREFILL_WEIGHTS, PREFILL_BEARS, PREFILL_TOMB_CHANCE,
   TIMED_PREFILL_WEIGHTS, TIMED_PREFILL_MIN, TIMED_PREFILL_MAX,
   goalForLevel, BOMB_TARGETS,
+  CHARMS, CHARM_CHOICES, CHARM_START_BOMBS, CHARM_BEAR_MULT, CHARM_CRYSTAL_MULT,
 } from './config.js';
 import { recordScore, bestFor } from './persistence.js';
 import { resolveMerges, crystalResolve, crystalOptions } from './match.js';
@@ -40,7 +41,14 @@ function emptyCells() {
 }
 
 function bearChance() {
-  return Math.min(BEAR_MAX_CHANCE, BEAR_BASE_CHANCE + state.turns * BEAR_CHANCE_PER_TURN);
+  let ch = Math.min(BEAR_MAX_CHANCE, BEAR_BASE_CHANCE + state.turns * BEAR_CHANCE_PER_TURN);
+  if (state.charm === 'peaceful') ch *= CHARM_BEAR_MULT;   // Peaceful Valley: fewer bears
+  return ch;
+}
+
+// Prospector charm doubles the crystal spawn rate (1 otherwise).
+function crystalCharmMult() {
+  return state.charm === 'prospector' ? CHARM_CRYSTAL_MULT : 1;
 }
 
 // Decide the next piece and place it in hand.
@@ -48,8 +56,8 @@ function bearChance() {
 export function spawnNext({ countTurn = true } = {}) {
   if (Math.random() < bearChance()) {
     state.current = 'bear';
-  } else if (Math.random() < CRYSTAL_CHANCE * state.crystalMult) {
-    state.current = 'crystal';   // rare wildcard (density scaled per game)
+  } else if (Math.random() < CRYSTAL_CHANCE * state.crystalMult * crystalCharmMult()) {
+    state.current = 'crystal';   // rare wildcard (density scaled per game + charm)
   } else if (state.grassStreak >= MAX_GRASS_STREAK) {
     // Too many grass in a row — hand out a non-grass piece this time.
     const { grass, ...rest } = SPAWN_WEIGHTS;
@@ -301,7 +309,8 @@ function prefill() {
     const [r, c] = cells[idx];
     state.board[r][c] = weightedPick(weights);
   }
-  const bears = Math.max(1, Math.round(PREFILL_BEARS * scale));
+  const bearScale = state.charm === 'peaceful' ? CHARM_BEAR_MULT : 1;  // Peaceful Valley
+  const bears = Math.max(1, Math.round(PREFILL_BEARS * scale * bearScale));
   for (let b = 0; b < bears && idx < cells.length; b++, idx++) {
     const [r, c] = cells[idx];
     state.board[r][c] = 'bear';
@@ -313,8 +322,21 @@ function prefill() {
   }
 }
 
+// Three DISTINCT random charm ids to offer at the start of a run.
+function pickCharmChoices() {
+  const ids = CHARMS.map((c) => c.id);
+  for (let i = ids.length - 1; i > 0; i--) {   // Fisher–Yates
+    const j = Math.floor(Math.random() * (i + 1));
+    [ids[i], ids[j]] = [ids[j], ids[i]];
+  }
+  return ids.slice(0, CHARM_CHOICES);
+}
+
 // Start a brand-new game. `cols`/`rows` set the board dimensions; omitting them
-// keeps the current/pending size.
+// keeps the current/pending size. The board is NOT dealt yet: first the player
+// picks 1 of 3 charms (chooseCharm below), because some charms shape the opening
+// deal (e.g. Peaceful Valley thins the starting bears). Until then charmChoices
+// is non-empty and the chooser is up.
 export function newGame(cols, rows) {
   if (cols) state.cols = cols;
   if (rows) state.rows = rows;
@@ -327,8 +349,21 @@ export function newGame(cols, rows) {
   state.best = bestFor(state.cols, state.rows, state.timeMode);  // best for this board+mode
   state.level = 1;
   state.goal = goalForLevel(1);
-  prefill();
+  state.charm = null;
+  state.charmChoices = pickCharmChoices();        // the chooser is now up
+  save();
+}
+
+// Apply the chosen charm, then deal the opening board. Called when the player
+// taps one of the three offered charms. Returns true if it took effect.
+export function chooseCharm(id) {
+  if (!state.charmChoices.includes(id)) return false;
+  state.charm = id;
+  state.charmChoices = [];                         // close the chooser
+  if (id === 'demolitionist') state.bombs = CHARM_START_BOMBS;
+  prefill();                                       // charm-aware (peaceful thins bears)
   spawnNext();
   state.activePos = pickActivePos(null, null);
   save();
+  return true;
 }

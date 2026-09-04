@@ -5,7 +5,7 @@
 
 import { state, unlockedStorage } from './state.js';
 import { NAMES, STORE_ITEMS, ORGANIC_PATH, BOARDS, MAX_STORAGE, boardKey, goalForLevel,
-  TIME_MODES, timeModeLabel } from './config.js';
+  TIME_MODES, timeModeLabel, CHARM_BY_ID } from './config.js';
 import { SPRITES } from './sprites.js';
 import { priceOf } from './store.js';
 import { previewMergeGroup } from './match.js';
@@ -41,6 +41,8 @@ export function cacheDom() {
   el.overReason = document.querySelector('#gameover .over-reason');
   el.crystalChoice = document.getElementById('crystal-choice');
   el.crystalOpts = document.getElementById('crystal-opts');
+  el.charmChoice = document.getElementById('charm-choice');
+  el.charmOpts = document.getElementById('charm-opts');
 }
 
 function sprite(type) {
@@ -685,6 +687,30 @@ function paintCrystalChoice() {
   el.crystalChoice.classList.add('show');
 }
 
+// Start-of-run charm chooser: three cards (icon + name + blurb). Tap one to apply
+// it and deal the board (chooseCharm in game.js). Shown while charmChoices is
+// non-empty; rebuilt only when the offered set changes.
+function paintCharmChoice() {
+  const choices = state.charmChoices;
+  if (!choices || choices.length === 0) {
+    el.charmChoice.classList.remove('show');
+    el.charmChoiceKey = null;
+    return;
+  }
+  const key = choices.join('|');
+  if (el.charmChoiceKey !== key) {
+    el.charmChoiceKey = key;
+    el.charmOpts.innerHTML = choices.map((id) => {
+      const c = CHARM_BY_ID[id];
+      return `<button class="charm-opt" data-charm="${id}">` +
+        `<span class="charm-icon">${c.icon}</span>` +
+        `<span class="charm-name">${c.name}</span>` +
+        `<span class="charm-desc">${c.desc}</span></button>`;
+    }).join('');
+  }
+  el.charmChoice.classList.add('show');
+}
+
 function paintOverlay() {
   // Shown when the game is over, until the player taps outside the card.
   if (state.over && !state.overlayDismissed) {
@@ -759,6 +785,7 @@ export function render({ onBuy, onSwap }) {
   paintStorage(onSwap);
   paintStore(onBuy);
   paintCrystalChoice();
+  paintCharmChoice();
   paintOverlay();
   state.lastCreated = null; // consume the one-shot pop marker
   state.bearMoves = [];     // consume the one-shot hop markers

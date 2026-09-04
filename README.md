@@ -22,6 +22,9 @@ works offline, installs straight from the browser. No App Store, no build step.
 - **Storehouse** (top-left) holds one piece in reserve — tap to swap.
 - **Store** sells build-chain tiles for in-game **pretend coins only** (earned
   from merges). Prices rise with each purchase. No real money, ever.
+- **Roguelike Charms:** every new run opens by offering **3 random perks**; pick
+  one and it bends the rules for that whole game (e.g. grass skips to Tree, start
+  with bombs, fewer bears, 15% more score). Board is dealt after you choose.
 - **Game over** when the board fills and nothing can free space.
 
 ## Run locally

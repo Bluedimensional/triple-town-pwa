@@ -1,7 +1,16 @@
 // match.js — connected-group detection (flood fill) and cascading merges.
 
 import { state } from './state.js';
-import { MERGE, POINTS, COINS, BOMB_EARN_MIN_POINTS, MAX_BOMBS } from './config.js';
+import { MERGE, POINTS, COINS, BOMB_EARN_MIN_POINTS, MAX_BOMBS, CHARM_SCORE_MULT } from './config.js';
+
+// The tier a base type turns into when it merges — normally MERGE[base].next, but
+// the Green Thumb charm sends grass straight to Tree (skipping Bush). Kept in one
+// place so resolveMerges and crystalOptions agree on the result.
+function mergeNext(base) {
+  if (state.charm === 'greenThumb' && base === 'grass') return 'tree';
+  const rule = MERGE[base];
+  return rule ? rule.next : null;
+}
 
 const DIRS = [[-1, 0], [1, 0], [0, -1], [0, 1]]; // orthogonal only
 
@@ -83,7 +92,8 @@ export function crystalOptions(r, c) {
     state.board[r][c] = type;                 // pretend the crystal is this type
     const group = floodFill(r, c, type);
     if (group.length >= MERGE[type].need) {
-      opts.push({ type, next: MERGE[type].next, count: group.length, points: POINTS[MERGE[type].next] || 0 });
+      const next = mergeNext(type);
+      opts.push({ type, next, count: group.length, points: POINTS[next] || 0 });
     }
   }
   state.board[r][c] = 'crystal';              // restore (the caller decides what to do)
@@ -111,7 +121,8 @@ export function crystalResolve(r, c) {
 export function resolveMerges(r, c) {
   let earned = 0;
   while (true) {
-    const rule = MERGE[baseType(state.board[r][c])];
+    const base = baseType(state.board[r][c]);
+    const rule = MERGE[base];
     if (!rule) break;
 
     const group = floodFill(r, c, state.board[r][c]);
@@ -119,6 +130,7 @@ export function resolveMerges(r, c) {
 
     // Matching MORE than the minimum makes a "super" result worth double points.
     const superResult = group.length > rule.need;
+    const next = mergeNext(base);           // charm-adjusted result tier
 
     // Collapse the whole group into the next tier at the placement point. Record
     // each absorbed tile (with its actual look) so the renderer can slide it in.
@@ -128,15 +140,17 @@ export function resolveMerges(r, c) {
       }
       state.board[gr][gc] = null;
     }
-    state.board[r][c] = superResult ? superType(rule.next) : rule.next;
+    state.board[r][c] = superResult ? superType(next) : next;
     state.lastCreated = { r, c };
 
-    const pts = (POINTS[rule.next] || 0) * (superResult ? 2 : 1);
+    let pts = (POINTS[next] || 0) * (superResult ? 2 : 1);
+    if (state.charm === 'highRoller') pts = Math.round(pts * CHARM_SCORE_MULT);
     state.score += pts;
     earned += pts;
-    state.coins += COINS[rule.next] || 0;
-    // A "big merge" (Castle-tier or higher) earns a Bomb, up to the cap.
-    if ((POINTS[rule.next] || 0) >= BOMB_EARN_MIN_POINTS && state.bombs < MAX_BOMBS) {
+    state.coins += COINS[next] || 0;
+    // A "big merge" (Castle-tier or higher) earns a Bomb, up to the cap. Based on
+    // the tile's own tier value (POINTS[next]), not the charm-boosted score.
+    if ((POINTS[next] || 0) >= BOMB_EARN_MIN_POINTS && state.bombs < MAX_BOMBS) {
       state.bombs++;
     }
     // Loop again from the same cell to cascade.
