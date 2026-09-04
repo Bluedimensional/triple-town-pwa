@@ -27,14 +27,12 @@ export const state = {
   levelCelebrate: null, // one-shot {level}: fire the full-screen level-up celebration
   undos: 0,         // undos available (earned one per level completed)
   undoStack: [],    // snapshots of state before recent placements, for undo
-  bombs: 0,         // regular bombs available (earned on big merges) — hit rock/bear
-  graveBombs: 0,    // grave bombs (rarer) — hit a tombstone/grave only
-  armed: null,      // transient: which special is aimed — null | 'bomb' | 'grave'
+  bombs: 0,         // bombs available (earned on big merges) — hit rock/bear
+  armed: null,      // transient: is a bomb aimed — null | 'bomb'
   bombBlast: null,  // one-shot {r,c}: a tile was just bombed, for the blast anim
   crystalChoice: null, // transient {r,c,options,scoreBefore}: a placed crystal could
-                       // complete >1 different merge — waiting for the player to pick
-  crystalChoiceOpen: false, // is the chooser overlay showing? (tap outside hides it
-                       // to peek at the board; tap the pending crystal to re-show)
+                       // complete >1 different merge — the chooser is up; tap outside
+                       // to cancel (crystal back to hand) or an option to pick
   grassStreak: 0,   // consecutive grass pieces handed out (caps long streaks)
   storeBought: {},  // tile type -> times purchased (drives rising prices)
   over: false,
@@ -79,11 +77,9 @@ export function resetGame() {
   state.undos = 0;
   state.undoStack = [];
   state.bombs = 0;
-  state.graveBombs = 0;
   state.armed = null;
   state.bombBlast = null;
   state.crystalChoice = null;
-  state.crystalChoiceOpen = false;
   state.grassStreak = 0;
   state.storeBought = {};
   state.over = false;

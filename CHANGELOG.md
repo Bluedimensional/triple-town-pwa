@@ -3,6 +3,23 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.50.0] - 2026-09-04 (v79)
+
+### Removed
+- **Grave bomb removed** (the 🪦 "clear a tombstone" tool next to the 💣 bomb).
+  Its button, its earn rule, and all related state/UI are gone. The regular Bomb
+  (💣 rock/bear) is unchanged. `state.armed` is now `null | 'bomb'` only.
+
+### Fixed
+- **Crystal-choice cancel no longer locks the board.** When a placed crystal
+  could complete more than one merge, the chooser opens; tapping the dim backdrop
+  now returns the crystal to your hand (restores the pre-placement snapshot)
+  instead of leaving it pending on the board, which had blocked bombing tiles and
+  swapping the piece into storage until you picked an option.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v79`.
+
 ## [0.49.0] - 2026-08-20 (v78)
 
 ### Removed

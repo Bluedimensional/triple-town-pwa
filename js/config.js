@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v78';
+export const VERSION = 'v79';
 
 // The organic path edges are now baked into the path GEOMETRY (each outer edge
 // bulges outward — see buildPathShape in render.js), so there is NO runtime SVG
@@ -115,13 +115,6 @@ export const timeModeKey = (m) => (m ? '·' + m + 'm' : '');
 export const BOMB_EARN_MIN_POINTS = 2000;   // Castle / Cathedral tier and up
 export const BOMB_TARGETS = ['rock', 'bear'];
 export const MAX_BOMBS = 9;                 // cap kept in hand (keeps it occasional)
-
-// Grave bombs — a rarer special bomb that clears a stuck Tombstone (a grave left
-// when bears run out of room). Regular bombs can't touch graves; only these can.
-// Earned less often than regular bombs: a bigger merge is required.
-export const GRAVE_BOMB_EARN_MIN_POINTS = 5000;  // Floating Castle / Treasury tier and up
-export const GRAVE_TARGETS = ['tombstone'];
-export const MAX_GRAVE_BOMBS = 5;
 
 // Bear spawn chance ramps up over the game.
 export const BEAR_BASE_CHANCE = 0.06;

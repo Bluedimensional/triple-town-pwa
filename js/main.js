@@ -2,7 +2,7 @@
 
 import { state } from './state.js';
 import { VERSION } from './config.js';
-import { placePiece, newGame, undoMove, armBomb, toggleBomb, bombAt, expireTimer, chooseCrystal } from './game.js';
+import { placePiece, newGame, undoMove, armBomb, toggleBomb, bombAt, expireTimer, chooseCrystal, cancelCrystal } from './game.js';
 import { swapReserve } from './storehouse.js';
 import { buyItem } from './store.js';
 import { save, load } from './persistence.js';
@@ -18,15 +18,7 @@ function draw() {
 // on anything else); otherwise it places the held piece there.
 function onCellTap(r, c) {
   if (state.over) return;
-  // Paused on a crystal choice: if the chooser was dismissed to peek at the board,
-  // tapping the pending crystal brings it back. Any other tap does nothing.
-  if (state.crystalChoice) {
-    if (!state.crystalChoiceOpen && state.crystalChoice.r === r && state.crystalChoice.c === c) {
-      state.crystalChoiceOpen = true;
-      draw();
-    }
-    return;
-  }
+  if (state.crystalChoice) return;   // the chooser (modal) handles taps
   if (state.armed) { bombAt(r, c); draw(); return; }
   if (placePiece(r, c)) draw();
 }
@@ -185,15 +177,8 @@ function boot() {
     draw();
   });
 
-  // Grave-bomb button: arm/disarm grave-aim mode; then tap a Tombstone to clear it.
-  document.getElementById('grave-btn').addEventListener('pointerdown', (e) => {
-    e.preventDefault();
-    toggleBomb('grave');
-    draw();
-  });
-
   // Crystal-choice overlay: tap an option to complete that merge; tap the dim
-  // backdrop to hide it (peek at the board) — the choice stays pending.
+  // backdrop to back out (the crystal returns to your hand).
   document.getElementById('crystal-opts').addEventListener('pointerdown', (e) => {
     const btn = e.target.closest('.cc-opt');
     if (!btn) return;
@@ -201,7 +186,7 @@ function boot() {
   });
   const crystalOverlay = document.getElementById('crystal-choice');
   crystalOverlay.addEventListener('pointerdown', (e) => {
-    if (e.target === crystalOverlay) { state.crystalChoiceOpen = false; draw(); }
+    if (e.target === crystalOverlay) { cancelCrystal(); draw(); }
   });
 
   draw();

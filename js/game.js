@@ -6,7 +6,7 @@ import {
   BEAR_BASE_CHANCE, BEAR_CHANCE_PER_TURN, BEAR_MAX_CHANCE,
   PREFILL_MIN, PREFILL_MAX, PREFILL_WEIGHTS, PREFILL_BEARS, PREFILL_TOMB_CHANCE,
   TIMED_PREFILL_WEIGHTS, TIMED_PREFILL_MIN, TIMED_PREFILL_MAX,
-  goalForLevel, BOMB_TARGETS, GRAVE_TARGETS,
+  goalForLevel, BOMB_TARGETS,
 } from './config.js';
 import { recordScore, bestFor } from './persistence.js';
 import { resolveMerges, crystalResolve, crystalOptions } from './match.js';
@@ -136,28 +136,21 @@ function snapshot() {
     reserves: state.reserves, score: state.score, coins: state.coins,
     turns: state.turns, level: state.level, goal: state.goal,
     grassStreak: state.grassStreak, storeBought: state.storeBought,
-    crystalMult: state.crystalMult, bombs: state.bombs, graveBombs: state.graveBombs,
+    crystalMult: state.crystalMult, bombs: state.bombs,
     over: state.over,
   });
 }
 
-// --- Bombs (the long-press / button specials) --------------------------------
-// Two kinds share this machinery:
-//   'bomb'  — earned on big merges; destroys a Rock or Bear.
-//   'grave' — rarer; destroys a Tombstone (a grave left by a trapped bear).
-// state.armed holds which kind is currently aimed (null | 'bomb' | 'grave').
-function countOf(kind) {
-  return kind === 'grave' ? state.graveBombs : state.bombs;
-}
-// Can the aimed kind destroy the tile `t`?
-function canHit(kind, t) {
+// --- Bombs (the long-press / button special) ---------------------------------
+// Earned on big merges; destroys a Rock or Bear. state.armed is 'bomb' when aimed.
+function canHit(t) {
   if (t === null) return false;
-  return (kind === 'grave' ? GRAVE_TARGETS : BOMB_TARGETS).includes(t);
+  return BOMB_TARGETS.includes(t);
 }
 
-// Arm a bomb of the given kind (needs at least one banked). Returns whether it armed.
+// Arm the bomb (needs at least one banked). Returns whether it armed.
 export function armBomb(kind = 'bomb') {
-  if (state.over || state.crystalChoice || countOf(kind) <= 0) return false;
+  if (state.over || state.crystalChoice || state.bombs <= 0) return false;
   state.armed = kind;
   return true;
 }
@@ -166,24 +159,21 @@ export function disarmBomb() {
   state.armed = null;
   return true;
 }
-// Tap a bomb button: arm that kind, or disarm if it's already the aimed one.
+// Tap the bomb button: arm, or disarm if already aimed.
 export function toggleBomb(kind = 'bomb') {
   if (state.armed === kind) { state.armed = null; return false; }
   return armBomb(kind);
 }
 
-// Detonate the armed bomb at (r,c) — destroys a valid target for the aimed kind.
-// A FREE action: clears the tile but does NOT consume the held piece, draw a new
-// one, ramp bears, or end the turn. Tapping a non-target just cancels. Returns
-// true if a tile was destroyed.
+// Detonate the armed bomb at (r,c) — destroys a Rock or Bear. A FREE action: clears
+// the tile but does NOT consume the held piece, draw a new one, ramp bears, or end
+// the turn. Tapping a non-target just cancels. Returns true if a tile was destroyed.
 export function bombAt(r, c) {
-  const kind = state.armed;
-  if (!kind) return false;
+  if (!state.armed) return false;
   const t = state.board[r][c];
-  if (countOf(kind) > 0 && canHit(kind, t)) {
+  if (state.bombs > 0 && canHit(t)) {
     state.board[r][c] = null;
-    if (kind === 'grave') state.graveBombs--;
-    else state.bombs--;
+    state.bombs--;
     state.armed = null;
     state.bombBlast = { r, c };
     save();
@@ -203,7 +193,7 @@ export function undoMove() {
   state.lastCreated = null; state.bearMoves = []; state.mergeSlides = [];
   state.floatPoints = null; state.levelFlash = false; state.levelCelebrate = null;
   state.armed = null; state.bombBlast = null;
-  state.crystalChoice = null; state.crystalChoiceOpen = false;
+  state.crystalChoice = null;
   save();
   return true;
 }
@@ -235,8 +225,7 @@ export function placePiece(r, c) {
     // the crystal, avoiding a mid-choice soft-lock.)
     if (opts.length >= 2) {
       state.crystalChoice = { r, c, options: opts, scoreBefore };
-      state.crystalChoiceOpen = true;
-      state.activePos = null;       // hide the held preview while choosing
+      state.activePos = null;       // hide the held preview while the chooser is up
       return true;
     }
     crystalResolve(r, c);           // 0 or 1 option: resolve automatically (rock if none)
@@ -267,11 +256,25 @@ export function chooseCrystal(type) {
   if (!ch) return false;
   const { r, c, scoreBefore } = ch;
   state.crystalChoice = null;
-  state.crystalChoiceOpen = false;
   state.board[r][c] = type;
   state.lastCreated = { r, c };
   resolveMerges(r, c);
   finishTurn(r, c, scoreBefore);
+  return true;
+}
+
+// Back out of a crystal choice: give the crystal back to your hand so you can bomb,
+// stash it in storage, or place it elsewhere. Restores the pre-placement snapshot
+// (pushed in placePiece), so the placement is undone without spending an undo.
+export function cancelCrystal() {
+  if (!state.crystalChoice) return false;
+  const snap = state.undoStack.pop();
+  state.crystalChoice = null;
+  state.armed = null;
+  if (snap) Object.assign(state, JSON.parse(snap));   // board, current, activePos, …
+  state.lastCreated = null;
+  state.mergeSlides = [];
+  save();
   return true;
 }
 

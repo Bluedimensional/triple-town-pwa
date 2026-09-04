@@ -1,8 +1,7 @@
 // match.js — connected-group detection (flood fill) and cascading merges.
 
 import { state } from './state.js';
-import { MERGE, POINTS, COINS, BOMB_EARN_MIN_POINTS, MAX_BOMBS,
-  GRAVE_BOMB_EARN_MIN_POINTS, MAX_GRAVE_BOMBS } from './config.js';
+import { MERGE, POINTS, COINS, BOMB_EARN_MIN_POINTS, MAX_BOMBS } from './config.js';
 
 const DIRS = [[-1, 0], [1, 0], [0, -1], [0, 1]]; // orthogonal only
 
@@ -136,14 +135,9 @@ export function resolveMerges(r, c) {
     state.score += pts;
     earned += pts;
     state.coins += COINS[rule.next] || 0;
-    // A "big merge" (Castle-tier or higher) earns a Bomb; a bigger one also earns
-    // a rarer Grave bomb. Both up to their caps.
-    const madeWorth = POINTS[rule.next] || 0;
-    if (madeWorth >= BOMB_EARN_MIN_POINTS && state.bombs < MAX_BOMBS) {
+    // A "big merge" (Castle-tier or higher) earns a Bomb, up to the cap.
+    if ((POINTS[rule.next] || 0) >= BOMB_EARN_MIN_POINTS && state.bombs < MAX_BOMBS) {
       state.bombs++;
-    }
-    if (madeWorth >= GRAVE_BOMB_EARN_MIN_POINTS && state.graveBombs < MAX_GRAVE_BOMBS) {
-      state.graveBombs++;
     }
     // Loop again from the same cell to cascade.
   }

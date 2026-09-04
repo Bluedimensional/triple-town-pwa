@@ -32,8 +32,6 @@ export function cacheDom() {
   el.undoCount = document.getElementById('undo-count');
   el.bombBtn = document.getElementById('bomb-btn');
   el.bombCount = document.getElementById('bomb-count');
-  el.graveBtn = document.getElementById('grave-btn');
-  el.graveCount = document.getElementById('grave-count');
   el.hint = document.querySelector('#toolbar .hint');
   el.celebrate = document.getElementById('level-celebrate');
   el.scoresModal = document.getElementById('scores-modal');
@@ -336,21 +334,12 @@ function paintBoard() {
         }
         cell.title = type ? NAMES[type] : '';
       }
-      // A dismissed-but-pending crystal choice: pulse the crystal so it's clear you
-      // still need to pick (tap it to bring the chooser back).
-      if (state.crystalChoice && !state.crystalChoiceOpen &&
-          state.crystalChoice.r === r && state.crystalChoice.c === c) {
-        cls += ' choice-pending';
-      }
-      // Bomb aim mode: the held piece glows, and every valid target for the aimed
-      // bomb lights up — Rocks/Bears for a regular bomb, Tombstones for a grave bomb.
+      // Bomb aim mode: the held piece glows, and every Rock/Bear lights up as a
+      // valid target.
       if (state.armed) {
         if (isActive(r, c)) cls += ' bomb-armed';
         const bt = state.board[r][c];
-        const isTarget = state.armed === 'grave'
-          ? bt === 'tombstone'
-          : (bt === 'rock' || bt === 'bear');
-        if (isTarget) cls += ' bomb-target';
+        if (bt === 'rock' || bt === 'bear') cls += ' bomb-target';
       }
       cell.className = cls;
     }
@@ -432,25 +421,18 @@ function paintUndo() {
   el.undoBtn.disabled = state.undos <= 0 || state.undoStack.length === 0;
 }
 
-// The bomb buttons: how many of each are banked, which (if any) is aimed, and —
-// while aimed — a hint telling you what to tap. Buttons light up when available.
+// The bomb button: how many are banked, whether it's aimed, and — while aimed — a
+// hint telling you what to tap. Lights up when available.
 const DEFAULT_HINT = 'Tap to place · slots below = storage';
 function paintBombs() {
-  // Regular bomb (rock / bear).
   el.bombCount.textContent = state.bombs;
   el.bombBtn.disabled = (state.bombs <= 0 && state.armed !== 'bomb') || state.over;
   el.bombBtn.classList.toggle('armed', state.armed === 'bomb');
   el.bombBtn.classList.toggle('ready', state.bombs > 0 && state.armed !== 'bomb' && !state.over);
-  // Grave bomb (tombstone).
-  el.graveCount.textContent = state.graveBombs;
-  el.graveBtn.disabled = (state.graveBombs <= 0 && state.armed !== 'grave') || state.over;
-  el.graveBtn.classList.toggle('armed', state.armed === 'grave');
-  el.graveBtn.classList.toggle('ready', state.graveBombs > 0 && state.armed !== 'grave' && !state.over);
 
   if (el.hint) {
     el.hint.textContent =
       state.armed === 'bomb' ? '💣 Tap a rock or bear to blow it up (tap 💣 again to cancel)'
-      : state.armed === 'grave' ? '🪦 Tap a grave to clear it (tap 🪦 again to cancel)'
       : DEFAULT_HINT;
   }
   document.body.classList.toggle('bomb-aiming', !!state.armed);
@@ -700,12 +682,7 @@ function paintCrystalChoice() {
       `<button class="cc-opt" data-type="${o.type}" aria-label="Make a ${NAMES[o.next]}" title="Make a ${NAMES[o.next]}">${sprite(o.next)}</button>`
     ).join('');
   }
-  // Show the overlay only while "open"; tapping outside hides it (to peek at the
-  // board) but leaves the choice pending — the crystal pulses; tap it to re-show.
-  el.crystalChoice.classList.toggle('show', state.crystalChoiceOpen);
-  if (!state.crystalChoiceOpen && el.hint) {
-    el.hint.textContent = '💎 Tap the crystal to pick its merge';
-  }
+  el.crystalChoice.classList.add('show');
 }
 
 function paintOverlay() {

@@ -93,7 +93,6 @@ export function save() {
       undos: state.undos,
       undoStack: state.undoStack,
       bombs: state.bombs,
-      graveBombs: state.graveBombs,
       grassStreak: state.grassStreak,
       storeBought: state.storeBought,
       over: state.over,
@@ -149,7 +148,6 @@ export function load() {
     state.undos = data.undos || 0;
     state.undoStack = Array.isArray(data.undoStack) ? data.undoStack : [];
     state.bombs = data.bombs || 0;
-    state.graveBombs = data.graveBombs || 0;
     state.armed = null;
     state.bombBlast = null;
     state.grassStreak = data.grassStreak || 0;
