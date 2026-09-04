@@ -25,6 +25,9 @@ works offline, installs straight from the browser. No App Store, no build step.
 - **Roguelike Charms:** every new run opens by offering **3 random perks**; pick
   one and it bends the rules for that whole game (e.g. grass skips to Tree, start
   with bombs, fewer bears, 15% more score). Board is dealt after you choose.
+- **Combo multiplier:** merge on consecutive placements to build a chain; the
+  longer the chain, the bigger the score multiplier on that turn's merge (up to
+  ×3). A 🔥 badge shows the live multiplier. Breaks when a placement merges nothing.
 - **Game over** when the board fills and nothing can free space.
 
 ## Run locally

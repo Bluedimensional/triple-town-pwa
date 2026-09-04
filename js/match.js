@@ -155,5 +155,6 @@ export function resolveMerges(r, c) {
     }
     // Loop again from the same cell to cascade.
   }
+  state.mergeEarned = earned;   // this placement's merge points (drives the combo)
   return earned;
 }

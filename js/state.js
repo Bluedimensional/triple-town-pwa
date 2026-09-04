@@ -35,6 +35,8 @@ export const state = {
                        // to cancel (crystal back to hand) or an option to pick
   charm: null,      // this run's chosen roguelike charm id (null = none active)
   charmChoices: [], // the ids offered at run start; NON-EMPTY = the chooser is up
+  combo: 0,         // consecutive merging placements — drives the combo multiplier
+  mergeEarned: 0,   // transient: points the LAST placement's merges earned (combo input)
   grassStreak: 0,   // consecutive grass pieces handed out (caps long streaks)
   storeBought: {},  // tile type -> times purchased (drives rising prices)
   over: false,
@@ -84,6 +86,8 @@ export function resetGame() {
   state.crystalChoice = null;
   state.charm = null;
   state.charmChoices = [];
+  state.combo = 0;
+  state.mergeEarned = 0;
   state.grassStreak = 0;
   state.storeBought = {};
   state.over = false;

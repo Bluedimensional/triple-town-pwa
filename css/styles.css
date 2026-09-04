@@ -578,6 +578,7 @@ body[data-field="ice"]::before {
 /* The storage row + board share one centered column so they line up. The width
    is capped so the whole stack (storage row is one cell tall) fits the height. */
 #board-stack {
+  position: relative;   /* anchors the floating combo badge */
   --cols: 6;
   --rows: 6;
   /* Cap the width so the whole stack (board + a one-cell storage row above) fits
@@ -1002,6 +1003,32 @@ body[data-field="ice"]::before {
 }
 .cc-opt:active { transform: scale(0.94); }
 .cc-opt svg { width: 100%; height: 100%; display: block; }
+
+/* ---- Combo multiplier badge — floats over the board's top-right while a chain
+   of consecutive merges is alive. Non-interactive so it never blocks a tap. ---- */
+.combo-badge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 7;
+  pointer-events: none;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff9d3d, #ff4d4d);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+.combo-badge.bump { animation: comboBump 0.42s ease; }
+@keyframes comboBump {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.28) rotate(-3deg); }
+  100% { transform: scale(1) rotate(0); }
+}
 
 /* ---- Roguelike charm chooser (start of run): 3 stacked perk cards ---- */
 .charm-card { max-width: min(92vw, 420px); }

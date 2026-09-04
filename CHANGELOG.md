@@ -3,6 +3,20 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.52.0] - 2026-09-04 (v81)
+
+### Added
+- **Combo multiplier.** Merge on consecutive placements to build a chain: each
+  placement that triggers a merge extends it; a placement that merges nothing (a
+  lone tile or a bear) breaks it. The chain sets a rising score multiplier on that
+  turn's merge points — 1st merge 1×, then ×1.25, ×1.5, ×2, ×2.5, up to ×3 at a
+  5-long chain. A 🔥 badge floats over the board's top-right showing the live
+  multiplier while a chain is alive. Stacks with the High Roller charm. Combo
+  survives undo (restored from the snapshot) and the save.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v81`.
+
 ## [0.51.0] - 2026-09-04 (v80)
 
 ### Added

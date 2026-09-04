@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v80';
+export const VERSION = 'v81';
 
 // The organic path edges are now baked into the path GEOMETRY (each outer edge
 // bulges outward — see buildPathShape in render.js), so there is NO runtime SVG
@@ -138,6 +138,19 @@ export const CHARM_BEAR_MULT = 0.6;         // peaceful: bear chance ×0.6 (40% 
 export const CHARM_CRYSTAL_MULT = 2;        // prospector: crystal chance ×2
 export const CHARM_STORE_MULT = 0.7;        // bargain: store prices ×0.7 (30% off)
 export const CHARM_SCORE_MULT = 1.15;       // highRoller: points ×1.15
+
+// --- Combo multiplier --------------------------------------------------------
+// Merge on CONSECUTIVE placements to build a combo chain: every placement that
+// triggers a merge extends the chain; a placement that merges nothing (a lone
+// tile, or a bear) breaks it back to zero. The chain length sets a score
+// multiplier applied to that turn's merge points (Boom Town-style) — so a run of
+// quick merges is worth progressively more. Indexed by the CURRENT chain length
+// (how many consecutive merges came before this one), capped at the last entry.
+//   chain 0 → 1× (first merge, no bonus) · 1 → 1.25× · 2 → 1.5× · 3 → 2× · 4 → 2.5× · 5+ → 3×
+export const COMBO_MULTS = [1, 1.25, 1.5, 2, 2.5, 3];
+export function comboMultiplier(chain) {
+  return COMBO_MULTS[Math.min(Math.max(0, chain), COMBO_MULTS.length - 1)];
+}
 
 // Bear spawn chance ramps up over the game.
 export const BEAR_BASE_CHANCE = 0.06;

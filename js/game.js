@@ -8,6 +8,7 @@ import {
   TIMED_PREFILL_WEIGHTS, TIMED_PREFILL_MIN, TIMED_PREFILL_MAX,
   goalForLevel, BOMB_TARGETS,
   CHARMS, CHARM_CHOICES, CHARM_START_BOMBS, CHARM_BEAR_MULT, CHARM_CRYSTAL_MULT,
+  comboMultiplier,
 } from './config.js';
 import { recordScore, bestFor } from './persistence.js';
 import { resolveMerges, crystalResolve, crystalOptions } from './match.js';
@@ -145,6 +146,7 @@ function snapshot() {
     turns: state.turns, level: state.level, goal: state.goal,
     grassStreak: state.grassStreak, storeBought: state.storeBought,
     crystalMult: state.crystalMult, bombs: state.bombs,
+    charm: state.charm, combo: state.combo,
     over: state.over,
   });
 }
@@ -221,6 +223,7 @@ export function placePiece(r, c) {
   state.board[r][c] = piece;
   state.lastCreated = { r, c };
   state.mergeSlides = [];   // collected during this turn's merges, for the animation
+  state.mergeEarned = 0;    // reset; resolveMerges sets it if this placement merges
 
   // Base points for the tile you just set down (grass, bought tiles, etc.).
   state.score += POINTS[piece] || 0;
@@ -248,6 +251,17 @@ export function placePiece(r, c) {
 // Everything after a placement resolves: float the points, tick the level, move
 // bears, draw the next piece, check for game over, save.
 function finishTurn(r, c, scoreBefore) {
+  // Combo: a placement that MERGED extends the chain and earns a rising bonus on
+  // its merge points (the multiplier for THIS merge is set by the chain so far);
+  // a placement that merged nothing breaks the chain back to zero.
+  const mergePts = state.mergeEarned || 0;
+  if (mergePts > 0) {
+    const bonus = Math.round(mergePts * (comboMultiplier(state.combo) - 1));
+    if (bonus > 0) state.score += bonus;
+    state.combo += 1;
+  } else {
+    state.combo = 0;
+  }
   state.floatPoints = { r, c, points: state.score - scoreBefore };
   maybeLevelUp();
   moveBears();

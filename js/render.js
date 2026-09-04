@@ -5,7 +5,7 @@
 
 import { state, unlockedStorage } from './state.js';
 import { NAMES, STORE_ITEMS, ORGANIC_PATH, BOARDS, MAX_STORAGE, boardKey, goalForLevel,
-  TIME_MODES, timeModeLabel, CHARM_BY_ID } from './config.js';
+  TIME_MODES, timeModeLabel, CHARM_BY_ID, comboMultiplier } from './config.js';
 import { SPRITES } from './sprites.js';
 import { priceOf } from './store.js';
 import { previewMergeGroup } from './match.js';
@@ -43,6 +43,7 @@ export function cacheDom() {
   el.crystalOpts = document.getElementById('crystal-opts');
   el.charmChoice = document.getElementById('charm-choice');
   el.charmOpts = document.getElementById('charm-opts');
+  el.comboBadge = document.getElementById('combo-badge');
 }
 
 function sprite(type) {
@@ -711,6 +712,29 @@ function paintCharmChoice() {
   el.charmChoice.classList.add('show');
 }
 
+// Combo badge: shows the multiplier the NEXT merge will earn while a chain of
+// consecutive merges is alive (state.combo >= 1). Hidden with no chain or at game
+// over. Pops (bump) whenever the chain length changes.
+let lastComboShown = -1;
+function paintCombo() {
+  if (!el.comboBadge) return;
+  const mult = comboMultiplier(state.combo);
+  const active = !state.over && state.combo >= 1 && mult > 1;
+  if (!active) {
+    el.comboBadge.hidden = true;
+    lastComboShown = -1;
+    return;
+  }
+  el.comboBadge.hidden = false;
+  el.comboBadge.textContent = '🔥 ×' + mult + ' Combo';
+  if (state.combo !== lastComboShown) {
+    lastComboShown = state.combo;
+    el.comboBadge.classList.remove('bump');
+    void el.comboBadge.offsetWidth;   // restart the pop animation
+    el.comboBadge.classList.add('bump');
+  }
+}
+
 function paintOverlay() {
   // Shown when the game is over, until the player taps outside the card.
   if (state.over && !state.overlayDismissed) {
@@ -786,6 +810,7 @@ export function render({ onBuy, onSwap }) {
   paintStore(onBuy);
   paintCrystalChoice();
   paintCharmChoice();
+  paintCombo();
   paintOverlay();
   state.lastCreated = null; // consume the one-shot pop marker
   state.bearMoves = [];     // consume the one-shot hop markers

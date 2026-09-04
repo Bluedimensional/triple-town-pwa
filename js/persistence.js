@@ -95,6 +95,7 @@ export function save() {
       bombs: state.bombs,
       charm: state.charm,
       charmChoices: state.charmChoices,
+      combo: state.combo,
       grassStreak: state.grassStreak,
       storeBought: state.storeBought,
       over: state.over,
@@ -156,6 +157,8 @@ export function load() {
     // (pre-charms) have neither → no charm, chooser not up, game plays normally.
     state.charm = data.charm ?? null;
     state.charmChoices = Array.isArray(data.charmChoices) ? data.charmChoices : [];
+    state.combo = data.combo || 0;
+    state.mergeEarned = 0;
     state.grassStreak = data.grassStreak || 0;
     state.storeBought = data.storeBought || {};
     state.over = !!data.over;
