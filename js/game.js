@@ -226,7 +226,6 @@ export function placePiece(r, c) {
   state.lastCreated = { r, c };
   state.mergeSlides = [];   // collected during this turn's merges, for the animation
   state.mergeEarned = 0;    // reset; resolveMerges sets it if this placement merges
-  state.superMerged = false;// reset; resolveMerges sets it on a 4+ (super) merge
 
   // Base points for the tile you just set down (grass, bought tiles, etc.).
   state.score += POINTS[piece] || 0;
@@ -287,7 +286,7 @@ function advanceSurge() {
     if (state.surgeTurns <= 0) { state.surgeActive = false; state.surgeTurns = 0; }
     return;
   }
-  if (state.superMerged) state.surgeCharge++;   // one per turn that made a 4+ merge
+  state.surgeCharge += state.mergeSlides.length; // every merge charges it; bigger merges/cascades absorb more tiles → fill faster
   if (state.surgeCharge >= SURGE_GOAL) {
     state.surgeCharge = 0;
     state.surgeActive = true;

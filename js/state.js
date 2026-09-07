@@ -37,7 +37,6 @@ export const state = {
   charmChoices: [], // the ids offered at run start; NON-EMPTY = the chooser is up
   combo: 0,         // consecutive merging placements — drives the combo multiplier
   mergeEarned: 0,   // transient: points the LAST placement's merges earned (combo input)
-  superMerged: false, // transient: did the LAST placement make a 4+ (super) merge?
   // Verdant Surge — the Green Thumb charm's power-up. Charges from 4+ (super)
   // merges; when full it turns ON for a few placements, during which bush also
   // jumps to a random house. Only meaningful while the Green Thumb charm is active.
@@ -95,7 +94,6 @@ export function resetGame() {
   state.charmChoices = [];
   state.combo = 0;
   state.mergeEarned = 0;
-  state.superMerged = false;
   state.surgeCharge = 0;
   state.surgeActive = false;
   state.surgeTurns = 0;

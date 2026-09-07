@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v83';
+export const VERSION = 'v84';
 
 // The organic path edges are now baked into the path GEOMETRY (each outer edge
 // bulges outward — see buildPathShape in render.js), so there is NO runtime SVG
@@ -123,7 +123,7 @@ export const MAX_BOMBS = 9;                 // cap kept in hand (keeps it occasi
 // store.js), keyed by its id, so nothing hard-codes a charm's text. Applies to
 // both endless and timed runs.
 export const CHARMS = [
-  { id: 'greenThumb',    icon: '🌱', name: 'Green Thumb',    desc: 'Grass skips to Tree. Make 4-merges to charge a Surge: bush jumps to a house too.' },
+  { id: 'greenThumb',    icon: '🌱', name: 'Green Thumb',    desc: 'Grass skips to Tree. Keep merging to charge a Surge: bush jumps to a house too.' },
   { id: 'demolitionist', icon: '💣', name: 'Demolitionist',  desc: 'Start the run with 3 bombs.' },
   { id: 'peaceful',      icon: '☮️', name: 'Peaceful Valley', desc: 'Bears appear 40% less often.' },
   { id: 'prospector',    icon: '💎', name: 'Prospector',     desc: 'Crystals appear twice as often.' },
@@ -140,11 +140,14 @@ export const CHARM_STORE_MULT = 0.7;        // bargain: store prices ×0.7 (30% 
 export const CHARM_SCORE_MULT = 1.15;       // highRoller: points ×1.15
 
 // Verdant Surge — the Green Thumb charm's power-up. Green Thumb always merges
-// grass → tree. On TOP of that, making 4+ (super) merges charges a meter; once
-// full, the Surge switches ON for a few placements, during which BUSH also jumps
-// straight to a random house (hut / house / mansion). Then it switches off and
-// the meter recharges. Only active while the Green Thumb charm is chosen.
-export const SURGE_GOAL = 3;                 // super merges needed to trigger a surge
+// grass → tree. On TOP of that, EVERY merge charges a meter (by the number of
+// tiles it absorbs, so bigger merges and cascades fill it faster). Once full, the
+// Surge switches ON for a few placements, during which BUSH also jumps straight to
+// a random house (hut / house / mansion). Then it switches off and the meter
+// recharges. Only active while the Green Thumb charm is chosen.
+// (Charging deliberately does NOT require 4+ merges — those are too rare to reach
+//  the Surge within a game; every merge now counts, bigger ones just count more.)
+export const SURGE_GOAL = 12;                // tiles-absorbed of merge progress to trigger
 export const SURGE_TURNS = 10;               // placements the surge stays ON
 export const SURGE_BUSH_TARGETS = ['hut', 'house', 'mansion']; // bush → random one of these
 

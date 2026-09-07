@@ -29,8 +29,8 @@ works offline, installs straight from the browser. No App Store, no build step.
   longer the chain, the bigger the score multiplier on that turn's merge (up to
   ×3). A 🔥 badge shows the live multiplier. Breaks when a placement merges nothing.
 - **Green Thumb / Verdant Surge:** the Green Thumb charm (always offered) makes
-  grass merge straight to Tree; making 4-of-a-kind merges charges a Surge meter
-  that briefly also turns bush merges into a random house.
+  grass merge straight to Tree; every merge charges a Surge meter (bigger merges
+  fill it faster) that briefly also turns bush merges into a random house.
 - **Game over** when the board fills and nothing can free space.
 
 ## Run locally

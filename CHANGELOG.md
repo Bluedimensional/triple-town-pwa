@@ -3,6 +3,20 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.55.0] - 2026-09-04 (v84)
+
+### Changed
+- **Verdant Surge is far easier to trigger.** It was gated on making three
+  4-of-a-kind ("super") merges — which are rare enough that a whole 5-minute game
+  could pass without ever charging it. Now **every merge charges the meter**
+  (by the tiles it absorbs, so bigger merges and cascades still fill it faster),
+  and the goal is a reachable 12 — so the first Surge lands after roughly six
+  ordinary merges (~1–2 minutes) instead of possibly never. Both `SURGE_GOAL`
+  (12) and `SURGE_TURNS` (10) remain single tunable constants in `js/config.js`.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v84`.
+
 ## [0.54.0] - 2026-09-04 (v83)
 
 ### Removed

@@ -137,7 +137,6 @@ export function resolveMerges(r, c) {
 
     // Matching MORE than the minimum makes a "super" result worth double points.
     const superResult = group.length > rule.need;
-    if (superResult) state.superMerged = true;   // a 4+ merge — charges the Verdant Surge
     const next = mergeNext(base);           // charm-adjusted result tier
 
     // Collapse the whole group into the next tier at the placement point. Record
