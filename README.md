@@ -24,7 +24,8 @@ works offline, installs straight from the browser. No App Store, no build step.
 - **Store** sells build-chain tiles for in-game **pretend coins only** (earned
   from merges). Prices rise with each purchase. No real money, ever.
 - **Roguelike Charms:** every new run opens by offering **3 perks** — Green Thumb
-  is always one, and **🎲 Shuffle** re-rolls the other two. Each genuinely bends a
+  is always one, **🎲 Shuffle** re-rolls the other two, and **Show all charms**
+  lists the whole roster. Charms **stack**: tap as many as you want, then Start. Each genuinely bends a
   rule for the whole game: merge diagonally, merge with only two of a kind, freeze
   the bears, make rocks wild, survive one full board, unlock all storage, duplicate
   every piece you place, undo without limit, or **Turbo** (every merge leaps two

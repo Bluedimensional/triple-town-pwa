@@ -3,9 +3,9 @@
 // Tiles are drawn from the SVG sprite map (js/sprites.js). To change the art,
 // edit sprites.js — nothing here or in the game logic assumes how a tile looks.
 
-import { state, unlockedStorage } from './state.js';
+import { state, unlockedStorage, hasCharm } from './state.js';
 import { NAMES, STORE_ITEMS, ORGANIC_PATH, BOARDS, MAX_STORAGE, boardKey, goalForLevel,
-  TIME_MODES, timeModeLabel, CHARM_BY_ID, comboMultiplier,
+  TIME_MODES, timeModeLabel, CHARM_BY_ID, CHARMS, comboMultiplier,
   SURGE_GOAL, SURGE_TURNS } from './config.js';
 import { SPRITES } from './sprites.js';
 import { priceOf } from './store.js';
@@ -42,6 +42,9 @@ export function cacheDom() {
   el.overReason = document.querySelector('#gameover .over-reason');
   el.charmChoice = document.getElementById('charm-choice');
   el.charmOpts = document.getElementById('charm-opts');
+  el.charmShuffle = document.getElementById('charm-shuffle');
+  el.charmShowAll = document.getElementById('charm-showall');
+  el.charmStart = document.getElementById('charm-start');
   el.comboBadge = document.getElementById('combo-badge');
   el.surge = document.getElementById('surge');
   el.surgeFill = document.getElementById('surge-fill');
@@ -424,7 +427,7 @@ function paintGoal() {
 function paintUndo() {
   // Do-Over charm: undos are free and unlimited, so show ∞ and only require that
   // there IS a move to take back.
-  const free = state.charm === 'doOver';
+  const free = hasCharm('doOver');
   el.undoCount.textContent = free ? '∞' : state.undos;
   el.undoBtn.disabled = state.undoStack.length === 0 || (!free && state.undos <= 0);
 }
@@ -462,7 +465,7 @@ function flashNoBomb() {
 // the bar shows the placements left and glows to signal bush → house is live.
 function paintSurge() {
   if (!el.surge) return;
-  const show = state.charm === 'greenThumb';
+  const show = hasCharm('greenThumb');
   el.surge.hidden = !show;
   if (!show) return;
   if (state.surgeActive) {
@@ -731,16 +734,30 @@ function paintCharmChoice() {
     el.charmChoiceKey = null;
     return;
   }
-  const key = choices.join('|');
+  // Charms STACK: tap any number to arm them, then Start. "Show all" swaps the
+  // three on offer for the whole roster so a specific combo can be hand-picked.
+  const list = state.charmShowAll ? CHARMS.map((c) => c.id) : choices;
+  const key = (state.charmShowAll ? 'all:' : 'some:') + list.join('|') + '#' + state.charms.join('|');
   if (el.charmChoiceKey !== key) {
     el.charmChoiceKey = key;
-    el.charmOpts.innerHTML = choices.map((id) => {
+    el.charmOpts.innerHTML = list.map((id) => {
       const c = CHARM_BY_ID[id];
-      return `<button class="charm-opt" data-charm="${id}">` +
+      const on = state.charms.includes(id);
+      return `<button class="charm-opt${on ? ' picked' : ''}" data-charm="${id}" aria-pressed="${on}">` +
         `<span class="charm-icon">${c.icon}</span>` +
         `<span class="charm-name">${c.name}</span>` +
         `<span class="charm-desc">${c.desc}</span></button>`;
     }).join('');
+  }
+  el.charmOpts.classList.toggle('scrolls', !!state.charmShowAll);
+  if (el.charmShowAll) {
+    el.charmShowAll.textContent = state.charmShowAll ? '← Just these three' : 'Show all charms';
+  }
+  if (el.charmShuffle) el.charmShuffle.hidden = !!state.charmShowAll;
+  if (el.charmStart) {
+    const n = state.charms.length;
+    el.charmStart.textContent = n === 0 ? 'Start with no charms'
+      : n === 1 ? 'Start with 1 charm' : `Start with ${n} charms`;
   }
   el.charmChoice.classList.add('show');
 }

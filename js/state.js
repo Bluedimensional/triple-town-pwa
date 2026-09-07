@@ -31,8 +31,9 @@ export const state = {
   armed: null,      // transient: is a bomb aimed — null | 'bomb'
   bombBlast: null,  // one-shot {r,c}: a tile was just bombed, for the blast anim
   charmsOn: true,   // SETTING: do new games open the charm chooser at all?
-  charm: null,      // this run's chosen roguelike charm id (null = none active)
+  charms: [],       // this run's ACTIVE charm ids — they stack, so several can be on
   charmChoices: [], // the ids offered at run start; NON-EMPTY = the chooser is up
+  charmShowAll: false, // chooser is expanded to the full roster, not just the 3
   combo: 0,         // consecutive merging placements — drives the combo multiplier
   mergeEarned: 0,   // transient: points the LAST placement's merges earned (combo input)
   // Verdant Surge — the Green Thumb charm's power-up. Charges from 4+ (super)
@@ -53,11 +54,16 @@ export const state = {
   floatPoints: null, // {r,c,points} points earned by the last placement, floats up
 };
 
+// Is this charm active this run? Charms stack, so any number can be on at once.
+export function hasCharm(id) {
+  return state.charms.includes(id);
+}
+
 // How many storage slots are unlocked at the current level: 2 at level 1, then
 // one more each level (3 at L2, 4 at L3), capped at MAX_STORAGE. The Deep Pockets
 // charm hands you all of them from turn one.
 export function unlockedStorage() {
-  if (state.charm === 'deepPockets') return MAX_STORAGE;
+  if (hasCharm('deepPockets')) return MAX_STORAGE;
   return Math.min(MAX_STORAGE, state.level + 1);
 }
 
@@ -91,8 +97,9 @@ export function resetGame() {
   state.bombs = 0;
   state.armed = null;
   state.bombBlast = null;
-  state.charm = null;
+  state.charms = [];
   state.charmChoices = [];
+  state.charmShowAll = false;
   state.combo = 0;
   state.mergeEarned = 0;
   state.surgeCharge = 0;

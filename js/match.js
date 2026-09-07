@@ -1,6 +1,6 @@
 // match.js — connected-group detection (flood fill) and cascading merges.
 
-import { state } from './state.js';
+import { state, hasCharm } from './state.js';
 import { MERGE, POINTS, COINS, BOMB_EARN_MIN_POINTS, MAX_BOMBS,
   SURGE_BUSH_TARGETS, TURBO_STEP, tierAfter } from './config.js';
 
@@ -9,17 +9,17 @@ import { MERGE, POINTS, COINS, BOMB_EARN_MIN_POINTS, MAX_BOMBS,
 // straight to Tree (plus bush to a random house while its Surge is up). Kept in
 // one place so resolveMerges and crystalOptions agree on the result.
 function mergeNext(base) {
-  // Turbo: leap two tiers up this base's own chain instead of one.
-  if (state.charm === 'turbo') {
+  // Charms STACK, so order matters here: the most SPECIFIC effect wins. Green
+  // Thumb's Surge (bush -> a random house) is the narrowest, then Turbo's two-tier
+  // leap, then Green Thumb's plain grass -> Tree.
+  if (base === 'bush' && state.surgeActive && hasCharm('greenThumb')) {
+    return SURGE_BUSH_TARGETS[Math.floor(Math.random() * SURGE_BUSH_TARGETS.length)];
+  }
+  if (hasCharm('turbo')) {
     const leap = tierAfter(base, TURBO_STEP);
     if (leap) return leap;
   }
-  if (state.charm === 'greenThumb') {
-    if (base === 'grass') return 'tree';
-    if (base === 'bush' && state.surgeActive) {
-      return SURGE_BUSH_TARGETS[Math.floor(Math.random() * SURGE_BUSH_TARGETS.length)];
-    }
-  }
+  if (hasCharm('greenThumb') && base === 'grass') return 'tree';
   const rule = MERGE[base];
   return rule ? rule.next : null;
 }
@@ -27,13 +27,13 @@ function mergeNext(base) {
 const DIRS = [[-1, 0], [1, 0], [0, -1], [0, 1]]; // orthogonal only
 // Crosswise charm adds the four diagonals, so corners link groups too.
 const DIRS8 = DIRS.concat([[-1, -1], [-1, 1], [1, -1], [1, 1]]);
-function dirs() { return state.charm === 'crosswise' ? DIRS8 : DIRS; }
+function dirs() { return hasCharm('crosswise') ? DIRS8 : DIRS; }
 
 // Does the tile at (r,c) count as `target` for matching? Normally only its own
 // base type does; the Wild Rocks charm lets a Rock stand in for anything.
 function matches(tile, target) {
   if (baseType(tile) === target) return true;
-  return state.charm === 'wildRocks' && tile === 'rock' && target !== 'rock';
+  return hasCharm('wildRocks') && tile === 'rock' && target !== 'rock';
 }
 
 // How many connected tiles a merge needs — normally the rule's own count, but
@@ -41,7 +41,7 @@ function matches(tile, target) {
 function mergeNeed(base) {
   const rule = MERGE[base];
   if (!rule) return Infinity;
-  return state.charm === 'soulmates' ? Math.max(2, rule.need - 1) : rule.need;
+  return hasCharm('soulmates') ? Math.max(2, rule.need - 1) : rule.need;
 }
 
 // A "super" tile (made by matching 4+) is the same base type for matching — a

@@ -1,13 +1,13 @@
 // game.js — turn orchestration: spawning, placing, cascades, bears, game over.
 
-import { state, resetGame } from './state.js';
+import { state, resetGame, hasCharm } from './state.js';
 import {
   SPAWN_WEIGHTS, MAX_GRASS_STREAK, CRYSTAL_CHANCE, POINTS,
   BEAR_BASE_CHANCE, BEAR_CHANCE_PER_TURN, BEAR_MAX_CHANCE,
   PREFILL_MIN, PREFILL_MAX, PREFILL_WEIGHTS, PREFILL_BEARS, PREFILL_TOMB_CHANCE,
   TIMED_PREFILL_WEIGHTS, TIMED_PREFILL_MIN, TIMED_PREFILL_MAX,
   goalForLevel, BOMB_TARGETS,
-  CHARMS, CHARM_CHOICES, CHARM_PINNED, PHOENIX_CLEARS,
+  CHARMS, CHARM_CHOICES, CHARM_PINNED, PHOENIX_CLEARS, CHARM_BY_ID,
   comboMultiplier,
   SURGE_GOAL, SURGE_TURNS,
 } from './config.js';
@@ -113,7 +113,7 @@ function checkGameOver() {
   if (!boardFull()) return;
   // Phoenix Heart: the first time the board fills, burn away every bear, grave and
   // rock instead of ending the run. Once only — after that a full board is final.
-  if (state.charm === 'phoenix' && !state.charmUsed) {
+  if (hasCharm('phoenix') && !state.charmUsed) {
     state.charmUsed = true;
     for (let r = 0; r < state.rows; r++) {
       for (let c = 0; c < state.cols; c++) {
@@ -158,7 +158,7 @@ function snapshot() {
     turns: state.turns, level: state.level, goal: state.goal,
     grassStreak: state.grassStreak, storeBought: state.storeBought,
     crystalMult: state.crystalMult, bombs: state.bombs,
-    charm: state.charm, combo: state.combo,
+    charms: state.charms.slice(), combo: state.combo,
     surgeCharge: state.surgeCharge, surgeActive: state.surgeActive, surgeTurns: state.surgeTurns,
     charmUsed: state.charmUsed,
     over: state.over,
@@ -209,7 +209,7 @@ export function bombAt(r, c) {
 
 // Take back the last placement (spends one earned undo — the Do-Over charm makes
 // them free and unlimited, so only having a move to take back matters).
-export function unlimitedUndo() { return state.charm === 'doOver'; }
+export function unlimitedUndo() { return hasCharm('doOver'); }
 export function undoMove() {
   if (state.undoStack.length === 0) return false;
   if (!unlimitedUndo() && state.undos <= 0) return false;
@@ -247,7 +247,7 @@ export function placePiece(r, c) {
   // Echo charm: the piece also copies itself onto a random empty tile beside it,
   // so a single placement can complete a match on its own. Buildable tiles only —
   // duplicating a bear would be a punishment, not a perk.
-  if (state.charm === 'echo' && piece !== 'bear' && piece !== 'crystal') {
+  if (hasCharm('echo') && piece !== 'bear' && piece !== 'crystal') {
     const spots = [];
     for (const [dr, dc] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
       const nr = r + dr;
@@ -292,7 +292,7 @@ function finishTurn(r, c, scoreBefore) {
   // Verdant Surge (Green Thumb power-up): a 4+ (super) merge banks charge; filling
   // the meter turns the surge ON for a few placements. While ON, bush jumps to a
   // random house (see mergeNext). Only runs while the Green Thumb charm is active.
-  if (state.charm === 'greenThumb') advanceSurge();
+  if (hasCharm('greenThumb')) advanceSurge();
 
   state.floatPoints = { r, c, points: state.score - scoreBefore };
   maybeLevelUp();
@@ -373,6 +373,23 @@ function pickCharmChoices(avoid = []) {
 export function reshuffleCharms() {
   if (!state.charmChoices.length) return false;
   state.charmChoices = pickCharmChoices(state.charmChoices);
+  // Drop any selection that's no longer on offer, so you can't keep a charm you
+  // can no longer see. (Selecting from the full list keeps everything, below.)
+  if (!state.charmShowAll) {
+    state.charms = state.charms.filter((id) => state.charmChoices.includes(id));
+  }
+  save();
+  return true;
+}
+
+// Expand the chooser to the FULL roster (or collapse back to the 3 on offer), so
+// a specific combination can be hand-picked rather than waited for.
+export function toggleCharmShowAll() {
+  if (!state.charmChoices.length) return false;
+  state.charmShowAll = !state.charmShowAll;
+  if (!state.charmShowAll) {
+    state.charms = state.charms.filter((id) => state.charmChoices.includes(id));
+  }
   save();
   return true;
 }
@@ -393,28 +410,44 @@ export function newGame(cols, rows) {
   state.best = bestFor(state.cols, state.rows, state.timeMode);  // best for this board+mode
   state.level = 1;
   state.goal = goalForLevel(1);
-  state.charm = null;
+  state.charms = [];
   if (state.charmsOn) {
     state.charmChoices = pickCharmChoices();      // the chooser is now up
   } else {
     // Charms switched off — skip the chooser and deal the board straight away.
     state.charmChoices = [];
-    prefill();
-    spawnNext();
-    state.activePos = pickActivePos(null, null);
+    dealOpeningBoard();
   }
   save();
 }
 
-// Apply the chosen charm, then deal the opening board. Called when the player
-// taps one of the three offered charms. Returns true if it took effect.
-export function chooseCharm(id) {
-  if (!state.charmChoices.includes(id)) return false;
-  state.charm = id;
-  state.charmChoices = [];                         // close the chooser
+// Deal the opening board. Kept separate because it runs AFTER charms are locked
+// in — a charm can shape the opening deal.
+function dealOpeningBoard() {
   prefill();
   spawnNext();
   state.activePos = pickActivePos(null, null);
+}
+
+// Toggle one charm on/off while the chooser is up. Charms STACK, so any number
+// can be selected (that's how you run, say, Crosswise and Turbo together).
+// Returns true if the selection changed.
+export function toggleCharm(id) {
+  if (!state.charmChoices.length) return false;      // chooser isn't up
+  if (!CHARM_BY_ID[id]) return false;                // not a real charm
+  const i = state.charms.indexOf(id);
+  if (i >= 0) state.charms.splice(i, 1);
+  else state.charms.push(id);
+  save();
+  return true;
+}
+
+// Lock in whatever is selected and start the run (zero selected is allowed —
+// that's just a plain game). Returns true if the run started.
+export function startRun() {
+  if (!state.charmChoices.length) return false;
+  state.charmChoices = [];                           // close the chooser
+  dealOpeningBoard();
   save();
   return true;
 }

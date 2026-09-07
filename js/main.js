@@ -2,7 +2,7 @@
 
 import { state } from './state.js';
 import { VERSION } from './config.js';
-import { placePiece, newGame, undoMove, armBomb, toggleBomb, bombAt, expireTimer, chooseCharm, reshuffleCharms } from './game.js';
+import { placePiece, newGame, undoMove, armBomb, toggleBomb, bombAt, expireTimer, toggleCharm, startRun, reshuffleCharms, toggleCharmShowAll } from './game.js';
 import { swapReserve } from './storehouse.js';
 import { buyItem } from './store.js';
 import { save, load } from './persistence.js';
@@ -203,7 +203,15 @@ function boot() {
   document.getElementById('charm-opts').addEventListener('pointerdown', (e) => {
     const btn = e.target.closest('.charm-opt');
     if (!btn) return;
-    if (chooseCharm(btn.dataset.charm)) draw();
+    if (toggleCharm(btn.dataset.charm)) draw();
+  });
+  document.getElementById('charm-showall').addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    if (toggleCharmShowAll()) draw();
+  });
+  document.getElementById('charm-start').addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    if (startRun()) draw();
   });
   // Shuffle: re-roll the offered charms (Green Thumb stays, the other two change).
   document.getElementById('charm-shuffle').addEventListener('pointerdown', (e) => {

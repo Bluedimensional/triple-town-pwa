@@ -4,7 +4,7 @@
 // empty tile. A bear with nowhere to go becomes a tombstone — which can then
 // trigger a tombstone-chain merge.
 
-import { state } from './state.js';
+import { state, hasCharm } from './state.js';
 import { resolveMerges } from './match.js';
 
 const DIRS = [[-1, 0], [1, 0], [0, -1], [0, 1]];
@@ -83,7 +83,7 @@ export function moveBears() {
   // 2) Move the remaining bears (those whose group had room), column-major.
   // Sleepy Bears charm: they stay put entirely, so you can wall one in at leisure.
   // (Trapping in step 1 still applies — an enclosed bear still becomes a grave.)
-  if (state.charm === 'sleepyBears') return;
+  if (hasCharm('sleepyBears')) return;
   const bears = [];
   for (let r = 0; r < state.rows; r++) {
     for (let c = 0; c < state.cols; c++) {

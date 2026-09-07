@@ -1099,3 +1099,42 @@ body[data-field="ice"]::before {
   cursor: pointer;
 }
 .charm-shuffle:active { transform: scale(0.97); }
+/* `display: flex` above beats the hidden attribute's default display:none. */
+.charm-shuffle[hidden] { display: none; }
+/* A picked charm reads as armed: filled, thicker border, tick in the corner. */
+.charm-opt.picked {
+  background: #eaf6dc;
+  border-width: 3px;
+  box-shadow: 0 6px 20px rgba(74, 124, 47, 0.45);
+}
+.charm-opt.picked::after {
+  content: '✓';
+  position: absolute;
+  top: 6px;
+  right: 9px;
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--accent);
+}
+.charm-opt { position: relative; }
+/* Full-roster mode: cap the height so 10 charms stay reachable on a phone. */
+.charm-opts.scrolls {
+  max-height: 52vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.charm-showall {
+  margin-top: 10px;
+  width: 100%;
+  padding: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: #5c7a3f;
+  background: transparent;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.charm-showall:active { transform: scale(0.97); }
+.charm-start { width: 100%; margin-top: 10px; }

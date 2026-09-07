@@ -3,6 +3,29 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.60.0] - 2026-09-04 (v89)
+
+### Changed
+- **Charms now STACK** — you can run several at once (Crosswise *and* Turbo, say).
+  `state.charm` (one id) became `state.charms` (a list), and every charm check now
+  goes through a `hasCharm()` helper. Old saves holding a single `charm` are
+  migrated to a one-item list on load.
+- **The chooser is multi-select.** Tap any number of charms to arm them (they fill
+  in and get a ✓), then press **Start**. Picking none is allowed — that's a plain
+  game. 🎲 Shuffle still re-rolls the two unpinned slots.
+- **New "Show all charms"** view expands the chooser to the whole roster, so a
+  specific combination can be hand-picked instead of waited for. (Shuffle hides
+  in this mode — there's nothing left to re-roll.)
+
+### Notes
+- Where charms overlap, the most SPECIFIC effect wins: Green Thumb's Surge
+  (bush → a random house) beats Turbo's two-tier leap for bush.
+- Fixed: the Shuffle button stayed visible in the all-charms view because its
+  `display: flex` overrode the `hidden` attribute.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v89`.
+
 ## [0.59.0] - 2026-09-04 (v88)
 
 ### Changed
