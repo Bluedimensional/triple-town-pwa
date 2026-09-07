@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.56.0] - 2026-09-04 (v85)
+
+### Added
+- **10-minute and 15-minute Timed modes.** Timed options are now 5 / 10 / 15
+  minutes (plus Endless). Each length keeps its own per-board leaderboard, and the
+  High Scores modal shows a tab for each.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v85`.
+
 ## [0.55.0] - 2026-09-04 (v84)
 
 ### Changed
