@@ -2,7 +2,7 @@
 
 import { state } from './state.js';
 import { VERSION } from './config.js';
-import { placePiece, newGame, undoMove, armBomb, toggleBomb, bombAt, expireTimer, chooseCrystal, cancelCrystal, chooseCharm, reshuffleCharms } from './game.js';
+import { placePiece, newGame, undoMove, armBomb, toggleBomb, bombAt, expireTimer, chooseCharm, reshuffleCharms } from './game.js';
 import { swapReserve } from './storehouse.js';
 import { buyItem } from './store.js';
 import { save, load } from './persistence.js';
@@ -18,7 +18,6 @@ function draw() {
 // on anything else); otherwise it places the held piece there.
 function onCellTap(r, c) {
   if (state.over) return;
-  if (state.crystalChoice) return;   // the chooser (modal) handles taps
   if (state.charmChoices.length) return;   // pick a charm first
   if (state.armed) { bombAt(r, c); draw(); return; }
   if (placePiece(r, c)) draw();
@@ -197,18 +196,6 @@ function boot() {
     e.preventDefault();
     toggleBomb('bomb');
     draw();
-  });
-
-  // Crystal-choice overlay: tap an option to complete that merge; tap the dim
-  // backdrop to back out (the crystal returns to your hand).
-  document.getElementById('crystal-opts').addEventListener('pointerdown', (e) => {
-    const btn = e.target.closest('.cc-opt');
-    if (!btn) return;
-    if (chooseCrystal(btn.dataset.type)) draw();
-  });
-  const crystalOverlay = document.getElementById('crystal-choice');
-  crystalOverlay.addEventListener('pointerdown', (e) => {
-    if (e.target === crystalOverlay) { cancelCrystal(); draw(); }
   });
 
   // Start-of-run charm chooser: tap a card to lock that charm in and deal the

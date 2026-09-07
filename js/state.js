@@ -30,9 +30,6 @@ export const state = {
   bombs: 0,         // bombs available (earned on big merges) — hit rock/bear
   armed: null,      // transient: is a bomb aimed — null | 'bomb'
   bombBlast: null,  // one-shot {r,c}: a tile was just bombed, for the blast anim
-  crystalChoice: null, // transient {r,c,options,scoreBefore}: a placed crystal could
-                       // complete >1 different merge — the chooser is up; tap outside
-                       // to cancel (crystal back to hand) or an option to pick
   charmsOn: true,   // SETTING: do new games open the charm chooser at all?
   charm: null,      // this run's chosen roguelike charm id (null = none active)
   charmChoices: [], // the ids offered at run start; NON-EMPTY = the chooser is up
@@ -94,7 +91,6 @@ export function resetGame() {
   state.bombs = 0;
   state.armed = null;
   state.bombBlast = null;
-  state.crystalChoice = null;
   state.charm = null;
   state.charmChoices = [];
   state.combo = 0;

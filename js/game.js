@@ -12,7 +12,7 @@ import {
   SURGE_GOAL, SURGE_TURNS,
 } from './config.js';
 import { recordScore, bestFor } from './persistence.js';
-import { resolveMerges, crystalResolve, crystalOptions } from './match.js';
+import { resolveMerges, crystalResolve } from './match.js';
 import { moveBears } from './bears.js';
 import { save } from './persistence.js';
 
@@ -174,7 +174,7 @@ function canHit(t) {
 
 // Arm the bomb (needs at least one banked). Returns whether it armed.
 export function armBomb(kind = 'bomb') {
-  if (state.over || state.crystalChoice || state.bombs <= 0) return false;
+  if (state.over || state.bombs <= 0) return false;
   state.armed = kind;
   return true;
 }
@@ -220,14 +220,13 @@ export function undoMove() {
   state.lastCreated = null; state.bearMoves = []; state.mergeSlides = [];
   state.floatPoints = null; state.levelFlash = false; state.levelCelebrate = null;
   state.armed = null; state.bombBlast = null;
-  state.crystalChoice = null;
   save();
   return true;
 }
 
 // Place the held piece at (r,c). Returns true if the move was legal.
 export function placePiece(r, c) {
-  if (state.over || state.crystalChoice) return false;   // busy waiting on a choice
+  if (state.over) return false;
   if (state.current === null) return false;
   if (state.board[r][c] !== null) return false; // must place on an empty tile
 
@@ -264,17 +263,10 @@ export function placePiece(r, c) {
   }
 
   if (piece === 'crystal') {
-    const opts = crystalOptions(r, c);
-    // More than one DIFFERENT merge is possible → let the player choose which.
-    // Pause the turn: the crystal sits on the board and the choice overlay shows;
-    // chooseCrystal() finishes the turn. (No save here — a reload just re-hands
-    // the crystal, avoiding a mid-choice soft-lock.)
-    if (opts.length >= 2) {
-      state.crystalChoice = { r, c, options: opts, scoreBefore };
-      state.activePos = null;       // hide the held preview while the chooser is up
-      return true;
-    }
-    crystalResolve(r, c);           // 0 or 1 option: resolve automatically (rock if none)
+    // A crystal always becomes whichever type completes the HIGHEST-value merge
+    // (or a rock if it can't complete anything). No chooser — even when several
+    // different merges are possible, the best one is taken automatically.
+    crystalResolve(r, c);
   } else if (piece !== 'bear') {
     resolveMerges(r, c);            // bears never merge; everything else can cascade
   }
@@ -325,35 +317,6 @@ function advanceSurge() {
     state.surgeActive = true;
     state.surgeTurns = SURGE_TURNS;
   }
-}
-
-// Resolve a paused crystal choice: turn the crystal into the picked type, run the
-// merge, then finish the turn as usual.
-export function chooseCrystal(type) {
-  const ch = state.crystalChoice;
-  if (!ch) return false;
-  const { r, c, scoreBefore } = ch;
-  state.crystalChoice = null;
-  state.board[r][c] = type;
-  state.lastCreated = { r, c };
-  resolveMerges(r, c);
-  finishTurn(r, c, scoreBefore);
-  return true;
-}
-
-// Back out of a crystal choice: give the crystal back to your hand so you can bomb,
-// stash it in storage, or place it elsewhere. Restores the pre-placement snapshot
-// (pushed in placePiece), so the placement is undone without spending an undo.
-export function cancelCrystal() {
-  if (!state.crystalChoice) return false;
-  const snap = state.undoStack.pop();
-  state.crystalChoice = null;
-  state.armed = null;
-  if (snap) Object.assign(state, JSON.parse(snap));   // board, current, activePos, …
-  state.lastCreated = null;
-  state.mergeSlides = [];
-  save();
-  return true;
 }
 
 // Scatter a random starting layout so a new game never opens blank.

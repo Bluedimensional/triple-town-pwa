@@ -40,8 +40,6 @@ export function cacheDom() {
   el.scoresTabs = document.getElementById('scores-tabs');
   el.scoresSnapshot = document.getElementById('scores-snapshot');
   el.overReason = document.querySelector('#gameover .over-reason');
-  el.crystalChoice = document.getElementById('crystal-choice');
-  el.crystalOpts = document.getElementById('crystal-opts');
   el.charmChoice = document.getElementById('charm-choice');
   el.charmOpts = document.getElementById('charm-opts');
   el.comboBadge = document.getElementById('combo-badge');
@@ -723,28 +721,6 @@ function paintStore(onBuy) {
   }
 }
 
-// When a placed crystal could complete more than one DIFFERENT merge, show a modal
-// asking which to make. Each option shows the RESULT piece + its name; the key is
-// the option's base `type` (passed to chooseCrystal). Rebuilt only when it changes.
-function paintCrystalChoice() {
-  const ch = state.crystalChoice;
-  if (!ch) {
-    el.crystalChoice.classList.remove('show');
-    el.crystalChoiceKey = null;
-    return;
-  }
-  const key = ch.options.map((o) => o.type).join('|');
-  if (el.crystalChoiceKey !== key) {
-    el.crystalChoiceKey = key;
-    // Just each possible result piece in its own box — no card, no text (it's
-    // obvious you're picking which merge to make).
-    el.crystalOpts.innerHTML = ch.options.map((o) =>
-      `<button class="cc-opt" data-type="${o.type}" aria-label="Make a ${NAMES[o.next]}" title="Make a ${NAMES[o.next]}">${sprite(o.next)}</button>`
-    ).join('');
-  }
-  el.crystalChoice.classList.add('show');
-}
-
 // Start-of-run charm chooser: three cards (icon + name + blurb). Tap one to apply
 // it and deal the board (chooseCharm in game.js). Shown while charmChoices is
 // non-empty; rebuilt only when the offered set changes.
@@ -866,7 +842,6 @@ export function render({ onBuy, onSwap }) {
   paintTheme();
   paintStorage(onSwap);
   paintStore(onBuy);
-  paintCrystalChoice();
   paintCharmChoice();
   paintCombo();
   paintSurge();

@@ -3,6 +3,23 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.59.0] - 2026-09-04 (v88)
+
+### Changed
+- **Crystals never ask any more.** When a placed crystal could complete more than
+  one different merge, the game used to pause and pop a chooser. It now always
+  takes the **highest-value merge** automatically (and still turns into a rock
+  when it can't complete anything). Respects charms — with Turbo it takes the best
+  two-tier leap.
+
+### Removed
+- The crystal "which merge?" chooser overlay and everything behind it: the
+  `crystalChoice` state, `chooseCrystal()` / `cancelCrystal()`, the modal markup,
+  its renderer, listeners and CSS — all unreachable once the choice is automatic.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v88`.
+
 ## [0.58.0] - 2026-09-04 (v87)
 
 ### Added

@@ -983,29 +983,6 @@ body[data-field="ice"]::before {
   font-weight: 700;
 }
 
-/* ---- Crystal "which merge?" chooser — just the result pieces, each in a box ---- */
-.cc-opts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
-  justify-content: center;
-}
-.cc-opt {
-  width: clamp(88px, 26vw, 120px);
-  aspect-ratio: 1 / 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  background: #f4f9ec;
-  border: 2px solid var(--accent);
-  border-radius: 18px;
-  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45);
-  cursor: pointer;
-}
-.cc-opt:active { transform: scale(0.94); }
-.cc-opt svg { width: 100%; height: 100%; display: block; }
-
 /* ---- Combo multiplier badge — floats over the board's top-right while a chain
    of consecutive merges is alive. Non-interactive so it never blocks a tap. ---- */
 .combo-badge {
