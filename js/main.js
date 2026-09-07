@@ -82,6 +82,13 @@ function markCrystal() {
   });
 }
 
+// Highlight the charms On/Off button matching the current setting.
+function markCharms() {
+  document.querySelectorAll('#charm-controls .charm-btn').forEach((b) => {
+    b.classList.toggle('current', (b.dataset.charms === '1') === !!state.charmsOn);
+  });
+}
+
 // Highlight the timed-mode button matching the pending choice.
 function markTime() {
   document.querySelectorAll('#time-controls .time-btn').forEach((b) => {
@@ -143,6 +150,17 @@ function boot() {
     });
   });
   markCrystal();
+
+  // Charms on/off. Takes effect on the NEXT new game (the current run keeps
+  // whatever charm it started with).
+  document.querySelectorAll('#charm-controls .charm-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      state.charmsOn = btn.dataset.charms === '1';
+      save();
+      markCharms();
+    });
+  });
+  markCharms();
 
   // Timed-mode buttons: changing the timer means a fresh game, so this is a
   // prompted restart (you can't switch a game already in progress to/from timed).

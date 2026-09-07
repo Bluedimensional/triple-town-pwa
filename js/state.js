@@ -33,6 +33,7 @@ export const state = {
   crystalChoice: null, // transient {r,c,options,scoreBefore}: a placed crystal could
                        // complete >1 different merge — the chooser is up; tap outside
                        // to cancel (crystal back to hand) or an option to pick
+  charmsOn: true,   // SETTING: do new games open the charm chooser at all?
   charm: null,      // this run's chosen roguelike charm id (null = none active)
   charmChoices: [], // the ids offered at run start; NON-EMPTY = the chooser is up
   combo: 0,         // consecutive merging placements — drives the combo multiplier

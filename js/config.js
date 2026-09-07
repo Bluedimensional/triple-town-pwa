@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v86';
+export const VERSION = 'v87';
 
 // The organic path edges are now baked into the path GEOMETRY (each outer edge
 // bulges outward — see buildPathShape in render.js), so there is NO runtime SVG
@@ -27,7 +27,7 @@ export const boardKey = (cols, rows) => cols + 'x' + rows;
 export const BUILD_CHAIN = [
   'grass', 'bush', 'tree', 'hut', 'house', 'mansion',
   'castle', 'floatingCastle', 'tripleCastle', 'megaCastle', 'kingdom',
-  'metropolis', 'skyUtopia',
+  'metropolis', 'skyUtopia', 'rocketTown', 'mothership', 'worldTurtle',
 ];
 export const TOMB_CHAIN = ['tombstone', 'church', 'cathedral', 'treasury', 'royalVault',
   'treasureHoard', 'goldPyramid', 'phoenix', 'divineSun'];
@@ -36,9 +36,10 @@ export const TOMB_CHAIN = ['tombstone', 'church', 'cathedral', 'treasury', 'roya
 // Every merge needs 3 connected (uniform — Floating Castle used to need 4, which
 // surprised players and made a crystal placed between two of them fizzle to a rock
 // instead of completing the trio; fixed to 3 in v56).
-// Both chains run deep so long games never dead-end. Build tops out at Sky Utopia
-// (...Kingdom -> Metropolis -> Sky Utopia); the bear/tomb line at Divine Sun
-// (...Golden Pyramid -> Phoenix -> Divine Sun).
+// Both chains run deep so long games never dead-end. The build line keeps going
+// past Sky Utopia into the silly tiers (Rocket Town -> Mothership -> World Turtle,
+// the new ceiling) so a fast run can't stall; the bear/tomb line tops out at
+// Divine Sun (...Golden Pyramid -> Phoenix -> Divine Sun).
 export const MERGE = {
   grass:          { next: 'bush',           need: 3 },
   bush:           { next: 'tree',           need: 3 },
@@ -52,6 +53,9 @@ export const MERGE = {
   megaCastle:     { next: 'kingdom',        need: 3 },
   kingdom:        { next: 'metropolis',     need: 3 },
   metropolis:     { next: 'skyUtopia',      need: 3 },
+  skyUtopia:      { next: 'rocketTown',     need: 3 },
+  rocketTown:     { next: 'mothership',     need: 3 },
+  mothership:     { next: 'worldTurtle',    need: 3 },
   // Tombstone chain (the bear payoff).
   tombstone:      { next: 'church',         need: 3 },
   church:         { next: 'cathedral',      need: 3 },
@@ -68,6 +72,7 @@ export const POINTS = {
   grass: 5, bush: 20, tree: 50, hut: 100, house: 300, mansion: 800,
   castle: 2000, floatingCastle: 5000, tripleCastle: 12000,
   megaCastle: 30000, kingdom: 75000, metropolis: 180000, skyUtopia: 400000,
+  rocketTown: 900000, mothership: 2000000, worldTurtle: 4500000,
   tombstone: 10, church: 500, cathedral: 2000, treasury: 8000, royalVault: 20000,
   treasureHoard: 50000, goldPyramid: 120000, phoenix: 280000, divineSun: 600000,
   bear: 0, crystal: 0, rock: 0,
@@ -78,6 +83,7 @@ export const COINS = {
   bush: 1, tree: 2, hut: 4, house: 8, mansion: 16,
   castle: 40, floatingCastle: 100, tripleCastle: 300,
   megaCastle: 600, kingdom: 1500, metropolis: 3500, skyUtopia: 8000,
+  rocketTown: 18000, mothership: 40000, worldTurtle: 90000,
   church: 10, cathedral: 40, treasury: 150, royalVault: 400,
   treasureHoard: 1000, goldPyramid: 2500, phoenix: 6000, divineSun: 15000,
 };
@@ -132,6 +138,7 @@ export const CHARMS = [
   { id: 'deepPockets', icon: '🎒', name: 'Deep Pockets',  desc: 'All four storage slots unlocked from the very first turn.' },
   { id: 'echo',        icon: '👯', name: 'Echo',          desc: 'Every piece you place copies itself onto a neighbouring empty tile.' },
   { id: 'doOver',      icon: '🕰️', name: 'Do-Over',       desc: 'Unlimited undos — take back any move, as often as you like.' },
+  { id: 'turbo',       icon: '🚀', name: 'Turbo',         desc: 'Every merge leaps TWO tiers at once. Mansions, castles and stranger things, fast.' },
 ];
 export const CHARM_BY_ID = Object.fromEntries(CHARMS.map((c) => [c.id, c]));
 export const CHARM_CHOICES = 3;             // how many charms are offered each run
@@ -140,6 +147,20 @@ export const CHARM_CHOICES = 3;             // how many charms are offered each 
 export const CHARM_PINNED = 'greenThumb';
 // The hazards Phoenix Heart sweeps away when it saves a full board.
 export const PHOENIX_CLEARS = ['bear', 'tombstone', 'rock'];
+// Turbo: how many tiers a single merge climbs (1 = normal).
+export const TURBO_STEP = 2;
+
+// The tile `steps` places further up whichever chain `base` belongs to, clamped to
+// the top of that chain. Returns null if `base` isn't in a chain or is already at
+// its top. Used by the Turbo charm to leap tiers.
+export function tierAfter(base, steps = 1) {
+  const chain = BUILD_CHAIN.includes(base) ? BUILD_CHAIN
+    : TOMB_CHAIN.includes(base) ? TOMB_CHAIN : null;
+  if (!chain) return null;
+  const i = chain.indexOf(base);
+  if (i < 0 || i >= chain.length - 1) return null;
+  return chain[Math.min(i + steps, chain.length - 1)];
+}
 
 // Verdant Surge — the Green Thumb charm's power-up. Green Thumb always merges
 // grass → tree. On TOP of that, EVERY merge charges a meter (by the number of
@@ -209,6 +230,7 @@ export const ASSETS = {
   grass: '🌿', bush: '🌳', tree: '🌲', hut: '🛖', house: '🏠',
   mansion: '🏘️', castle: '🏰', floatingCastle: '🏯', tripleCastle: '💎',
   megaCastle: '🏰', kingdom: '👑', metropolis: '🏙️', skyUtopia: '🌈',
+  rocketTown: '🚀', mothership: '🛸', worldTurtle: '🐢',
   bear: '🐻', tombstone: '🪦', church: '⛪', cathedral: '🕌', treasury: '💰',
   royalVault: '👑', treasureHoard: '💰', goldPyramid: '🔺', phoenix: '🔥', divineSun: '☀️',
   crystal: '🔷', rock: '🪨',
@@ -220,6 +242,7 @@ export const NAMES = {
   mansion: 'Mansion', castle: 'Castle', floatingCastle: 'Floating Castle',
   tripleCastle: 'Triple Castle', megaCastle: 'Mega Castle', kingdom: 'Kingdom',
   metropolis: 'Metropolis', skyUtopia: 'Sky Utopia',
+  rocketTown: 'Rocket Town', mothership: 'Mothership', worldTurtle: 'World Turtle',
   bear: 'Bear', tombstone: 'Tombstone',
   church: 'Church', cathedral: 'Cathedral', treasury: 'Treasury', royalVault: 'Royal Vault',
   treasureHoard: 'Treasure Hoard', goldPyramid: 'Golden Pyramid',
@@ -229,6 +252,7 @@ export const NAMES = {
 // "Super" variants (matched 4+) get their own tooltip names.
 for (const t of ['bush', 'tree', 'hut', 'house', 'mansion', 'castle',
   'floatingCastle', 'tripleCastle', 'megaCastle', 'kingdom', 'metropolis', 'skyUtopia',
+  'rocketTown', 'mothership', 'worldTurtle',
   'church', 'cathedral', 'treasury', 'royalVault', 'treasureHoard', 'goldPyramid',
   'phoenix', 'divineSun']) {
   NAMES[t + 'Super'] = 'Super ' + NAMES[t];

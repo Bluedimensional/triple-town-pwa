@@ -234,7 +234,7 @@ body[data-field="ice"]::before {
   letter-spacing: 0.05em;
   color: var(--ink-soft);
 }
-.size-btn, .crys-btn, .time-btn {
+.size-btn, .crys-btn, .time-btn, .charm-btn {
   background: rgba(255,255,255,0.12);
   color: var(--ink);
   border: 1px solid transparent;
@@ -244,15 +244,15 @@ body[data-field="ice"]::before {
   font-size: 13px;
   font-variant-numeric: tabular-nums;
 }
-.size-btn.current, .crys-btn.current, .time-btn.current { border-color: var(--accent); background: rgba(107,160,58,0.28); }
+.size-btn.current, .crys-btn.current, .time-btn.current, .charm-btn.current { border-color: var(--accent); background: rgba(107,160,58,0.28); }
 /* Crystal-density + timed-mode choosers (toolbar). */
-#crystal-controls, #time-controls {
+#crystal-controls, #time-controls, #charm-controls {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
 }
-#crystal-controls .crys-btn, #time-controls .time-btn { padding: 7px 9px; }
+#crystal-controls .crys-btn, #time-controls .time-btn, #charm-controls .charm-btn { padding: 7px 9px; }
 .size-btn.primary {
   background: var(--accent);
   color: #fff;

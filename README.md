@@ -15,7 +15,8 @@ works offline, installs straight from the browser. No App Store, no build step.
 - **Match 3+ connected** (orthogonally) of the same type and they merge into the
   next tier at the tile you placed. Merges cascade.
 - **Build chain:** grass → bush → tree → hut → house → mansion → castle →
-  floating castle → triple castle. *(Triple Castle needs **four** Floating Castles.)*
+  floating castle → triple castle → mega castle → kingdom → metropolis →
+  sky utopia → **rocket town → mothership → world turtle** (it gets silly at the top).
 - **Bears** shuffle one space after every placement; trap one (no adjacent empty
   tile) and it becomes a tombstone. Tombstones chain: tombstone → church →
   cathedral → treasury.
@@ -26,7 +27,9 @@ works offline, installs straight from the browser. No App Store, no build step.
   is always one, and **🎲 Shuffle** re-rolls the other two. Each genuinely bends a
   rule for the whole game: merge diagonally, merge with only two of a kind, freeze
   the bears, make rocks wild, survive one full board, unlock all storage, duplicate
-  every piece you place, or undo without limit. Board is dealt after you choose.
+  every piece you place, undo without limit, or **Turbo** (every merge leaps two
+  tiers). Board is dealt after you choose. A 🍀 On/Off toggle in the toolbar turns
+  the whole charm system off if you want a plain game.
 - **Combo multiplier:** merge on consecutive placements to build a chain; the
   longer the chain, the bigger the score multiplier on that turn's merge (up to
   ×3). A 🔥 badge shows the live multiplier. Breaks when a placement merges nothing.

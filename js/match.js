@@ -2,13 +2,18 @@
 
 import { state } from './state.js';
 import { MERGE, POINTS, COINS, BOMB_EARN_MIN_POINTS, MAX_BOMBS,
-  SURGE_BUSH_TARGETS } from './config.js';
+  SURGE_BUSH_TARGETS, TURBO_STEP, tierAfter } from './config.js';
 
 // The tier a base type turns into when it merges — normally MERGE[base].next, but
-// the Green Thumb charm bends it: grass always jumps straight to Tree, and while
-// its Verdant Surge is active bush jumps to a random house. Kept in one place so
-// resolveMerges and crystalOptions agree on the result.
+// charms bend it: Turbo leaps two tiers up the chain, and Green Thumb sends grass
+// straight to Tree (plus bush to a random house while its Surge is up). Kept in
+// one place so resolveMerges and crystalOptions agree on the result.
 function mergeNext(base) {
+  // Turbo: leap two tiers up this base's own chain instead of one.
+  if (state.charm === 'turbo') {
+    const leap = tierAfter(base, TURBO_STEP);
+    if (leap) return leap;
+  }
   if (state.charm === 'greenThumb') {
     if (base === 'grass') return 'tree';
     if (base === 'bush' && state.surgeActive) {

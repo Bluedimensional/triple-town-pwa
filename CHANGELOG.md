@@ -3,6 +3,28 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.58.0] - 2026-09-04 (v87)
+
+### Added
+- **🚀 Turbo charm** — every merge leaps **two tiers at once** instead of one
+  (grass→Tree, house→Castle, and so on, up both the build and tombstone chains).
+  A Castle is 3 merge-steps from grass instead of 6, so mansions, castles and the
+  weird stuff show up fast. Distinct from Soulmates: Soulmates makes matches
+  *easier* (two of a kind), Turbo makes each match *worth more progress*.
+- **Three new tiers above Sky Utopia**, so a Turbo run can't dead-end at the old
+  ceiling — and deliberately not "another, bigger castle". Once the town is a
+  floating rainbow city the only way up is absurd:
+  **🚀 Rocket Town** → **🛸 Mothership** → **🐢 World Turtle**
+  (the town straps on a rocket, gets abducted, and turns out to have been riding a
+  giant turtle all along). New hand-drawn SVG art for each, plus Super variants.
+  Sky Utopia is no longer terminal; World Turtle is the new ceiling.
+- **🍀 Charms On/Off toggle** in the toolbar. Off means new games start plain with
+  no perk and no chooser; On (default) opens the chooser. Applies to the next new
+  game and is remembered.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v87`.
+
 ## [0.57.0] - 2026-09-04 (v86)
 
 ### Added

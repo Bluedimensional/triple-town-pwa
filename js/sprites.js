@@ -445,6 +445,82 @@ const skyUtopia = svg(`
     <ellipse cx="34" cy="75" rx="14" ry="9"/><ellipse cx="66" cy="75" rx="14" ry="9"/><ellipse cx="50" cy="77" rx="18" ry="11"/></g>`,
   { cy: 87, rx: 34, ry: 6 });
 
+// --- beyond Sky Utopia: the silly tiers ---------------------------------------
+// Added so a fast run (the Turbo charm) doesn't dead-end at the top of the chain.
+// Deliberately NOT "another, bigger castle" — once the town is a floating rainbow
+// city the only way up is absurd: it straps on a rocket, gets abducted, and turns
+// out to have been riding a giant turtle the whole time.
+
+// Rocket Town — the whole town bolts a rocket to itself and leaves.
+const rocketTown = svg(`
+  <defs>
+    <linearGradient id="rtBody" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#b9c8da"/><stop offset="45%" stop-color="#ffffff"/><stop offset="100%" stop-color="#9aabbe"/></linearGradient>
+    <linearGradient id="rtFlame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff3b0"/><stop offset="55%" stop-color="#ffa22e"/><stop offset="100%" stop-color="#e8452e"/></linearGradient>
+  </defs>
+  <g fill="#fff2a8"><circle cx="14" cy="24" r="1.7"/><circle cx="86" cy="20" r="1.7"/>
+    <circle cx="80" cy="46" r="1.3"/><circle cx="18" cy="50" r="1.3"/></g>
+  <path d="M40 74 Q50 99 60 74 Z" fill="url(#rtFlame)" stroke="#8a2a12" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M45 74 Q50 89 55 74 Z" fill="#fff3b0" opacity="0.9"/>
+  <path d="M30 74 L38 52 L38 74 Z" fill="#e8635e" stroke="#5a1f14" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M70 74 L62 52 L62 74 Z" fill="#e8635e" stroke="#5a1f14" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M38 75 L38 30 Q50 8 62 30 L62 75 Z" fill="url(#rtBody)" stroke="#2c3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M38 31 Q50 8 62 31 Z" fill="#e8635e" stroke="#2c3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+  <g fill="#fff6c8" stroke="#2c3a4a" stroke-width="1.2">
+    <rect x="42" y="38" width="6" height="7"/><rect x="52" y="38" width="6" height="7"/>
+    <rect x="42" y="50" width="6" height="7"/><rect x="52" y="50" width="6" height="7"/>
+    <rect x="42" y="62" width="6" height="7"/><rect x="52" y="62" width="6" height="7"/></g>
+  <circle cx="50" cy="24" r="4" fill="#8fd0ec" stroke="#2c3a4a" stroke-width="2"/>`,
+  { cy: 92, rx: 22, ry: 5 });
+
+// Mothership — a flying saucer hoovering the last little house off the board.
+const mothership = svg(`
+  <defs>
+    <linearGradient id="msHull" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e4eef8"/><stop offset="100%" stop-color="#7b90aa"/></linearGradient>
+    <radialGradient id="msDome" cx="40%" cy="32%" r="68%">
+      <stop offset="0%" stop-color="#dcf8ff"/><stop offset="100%" stop-color="#43a9cd"/></radialGradient>
+    <linearGradient id="msBeam" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c6f7a6" stop-opacity="0.9"/><stop offset="100%" stop-color="#c6f7a6" stop-opacity="0.04"/></linearGradient>
+  </defs>
+  <g fill="#fff2a8"><circle cx="13" cy="18" r="1.6"/><circle cx="87" cy="20" r="1.6"/><circle cx="78" cy="8" r="1.2"/></g>
+  <path d="M34 52 L18 94 L82 94 L66 52 Z" fill="url(#msBeam)"/>
+  <path d="M44 80 L44 71 Q50 65 56 71 L56 80 Z" fill="#fbf4e6" stroke="#534023" stroke-width="2"/>
+  <path d="M41 71 L50 62 L59 71 Z" fill="#d0763e" stroke="#492913" stroke-width="2" stroke-linejoin="round"/>
+  <ellipse cx="50" cy="46" rx="38" ry="13" fill="url(#msHull)" stroke="#2b3a4c" stroke-width="3"/>
+  <path d="M32 40 Q50 18 68 40 Z" fill="url(#msDome)" stroke="#2b3a4c" stroke-width="2.5" stroke-linejoin="round"/>
+  <g fill="#ffe487" stroke="#2b3a4c" stroke-width="1.2">
+    <circle cx="25" cy="49" r="3"/><circle cx="37" cy="52" r="3"/><circle cx="50" cy="53" r="3"/>
+    <circle cx="63" cy="52" r="3"/><circle cx="75" cy="49" r="3"/></g>`,
+  { cy: 96, rx: 30, ry: 4 });
+
+// World Turtle — turns out the whole town has been riding a giant turtle.
+const worldTurtle = svg(`
+  <defs>
+    <linearGradient id="wtShell" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#86c65f"/><stop offset="100%" stop-color="#2d6a28"/></linearGradient>
+    <linearGradient id="wtSkin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#aed77f"/><stop offset="100%" stop-color="#5a9140"/></linearGradient>
+  </defs>
+  <g fill="#fff2a8"><circle cx="12" cy="20" r="1.6"/><circle cx="88" cy="24" r="1.6"/>
+    <circle cx="79" cy="10" r="1.2"/><circle cx="21" cy="9" r="1.2"/></g>
+  <g fill="url(#wtSkin)" stroke="#25451a" stroke-width="2.5" stroke-linejoin="round">
+    <path d="M24 64 Q14 72 18 84 L30 80 Z"/><path d="M76 64 Q86 72 82 84 L70 80 Z"/>
+    <path d="M86 62 Q98 58 98 48 Q98 39 89 39 Q80 40 78 52 Z"/></g>
+  <circle cx="90" cy="46" r="2" fill="#17240f"/>
+  <path d="M16 66 Q50 16 84 66 Z" fill="url(#wtShell)" stroke="#1e4a1a" stroke-width="3" stroke-linejoin="round"/>
+  <g fill="none" stroke="#1e4a1a" stroke-width="1.8" opacity="0.7">
+    <path d="M33 48 L33 66"/><path d="M50 41 L50 66"/><path d="M67 48 L67 66"/><path d="M22 56 Q50 46 78 56"/></g>
+  <ellipse cx="50" cy="67" rx="35" ry="6" fill="#c9a86a" stroke="#5c4109" stroke-width="2.5"/>
+  <g stroke="#3a2b12" stroke-width="1.6">
+    <rect x="34" y="30" width="9" height="11" fill="#fbf4e6"/>
+    <rect x="46" y="24" width="9" height="17" fill="#e8d9b8"/>
+    <rect x="58" y="32" width="9" height="9" fill="#fbf4e6"/></g>
+  <g stroke="#492913" stroke-width="1.6" fill="#d0763e" stroke-linejoin="round">
+    <path d="M32 31 L38.5 23 L45 31 Z"/><path d="M44 25 L50.5 16 L57 25 Z"/><path d="M56 33 L62.5 26 L69 33 Z"/></g>`,
+  { cy: 88, rx: 33, ry: 6 });
+
 // --- tomb line, above Royal Vault --------------------------------------------
 
 // Treasure Hoard — the tier above Royal Vault: the treasure has burst its chest
@@ -541,7 +617,7 @@ const divineSun = svg(`
 
 export const SPRITES = {
   grass, bush, tree, hut, house, mansion, castle, floatingCastle, tripleCastle,
-  megaCastle, kingdom, metropolis, skyUtopia,
+  megaCastle, kingdom, metropolis, skyUtopia, rocketTown, mothership, worldTurtle,
   bear, tombstone, church, cathedral, treasury, royalVault, treasureHoard, goldPyramid,
   phoenix, divineSun,
   plate, crystal, rock,
@@ -561,6 +637,7 @@ const SUPER_STAR =
   'fill="#ffd84a" stroke="#654909" stroke-width="1"/>';
 const SUPER_BASES = ['bush', 'tree', 'hut', 'house', 'mansion', 'castle',
   'floatingCastle', 'tripleCastle', 'megaCastle', 'kingdom', 'metropolis', 'skyUtopia',
+  'rocketTown', 'mothership', 'worldTurtle',
   'church', 'cathedral', 'treasury', 'royalVault', 'treasureHoard', 'goldPyramid',
   'phoenix', 'divineSun'];
 const PLANT_SUPERS = new Set(['bush', 'tree']);

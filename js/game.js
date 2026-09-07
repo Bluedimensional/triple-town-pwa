@@ -431,7 +431,15 @@ export function newGame(cols, rows) {
   state.level = 1;
   state.goal = goalForLevel(1);
   state.charm = null;
-  state.charmChoices = pickCharmChoices();        // the chooser is now up
+  if (state.charmsOn) {
+    state.charmChoices = pickCharmChoices();      // the chooser is now up
+  } else {
+    // Charms switched off — skip the chooser and deal the board straight away.
+    state.charmChoices = [];
+    prefill();
+    spawnNext();
+    state.activePos = pickActivePos(null, null);
+  }
   save();
 }
 
