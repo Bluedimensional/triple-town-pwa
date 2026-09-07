@@ -3,6 +3,32 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [Unreleased] - 2026-09-06
+
+### Docs
+- **README "What it is" brought back in line with the code.** It had drifted over
+  many versions:
+  - The merge bullet now states the rule outright: **every** merge needs three.
+    (`MERGE` in `js/config.js` is `need: 3` for every tier — the Floating-Castle
+    need-4 case went away in v56, and the README's stale note about it had already
+    been removed in v87.)
+  - Tombstone chain extended to what `TOMB_CHAIN` actually holds: tombstone →
+    church → cathedral → treasury → royal vault → treasure hoard → golden pyramid
+    → phoenix → divine sun.
+  - "Storehouse (top-left) holds one piece" replaced with the real thing: up to
+    `MAX_STORAGE` = 4 slots rendered **below** the board (moved there in v75), two
+    unlocked at the start, a third at level 2, a fourth at level 3, all four with
+    Deep Pockets.
+  - Added the features that were never documented: bombs (earned on merges worth
+    `BOMB_EARN_MIN_POINTS` = 2,000+, cap 9, destroy a rock or bear for free),
+    crystal wildcards and the 1×/2×/3× density toggle, timed modes
+    (`TIME_MODES` = Endless / 5 / 10 / 15 min, each with its own leaderboard),
+    board sizes (6×6 / 7×7 / 8×8 / 7×8), and levels as score milestones
+    (20,000 → 45,000 → 80,000 …, each banking an undo).
+  - Store bullet now names what `STORE_ITEMS` sells (grass, bush, tree, hut,
+    crystal), game-over covers the timer expiring, and crystals were removed from
+    the "Deferred (backlog)" list since they shipped.
+
 ## [0.60.0] - 2026-09-04 (v89)
 
 ### Changed
