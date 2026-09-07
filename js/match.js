@@ -1,7 +1,7 @@
 // match.js — connected-group detection (flood fill) and cascading merges.
 
 import { state } from './state.js';
-import { MERGE, POINTS, COINS, BOMB_EARN_MIN_POINTS, MAX_BOMBS, CHARM_SCORE_MULT,
+import { MERGE, POINTS, COINS, BOMB_EARN_MIN_POINTS, MAX_BOMBS,
   SURGE_BUSH_TARGETS } from './config.js';
 
 // The tier a base type turns into when it merges — normally MERGE[base].next, but
@@ -20,6 +20,24 @@ function mergeNext(base) {
 }
 
 const DIRS = [[-1, 0], [1, 0], [0, -1], [0, 1]]; // orthogonal only
+// Crosswise charm adds the four diagonals, so corners link groups too.
+const DIRS8 = DIRS.concat([[-1, -1], [-1, 1], [1, -1], [1, 1]]);
+function dirs() { return state.charm === 'crosswise' ? DIRS8 : DIRS; }
+
+// Does the tile at (r,c) count as `target` for matching? Normally only its own
+// base type does; the Wild Rocks charm lets a Rock stand in for anything.
+function matches(tile, target) {
+  if (baseType(tile) === target) return true;
+  return state.charm === 'wildRocks' && tile === 'rock' && target !== 'rock';
+}
+
+// How many connected tiles a merge needs — normally the rule's own count, but
+// the Soulmates charm drops every merge to just two of a kind.
+function mergeNeed(base) {
+  const rule = MERGE[base];
+  if (!rule) return Infinity;
+  return state.charm === 'soulmates' ? Math.max(2, rule.need - 1) : rule.need;
+}
 
 // A "super" tile (made by matching 4+) is the same base type for matching — a
 // super bush still groups/merges with regular bushes. The suffix carries only
@@ -43,13 +61,13 @@ export function floodFill(r, c, type) {
   seen.add(r + ',' + c);
   while (stack.length) {
     const [cr, cc] = stack.pop();
-    if (baseType(state.board[cr][cc]) !== target) continue;
+    if (!matches(state.board[cr][cc], target)) continue;
     group.push([cr, cc]);
-    for (const [dr, dc] of DIRS) {
+    for (const [dr, dc] of dirs()) {
       const nr = cr + dr;
       const nc = cc + dc;
       const key = nr + ',' + nc;
-      if (inBounds(nr, nc) && !seen.has(key) && baseType(state.board[nr][nc]) === target) {
+      if (inBounds(nr, nc) && !seen.has(key) && matches(state.board[nr][nc], target)) {
         seen.add(key);
         stack.push([nr, nc]);
       }
@@ -76,18 +94,18 @@ export function previewMergeGroup() {
   const stack = [[r, c]];
   while (stack.length) {
     const [cr, cc] = stack.pop();
-    for (const [dr, dc] of DIRS) {
+    for (const [dr, dc] of dirs()) {
       const nr = cr + dr;
       const nc = cc + dc;
       const key = nr + ',' + nc;
-      if (inBounds(nr, nc) && !seen.has(key) && baseType(state.board[nr][nc]) === target) {
+      if (inBounds(nr, nc) && !seen.has(key) && matches(state.board[nr][nc], target)) {
         seen.add(key);
         group.push([nr, nc]);
         stack.push([nr, nc]);
       }
     }
   }
-  return group.length >= rule.need ? group : [];
+  return group.length >= mergeNeed(target) ? group : [];
 }
 
 // The distinct merges a crystal at (r,c) could complete — one per base type it
@@ -98,7 +116,7 @@ export function crystalOptions(r, c) {
   for (const type in MERGE) {
     state.board[r][c] = type;                 // pretend the crystal is this type
     const group = floodFill(r, c, type);
-    if (group.length >= MERGE[type].need) {
+    if (group.length >= mergeNeed(type)) {
       const next = mergeNext(type);
       opts.push({ type, next, count: group.length, points: POINTS[next] || 0 });
     }
@@ -131,12 +149,13 @@ export function resolveMerges(r, c) {
     const base = baseType(state.board[r][c]);
     const rule = MERGE[base];
     if (!rule) break;
+    const need = mergeNeed(base);           // charm-adjusted (Soulmates drops it to 2)
 
     const group = floodFill(r, c, state.board[r][c]);
-    if (group.length < rule.need) break;
+    if (group.length < need) break;
 
     // Matching MORE than the minimum makes a "super" result worth double points.
-    const superResult = group.length > rule.need;
+    const superResult = group.length > need;
     const next = mergeNext(base);           // charm-adjusted result tier
 
     // Collapse the whole group into the next tier at the placement point. Record
@@ -150,13 +169,11 @@ export function resolveMerges(r, c) {
     state.board[r][c] = superResult ? superType(next) : next;
     state.lastCreated = { r, c };
 
-    let pts = (POINTS[next] || 0) * (superResult ? 2 : 1);
-    if (state.charm === 'highRoller') pts = Math.round(pts * CHARM_SCORE_MULT);
+    const pts = (POINTS[next] || 0) * (superResult ? 2 : 1);
     state.score += pts;
     earned += pts;
     state.coins += COINS[next] || 0;
-    // A "big merge" (Castle-tier or higher) earns a Bomb, up to the cap. Based on
-    // the tile's own tier value (POINTS[next]), not the charm-boosted score.
+    // A "big merge" (Castle-tier or higher) earns a Bomb, up to the cap.
     if ((POINTS[next] || 0) >= BOMB_EARN_MIN_POINTS && state.bombs < MAX_BOMBS) {
       state.bombs++;
     }

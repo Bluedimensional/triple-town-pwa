@@ -43,6 +43,8 @@ export const state = {
   surgeCharge: 0,   // super-merges banked toward the goal
   surgeActive: false, // is the surge currently ON?
   surgeTurns: 0,    // placements left while the surge is ON
+  charmUsed: false, // a once-per-run charm has fired (Phoenix Heart's rescue)
+  phoenixFlash: false, // one-shot: Phoenix Heart just saved a full board
   grassStreak: 0,   // consecutive grass pieces handed out (caps long streaks)
   storeBought: {},  // tile type -> times purchased (drives rising prices)
   over: false,
@@ -54,8 +56,10 @@ export const state = {
 };
 
 // How many storage slots are unlocked at the current level: 2 at level 1, then
-// one more each level (3 at L2, 4 at L3), capped at MAX_STORAGE.
+// one more each level (3 at L2, 4 at L3), capped at MAX_STORAGE. The Deep Pockets
+// charm hands you all of them from turn one.
 export function unlockedStorage() {
+  if (state.charm === 'deepPockets') return MAX_STORAGE;
   return Math.min(MAX_STORAGE, state.level + 1);
 }
 
@@ -97,6 +101,8 @@ export function resetGame() {
   state.surgeCharge = 0;
   state.surgeActive = false;
   state.surgeTurns = 0;
+  state.charmUsed = false;
+  state.phoenixFlash = false;
   state.grassStreak = 0;
   state.storeBought = {};
   state.over = false;

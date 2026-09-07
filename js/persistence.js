@@ -99,6 +99,7 @@ export function save() {
       surgeCharge: state.surgeCharge,
       surgeActive: state.surgeActive,
       surgeTurns: state.surgeTurns,
+      charmUsed: state.charmUsed,
       grassStreak: state.grassStreak,
       storeBought: state.storeBought,
       over: state.over,
@@ -168,6 +169,8 @@ export function load() {
     state.surgeCharge = data.surgeCharge || 0;
     state.surgeActive = !!data.surgeActive;
     state.surgeTurns = data.surgeTurns || 0;
+    state.charmUsed = !!data.charmUsed;
+    state.phoenixFlash = false;
     state.grassStreak = data.grassStreak || 0;
     state.storeBought = data.storeBought || {};
     state.over = !!data.over;

@@ -424,8 +424,11 @@ function paintGoal() {
 // The undo button: shows how many undos are banked (one per level completed) and
 // is enabled only when there's an undo to spend and a move to take back.
 function paintUndo() {
-  el.undoCount.textContent = state.undos;
-  el.undoBtn.disabled = state.undos <= 0 || state.undoStack.length === 0;
+  // Do-Over charm: undos are free and unlimited, so show ∞ and only require that
+  // there IS a move to take back.
+  const free = state.charm === 'doOver';
+  el.undoCount.textContent = free ? '∞' : state.undos;
+  el.undoBtn.disabled = state.undoStack.length === 0 || (!free && state.undos <= 0);
 }
 
 // The bomb button: how many are banked, whether it's aimed, and — while aimed — a
@@ -456,10 +459,9 @@ function flashNoBomb() {
     () => el.bombBtn.classList.remove('nobomb'), { once: true });
 }
 
-// A quick blast burst where a bomb just destroyed a tile.
 // The Verdant Surge meter — shown ONLY while the Green Thumb charm is active. It
-// charges from 4+ merges; when the surge is ON, the bar shows the placements left
-// and the whole thing glows to signal bush → house is live.
+// charges from every merge (bigger merges fill it faster); when the surge is ON,
+// the bar shows the placements left and glows to signal bush → house is live.
 function paintSurge() {
   if (!el.surge) return;
   const show = state.charm === 'greenThumb';
@@ -476,6 +478,7 @@ function paintSurge() {
   }
 }
 
+// A quick blast burst where a bomb just destroyed a tile.
 function renderBombBlast() {
   const b = state.bombBlast;
   state.bombBlast = null;
@@ -525,6 +528,37 @@ function renderLevelCelebrate() {
     el.celebrate.classList.remove('show');
     el.celebrate.innerHTML = '';
   }, 2000);
+}
+
+// Phoenix Heart just saved a full board — a one-shot burst of embers, reusing the
+// level-celebration overlay. Fired after the level celebration so it takes the
+// element if both happen to land on the same turn.
+function renderPhoenixFlash() {
+  if (!state.phoenixFlash) return;
+  state.phoenixFlash = false;
+  if (!el.celebrate) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let embers = '';
+  if (!reduce) {
+    for (let i = 0; i < 16; i++) {
+      const a = Math.random() * Math.PI * 2, dist = 120 + Math.random() * 190;
+      const tx = Math.round(Math.cos(a) * dist), ty = Math.round(Math.sin(a) * dist);
+      const size = Math.round(12 + Math.random() * 20), delay = (Math.random() * 0.12).toFixed(2);
+      embers += `<span class="lc-star" style="--tx:${tx}px;--ty:${ty}px;font-size:${size}px;animation-delay:${delay}s">🔥</span>`;
+    }
+  }
+  el.celebrate.innerHTML =
+    '<div class="lc-flash"></div>' +
+    `<div class="lc-stars">${embers}</div>` +
+    '<div class="lc-num lc-sm">🔥 Reborn</div>';
+  el.celebrate.classList.remove('show');
+  void el.celebrate.offsetWidth;
+  el.celebrate.classList.add('show');
+  clearTimeout(el.celebrateTimer);
+  el.celebrateTimer = setTimeout(() => {
+    el.celebrate.classList.remove('show');
+    el.celebrate.innerHTML = '';
+  }, 2200);
 }
 
 // Which timed mode's scores the modal is currently showing (defaults to the mode
@@ -828,6 +862,7 @@ export function render({ onBuy, onSwap }) {
   paintUndo();
   paintBombs();
   renderLevelCelebrate();
+  renderPhoenixFlash();
   paintTheme();
   paintStorage(onSwap);
   paintStore(onBuy);

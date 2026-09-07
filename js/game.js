@@ -7,7 +7,7 @@ import {
   PREFILL_MIN, PREFILL_MAX, PREFILL_WEIGHTS, PREFILL_BEARS, PREFILL_TOMB_CHANCE,
   TIMED_PREFILL_WEIGHTS, TIMED_PREFILL_MIN, TIMED_PREFILL_MAX,
   goalForLevel, BOMB_TARGETS,
-  CHARMS, CHARM_CHOICES, CHARM_START_BOMBS, CHARM_BEAR_MULT, CHARM_CRYSTAL_MULT,
+  CHARMS, CHARM_CHOICES, CHARM_PINNED, PHOENIX_CLEARS,
   comboMultiplier,
   SURGE_GOAL, SURGE_TURNS,
 } from './config.js';
@@ -43,14 +43,7 @@ function emptyCells() {
 }
 
 function bearChance() {
-  let ch = Math.min(BEAR_MAX_CHANCE, BEAR_BASE_CHANCE + state.turns * BEAR_CHANCE_PER_TURN);
-  if (state.charm === 'peaceful') ch *= CHARM_BEAR_MULT;   // Peaceful Valley: fewer bears
-  return ch;
-}
-
-// Prospector charm doubles the crystal spawn rate (1 otherwise).
-function crystalCharmMult() {
-  return state.charm === 'prospector' ? CHARM_CRYSTAL_MULT : 1;
+  return Math.min(BEAR_MAX_CHANCE, BEAR_BASE_CHANCE + state.turns * BEAR_CHANCE_PER_TURN);
 }
 
 // Decide the next piece and place it in hand.
@@ -58,8 +51,8 @@ function crystalCharmMult() {
 export function spawnNext({ countTurn = true } = {}) {
   if (Math.random() < bearChance()) {
     state.current = 'bear';
-  } else if (Math.random() < CRYSTAL_CHANCE * state.crystalMult * crystalCharmMult()) {
-    state.current = 'crystal';   // rare wildcard (density scaled per game + charm)
+  } else if (Math.random() < CRYSTAL_CHANCE * state.crystalMult) {
+    state.current = 'crystal';   // rare wildcard (density scaled per game)
   } else if (state.grassStreak >= MAX_GRASS_STREAK) {
     // Too many grass in a row — hand out a non-grass piece this time.
     const { grass, ...rest } = SPAWN_WEIGHTS;
@@ -117,7 +110,25 @@ export function expireTimer() {
 // empty tile left to place on), as in classic Triple Town. There is no turn cap.
 function checkGameOver() {
   if (state.over) return;
-  if (boardFull()) endGame();
+  if (!boardFull()) return;
+  // Phoenix Heart: the first time the board fills, burn away every bear, grave and
+  // rock instead of ending the run. Once only — after that a full board is final.
+  if (state.charm === 'phoenix' && !state.charmUsed) {
+    state.charmUsed = true;
+    for (let r = 0; r < state.rows; r++) {
+      for (let c = 0; c < state.cols; c++) {
+        if (PHOENIX_CLEARS.includes(state.board[r][c])) state.board[r][c] = null;
+      }
+    }
+    state.phoenixFlash = true;             // one-shot: renderer plays the rebirth
+    if (!boardFull()) {
+      // activePos was computed while the board was still full, so it's null —
+      // put the held piece back on a freed tile so play can continue.
+      if (!state.activePos) state.activePos = pickActivePos(null, null);
+      return;                              // rescued — keep playing
+    }
+  }
+  endGame();
 }
 
 // Levels are score milestones you pass through while you keep playing — reaching
@@ -149,6 +160,7 @@ function snapshot() {
     crystalMult: state.crystalMult, bombs: state.bombs,
     charm: state.charm, combo: state.combo,
     surgeCharge: state.surgeCharge, surgeActive: state.surgeActive, surgeTurns: state.surgeTurns,
+    charmUsed: state.charmUsed,
     over: state.over,
   });
 }
@@ -195,12 +207,15 @@ export function bombAt(r, c) {
   return false;
 }
 
-// Take back the last placement (spends one earned undo).
+// Take back the last placement (spends one earned undo — the Do-Over charm makes
+// them free and unlimited, so only having a move to take back matters).
+export function unlimitedUndo() { return state.charm === 'doOver'; }
 export function undoMove() {
-  if (state.undos <= 0 || state.undoStack.length === 0) return false;
+  if (state.undoStack.length === 0) return false;
+  if (!unlimitedUndo() && state.undos <= 0) return false;
   const snap = JSON.parse(state.undoStack.pop());
   Object.assign(state, snap);
-  state.undos--;
+  if (!unlimitedUndo()) state.undos--;
   // Clear one-shot animation markers so nothing replays on the restored board.
   state.lastCreated = null; state.bearMoves = []; state.mergeSlides = [];
   state.floatPoints = null; state.levelFlash = false; state.levelCelebrate = null;
@@ -229,6 +244,24 @@ export function placePiece(r, c) {
 
   // Base points for the tile you just set down (grass, bought tiles, etc.).
   state.score += POINTS[piece] || 0;
+
+  // Echo charm: the piece also copies itself onto a random empty tile beside it,
+  // so a single placement can complete a match on its own. Buildable tiles only —
+  // duplicating a bear would be a punishment, not a perk.
+  if (state.charm === 'echo' && piece !== 'bear' && piece !== 'crystal') {
+    const spots = [];
+    for (const [dr, dc] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
+      const nr = r + dr;
+      const nc = c + dc;
+      if (nr >= 0 && nr < state.rows && nc >= 0 && nc < state.cols &&
+          state.board[nr][nc] === null) spots.push([nr, nc]);
+    }
+    if (spots.length) {
+      const [er, ec] = spots[Math.floor(Math.random() * spots.length)];
+      state.board[er][ec] = piece;
+      state.score += POINTS[piece] || 0;
+    }
+  }
 
   if (piece === 'crystal') {
     const opts = crystalOptions(r, c);
@@ -346,8 +379,7 @@ function prefill() {
     const [r, c] = cells[idx];
     state.board[r][c] = weightedPick(weights);
   }
-  const bearScale = state.charm === 'peaceful' ? CHARM_BEAR_MULT : 1;  // Peaceful Valley
-  const bears = Math.max(1, Math.round(PREFILL_BEARS * scale * bearScale));
+  const bears = Math.max(1, Math.round(PREFILL_BEARS * scale));
   for (let b = 0; b < bears && idx < cells.length; b++, idx++) {
     const [r, c] = cells[idx];
     state.board[r][c] = 'bear';
@@ -361,20 +393,31 @@ function prefill() {
 
 // The charm ids to offer at the start of a run: Green Thumb is ALWAYS one of them
 // (it's the charm with the Verdant Surge power-up), plus random distinct others.
-function pickCharmChoices() {
-  const rest = CHARMS.map((c) => c.id).filter((id) => id !== 'greenThumb');
-  for (let i = rest.length - 1; i > 0; i--) {   // Fisher–Yates
+// `avoid` holds ids to skip when possible, so a re-shuffle always shows new ones.
+function pickCharmChoices(avoid = []) {
+  const all = CHARMS.map((c) => c.id).filter((id) => id !== CHARM_PINNED);
+  let rest = all.filter((id) => !avoid.includes(id));
+  if (rest.length < CHARM_CHOICES - 1) rest = all;   // too few left — allow repeats
+  for (let i = rest.length - 1; i > 0; i--) {        // Fisher–Yates
     const j = Math.floor(Math.random() * (i + 1));
     [rest[i], rest[j]] = [rest[j], rest[i]];
   }
-  return ['greenThumb', ...rest.slice(0, CHARM_CHOICES - 1)];
+  return [CHARM_PINNED, ...rest.slice(0, CHARM_CHOICES - 1)];
+}
+
+// Re-roll the offered charms while the chooser is up (the Shuffle button). Green
+// Thumb stays pinned; the other slots become ones you weren't just shown.
+export function reshuffleCharms() {
+  if (!state.charmChoices.length) return false;
+  state.charmChoices = pickCharmChoices(state.charmChoices);
+  save();
+  return true;
 }
 
 // Start a brand-new game. `cols`/`rows` set the board dimensions; omitting them
 // keeps the current/pending size. The board is NOT dealt yet: first the player
-// picks 1 of 3 charms (chooseCharm below), because some charms shape the opening
-// deal (e.g. Peaceful Valley thins the starting bears). Until then charmChoices
-// is non-empty and the chooser is up.
+// picks 1 of 3 charms (chooseCharm below), because a charm can shape the opening
+// deal. Until then charmChoices is non-empty and the chooser is up.
 export function newGame(cols, rows) {
   if (cols) state.cols = cols;
   if (rows) state.rows = rows;
@@ -398,8 +441,7 @@ export function chooseCharm(id) {
   if (!state.charmChoices.includes(id)) return false;
   state.charm = id;
   state.charmChoices = [];                         // close the chooser
-  if (id === 'demolitionist') state.bombs = CHARM_START_BOMBS;
-  prefill();                                       // charm-aware (peaceful thins bears)
+  prefill();
   spawnNext();
   state.activePos = pickActivePos(null, null);
   save();

@@ -22,9 +22,11 @@ works offline, installs straight from the browser. No App Store, no build step.
 - **Storehouse** (top-left) holds one piece in reserve — tap to swap.
 - **Store** sells build-chain tiles for in-game **pretend coins only** (earned
   from merges). Prices rise with each purchase. No real money, ever.
-- **Roguelike Charms:** every new run opens by offering **3 random perks**; pick
-  one and it bends the rules for that whole game (e.g. grass skips to Tree, start
-  with bombs, fewer bears, 15% more score). Board is dealt after you choose.
+- **Roguelike Charms:** every new run opens by offering **3 perks** — Green Thumb
+  is always one, and **🎲 Shuffle** re-rolls the other two. Each genuinely bends a
+  rule for the whole game: merge diagonally, merge with only two of a kind, freeze
+  the bears, make rocks wild, survive one full board, unlock all storage, duplicate
+  every piece you place, or undo without limit. Board is dealt after you choose.
 - **Combo multiplier:** merge on consecutive placements to build a chain; the
   longer the chain, the bigger the score multiplier on that turn's merge (up to
   ×3). A 🔥 badge shows the live multiplier. Breaks when a placement merges nothing.

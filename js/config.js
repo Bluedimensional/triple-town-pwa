@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v85';
+export const VERSION = 'v86';
 
 // The organic path edges are now baked into the path GEOMETRY (each outer edge
 // bulges outward — see buildPathShape in render.js), so there is NO runtime SVG
@@ -123,21 +123,23 @@ export const MAX_BOMBS = 9;                 // cap kept in hand (keeps it occasi
 // store.js), keyed by its id, so nothing hard-codes a charm's text. Applies to
 // both endless and timed runs.
 export const CHARMS = [
-  { id: 'greenThumb',    icon: '🌱', name: 'Green Thumb',    desc: 'Grass skips to Tree. Keep merging to charge a Surge: bush jumps to a house too.' },
-  { id: 'demolitionist', icon: '💣', name: 'Demolitionist',  desc: 'Start the run with 3 bombs.' },
-  { id: 'peaceful',      icon: '☮️', name: 'Peaceful Valley', desc: 'Bears appear 40% less often.' },
-  { id: 'prospector',    icon: '💎', name: 'Prospector',     desc: 'Crystals appear twice as often.' },
-  { id: 'bargain',       icon: '🏷️', name: 'Bargain Hunter',  desc: 'Store prices are 30% cheaper, all game.' },
-  { id: 'highRoller',    icon: '✨', name: 'High Roller',     desc: 'Every score is boosted 15%.' },
+  { id: 'greenThumb',  icon: '🌱', name: 'Green Thumb',   desc: 'Grass skips to Tree. Keep merging to charge a Surge: bush jumps to a house too.' },
+  { id: 'crosswise',   icon: '✳️', name: 'Crosswise',     desc: 'Merges connect DIAGONALLY too — corners count, the whole board links up.' },
+  { id: 'soulmates',   icon: '💞', name: 'Soulmates',     desc: 'Every merge needs only TWO of a kind instead of three.' },
+  { id: 'sleepyBears', icon: '😴', name: 'Sleepy Bears',  desc: 'Bears never move. Wall them in whenever you feel like it.' },
+  { id: 'wildRocks',   icon: '🪨', name: 'Wild Rocks',    desc: 'Rocks count as ANY tile when merging — dead weight becomes a wildcard.' },
+  { id: 'phoenix',     icon: '🔥', name: 'Phoenix Heart', desc: 'Once per run, a full board is swept clear of bears, graves and rocks instead of ending.' },
+  { id: 'deepPockets', icon: '🎒', name: 'Deep Pockets',  desc: 'All four storage slots unlocked from the very first turn.' },
+  { id: 'echo',        icon: '👯', name: 'Echo',          desc: 'Every piece you place copies itself onto a neighbouring empty tile.' },
+  { id: 'doOver',      icon: '🕰️', name: 'Do-Over',       desc: 'Unlimited undos — take back any move, as often as you like.' },
 ];
 export const CHARM_BY_ID = Object.fromEntries(CHARMS.map((c) => [c.id, c]));
 export const CHARM_CHOICES = 3;             // how many charms are offered each run
-// Effect magnitudes, read by the logic that implements each charm.
-export const CHARM_START_BOMBS = 3;         // demolitionist: bombs in hand at start
-export const CHARM_BEAR_MULT = 0.6;         // peaceful: bear chance ×0.6 (40% fewer)
-export const CHARM_CRYSTAL_MULT = 2;        // prospector: crystal chance ×2
-export const CHARM_STORE_MULT = 0.7;        // bargain: store prices ×0.7 (30% off)
-export const CHARM_SCORE_MULT = 1.15;       // highRoller: points ×1.15
+// Green Thumb is PINNED (always offered); the other slots are rolled from the rest
+// and the chooser's Shuffle button re-rolls them.
+export const CHARM_PINNED = 'greenThumb';
+// The hazards Phoenix Heart sweeps away when it saves a full board.
+export const PHOENIX_CLEARS = ['bear', 'tombstone', 'rock'];
 
 // Verdant Surge — the Green Thumb charm's power-up. Green Thumb always merges
 // grass → tree. On TOP of that, EVERY merge charges a meter (by the number of

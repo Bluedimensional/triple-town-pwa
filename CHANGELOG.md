@@ -3,6 +3,32 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.57.0] - 2026-09-04 (v86)
+
+### Added
+- **🎲 Shuffle button on the charm chooser.** Don't like what's on offer? Re-roll
+  it. Green Thumb stays pinned (it's the one with the Verdant Surge); the other
+  two slots become charms you weren't just shown, so every press changes something.
+  Unlimited presses.
+- **A whole new charm roster** — the old ones were all just multipliers. Every
+  charm now bends an actual rule of the game:
+  - ✳️ **Crosswise** — merges connect **diagonally** too, not just orthogonally.
+  - 💞 **Soulmates** — every merge needs only **two** of a kind instead of three.
+  - 😴 **Sleepy Bears** — bears **never move**; wall them in at your leisure.
+  - 🪨 **Wild Rocks** — rocks count as **any tile** when merging.
+  - 🔥 **Phoenix Heart** — once per run a full board is **swept clear** of bears,
+    graves and rocks instead of ending (with a "Reborn" burst).
+  - 🎒 **Deep Pockets** — all four storage slots from turn one.
+  - 👯 **Echo** — every piece you place **copies itself** onto a neighbouring tile.
+  - 🕰️ **Do-Over** — **unlimited undos** (the counter shows ∞).
+
+### Removed
+- The old multiplier-only charms: Demolitionist, Peaceful Valley, Prospector,
+  Bargain Hunter and High Roller, along with all their tuning constants.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v86`.
+
 ## [0.56.0] - 2026-09-04 (v85)
 
 ### Added

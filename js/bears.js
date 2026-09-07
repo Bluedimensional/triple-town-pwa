@@ -81,6 +81,9 @@ export function moveBears() {
   }
 
   // 2) Move the remaining bears (those whose group had room), column-major.
+  // Sleepy Bears charm: they stay put entirely, so you can wall one in at leisure.
+  // (Trapping in step 1 still applies — an enclosed bear still becomes a grave.)
+  if (state.charm === 'sleepyBears') return;
   const bears = [];
   for (let r = 0; r < state.rows; r++) {
     for (let c = 0; c < state.cols; c++) {

@@ -430,6 +430,8 @@ body[data-field="ice"]::before {
   15% { opacity: 1; }
   100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1) rotate(160deg); }
 }
+/* Smaller variant for word-y celebration text (e.g. Phoenix Heart's "Reborn"). */
+.lc-num.lc-sm { font-size: clamp(30px, 9vw, 62px); }
 .lc-num {
   position: relative;
   font-weight: 900;
@@ -1101,3 +1103,22 @@ body[data-field="ice"]::before {
   color: #5c7a3f;
   margin-top: 2px;
 }
+/* Re-roll the two unpinned charms. */
+.charm-shuffle {
+  margin-top: 14px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: #5c7a3f;
+  background: rgba(92, 122, 63, 0.1);
+  border: 2px dashed rgba(92, 122, 63, 0.45);
+  border-radius: 12px;
+  cursor: pointer;
+}
+.charm-shuffle:active { transform: scale(0.97); }
