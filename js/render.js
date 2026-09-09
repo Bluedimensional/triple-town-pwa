@@ -46,6 +46,7 @@ export function cacheDom() {
   el.charmShowAll = document.getElementById('charm-showall');
   el.charmStart = document.getElementById('charm-start');
   el.comboBadge = document.getElementById('combo-badge');
+  el.activeCharms = document.getElementById('active-charms');
   el.surge = document.getElementById('surge');
   el.surgeFill = document.getElementById('surge-fill');
   el.surgeCount = document.getElementById('surge-count');
@@ -762,6 +763,24 @@ function paintCharmChoice() {
   el.charmChoice.classList.add('show');
 }
 
+// The charms running this game, listed under the goal bar so it is always clear
+// what is bending the rules. Hidden when none are active, and while the chooser
+// is still up (the modal covers it and the selection is still changing).
+function paintActiveCharms() {
+  if (!el.activeCharms) return;
+  const ids = state.charms;
+  const on = ids.length > 0 && state.charmChoices.length === 0;
+  el.activeCharms.hidden = !on;
+  if (!on) { el.activeCharmsKey = null; return; }
+  const key = ids.join('|');
+  if (el.activeCharmsKey === key) return;      // unchanged — skip the rebuild
+  el.activeCharmsKey = key;
+  el.activeCharms.innerHTML = ids.map((id) => {
+    const c = CHARM_BY_ID[id];
+    return c ? `<span class="ac-chip" title="${c.desc}"><span class="ac-icon">${c.icon}</span>${c.name}</span>` : '';
+  }).join('');
+}
+
 // Combo badge: shows the multiplier the NEXT merge will earn while a chain of
 // consecutive merges is alive (state.combo >= 1). Hidden with no chain or at game
 // over. Pops (bump) whenever the chain length changes.
@@ -859,6 +878,7 @@ export function render({ onBuy, onSwap }) {
   paintTheme();
   paintStorage(onSwap);
   paintStore(onBuy);
+  paintActiveCharms();
   paintCharmChoice();
   paintCombo();
   paintSurge();

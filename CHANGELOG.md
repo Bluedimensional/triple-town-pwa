@@ -3,6 +3,16 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.61.0] - 2026-09-09 (v90)
+
+### Added
+- **Your active charms are now shown while you play** — a strip of chips under the
+  goal bar naming each one (icon + name, with its description on hover). Hidden
+  when no charms are running, and while the chooser is still open.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v90`.
+
 ## [0.60.0] - 2026-09-04 (v89)
 
 ### Changed
