@@ -27,6 +27,11 @@
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+/* The `hidden` attribute must always win. Several elements here set display
+   (flex/grid), which silently overrides hidden's default `display: none` — that
+   bug shipped three times (shuffle button, charms strip, Surge meter). */
+[hidden] { display: none !important; }
+
 html, body {
   margin: 0;
   height: 100%;
@@ -584,10 +589,14 @@ body[data-field="ice"]::before {
   position: relative;   /* anchors the floating combo badge */
   --cols: 6;
   --rows: 6;
-  /* Cap the width so the whole stack (board + a one-cell storage row above) fits
-     the height. A board of `rows` cells plus the storage row is `rows + 1` cells
-     tall; keeping cells square means width = cols/(rows+1) of the height budget. */
-  width: min(100%, calc((100dvh - 300px) * var(--cols) / (var(--rows) + 1)));
+  /* Cap the width so the whole stack (board + a one-cell storage row) fits the
+     height. A board of `rows` cells plus the storage row is `rows + 1` cells tall;
+     keeping cells square means width = cols/(rows+1) of the height budget.
+     The subtracted figure is everything ELSE on screen: HUD + goal bar (which
+     grows a row when several charms are active) + toolbar + store + gaps and
+     padding — measured at ~332px on a 375-wide phone, so 340 leaves a margin.
+     Only binds on SHORT screens; on tall ones the 100% width caps first. */
+  width: min(100%, calc((100dvh - 340px) * var(--cols) / (var(--rows) + 1)));
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -1010,6 +1019,55 @@ body[data-field="ice"]::before {
   100% { transform: scale(1) rotate(0); }
 }
 
+/* ---- Settings drawer ------------------------------------------------------- */
+.settings-btn {
+  margin-left: auto;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 5px 11px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.settings-btn:active { transform: scale(0.95); }
+.settings-card {
+  width: min(94vw, 460px);
+  max-height: 86vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
+}
+.settings-card h1 { margin-bottom: 2px; }
+/* Inside the drawer each group stacks on its own line. */
+.settings-card > div[id$="-controls"] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 9px;
+  background: rgba(92, 122, 63, 0.10);
+  border-radius: 10px;
+}
+.settings-card .new-label { color: #5c7a3f; }
+.settings-card .size-btn, .settings-card .crys-btn, .settings-card .time-btn,
+.settings-card .charm-btn, .settings-card .tide-btn, .settings-card .pick-btn {
+  color: #2f4a1c;
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(92, 122, 63, 0.4);
+}
+.settings-card .size-btn.current, .settings-card .crys-btn.current,
+.settings-card .time-btn.current, .settings-card .charm-btn.current,
+.settings-card .tide-btn.current, .settings-card .pick-btn.current {
+  background: rgba(107, 160, 58, 0.34);
+  border-color: var(--accent);
+}
+
 /* ---- Crystal "which merge?" chooser ----------------------------------------
    No card behind the options: the pieces float on a LIGHT backdrop so the board
    stays readable while you decide, and their contrast comes from a drop shadow.
@@ -1046,23 +1104,21 @@ body[data-field="ice"]::before {
 .active-charms {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 7px;
+  gap: 4px;
+  margin-top: 6px;
 }
-/* `display: flex` above beats the hidden attribute's default display:none. */
-.active-charms[hidden] { display: none; }
 .ac-chip {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 8px 3px 5px;
+  padding: 2px 7px 2px 4px;
   border-radius: 999px;
   background: rgba(107, 160, 58, 0.28);
   border: 1px solid rgba(160, 214, 110, 0.55);
   color: #e6f5d5;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 1.35;
   white-space: nowrap;
 }
 .ac-icon { font-size: 13px; line-height: 1; }
@@ -1162,8 +1218,6 @@ body[data-field="ice"]::before {
   cursor: pointer;
 }
 .charm-shuffle:active { transform: scale(0.97); }
-/* `display: flex` above beats the hidden attribute's default display:none. */
-.charm-shuffle[hidden] { display: none; }
 /* A picked charm reads as armed: filled, thicker border, tick in the corner. */
 .charm-opt.picked {
   background: #eaf6dc;

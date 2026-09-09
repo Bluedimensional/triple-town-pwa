@@ -3,6 +3,38 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.65.0] - 2026-09-09 (v94)
+
+### Fixed
+- **The screen no longer overflows on a phone.** Six control rows had accumulated
+  in the toolbar (sizes, crystals, timed modes, and three On/Off toggles), pushing
+  the Store off the bottom of the screen. Measured at 393x852 the page ran 18px
+  past the viewport with the Store clipped; on shorter phones, worse.
+  - **Settings moved into a ⚙ drawer**, leaving a single slim toolbar row.
+    Toolbar height 138px -> 27px.
+  - **The Surge meter was showing on every run**, not just Green Thumb ones —
+    `.surge { display: flex }` silently overrode its `hidden` attribute. It has
+    been visible since v83. Goal bar 145px -> 109px.
+  - **Board-size reserve corrected** from 300px to 340px. That figure is the space
+    the rest of the UI needs, and it had not been updated as rows were added, so
+    the board was sized too tall on short screens.
+  - Net: ~147px reclaimed. Now 0 overflow with 56px spare at 393x852, and 13px
+    spare at 375x667 (the shortest common phone), Store fully visible on both.
+
+### Changed
+- Settings groups are now **labelled** ("🔀 Crystal choice", "📈 Rising Tide",
+  "🍀 Charms"…) instead of a bare emoji, which was unreadable on a phone where
+  there is no hover for the tooltip.
+- Charm chips tightened slightly so several charms take less vertical space.
+
+### Notes
+- Added a global `[hidden] { display: none !important; }`. The hidden-attribute
+  override bug had now shipped three times (shuffle button, charms strip, Surge
+  meter); this ends that class of bug rather than patching a fourth.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v94`.
+
 ## [0.64.0] - 2026-09-09 (v93)
 
 ### Added

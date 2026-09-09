@@ -43,8 +43,15 @@ function onBuy(type) {
   }
 }
 
+// The settings drawer holds everything you set occasionally (board size, timed
+// mode, crystals, feature toggles) so the play screen stays short enough to fit.
+const settingsModal = () => document.getElementById('settings-modal');
+function openSettings() { settingsModal().classList.add('show'); }
+function closeSettings() { settingsModal().classList.remove('show'); }
+
 // Start a new game at the given dimensions, rebuilding the grid for it.
 function onNewGame(cols, rows) {
+  closeSettings();
   if (!state.over &&
       !confirm(`Start a new ${cols}×${rows} game? Current progress will be lost.`)) return;
   newGame(cols, rows);
@@ -56,6 +63,7 @@ function onNewGame(cols, rows) {
 // Switch timed mode = start a fresh game at that length (prompted restart), since
 // a game already underway can't change its clock.
 function onNewTimeMode(mode) {
+  closeSettings();
   if (mode === state.timeMode && !state.over) return;   // already this mode, nothing to do
   const label = mode ? mode + '-min' : 'Endless';
   if (!state.over && !confirm(`Leave this game and start a new ${label} game?`)) return;
@@ -225,6 +233,13 @@ function boot() {
   overlay.addEventListener('pointerdown', (e) => { if (e.target === overlay) dismissOver(); });
   document.getElementById('over-close').addEventListener('pointerdown', (e) => { e.stopPropagation(); dismissOver(); });
   document.getElementById('over-view').addEventListener('pointerdown', (e) => { e.stopPropagation(); dismissOver(); });
+
+  // Settings drawer: the ⚙ button opens it; backdrop tap or Close hides it.
+  document.getElementById('settings-btn').addEventListener('pointerdown', openSettings);
+  document.getElementById('settings-close').addEventListener('pointerdown', closeSettings);
+  settingsModal().addEventListener('pointerdown', (e) => {
+    if (e.target === settingsModal()) closeSettings();
+  });
 
   // High-scores modal: the Best stat opens it; backdrop tap or Close hides it.
   document.getElementById('best-stat').addEventListener('pointerdown', openScores);
