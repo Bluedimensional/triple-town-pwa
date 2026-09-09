@@ -150,7 +150,10 @@ function maybeLevelUp() {
 }
 
 // A snapshot of everything a placement changes, so a move can be undone.
-const MAX_UNDO = 10;
+// History runs DEEP so you can step back as many moves as you have undos banked
+// — a snapshot measures ~710 bytes on an 8x8, so 500 of them is ~365 KB, well
+// inside a localStorage budget, and saving at that depth costs ~0.3 ms.
+const MAX_HISTORY = 500;
 function snapshot() {
   return JSON.stringify({
     board: state.board, current: state.current, activePos: state.activePos,
@@ -200,6 +203,7 @@ export function bombAt(r, c) {
     state.bombs--;
     state.armed = null;
     state.bombBlast = { r, c };
+    state.redoStack.length = 0;   // bombing forks history too — nothing to redo
     save();
     return true;
   }
@@ -213,15 +217,35 @@ export function unlimitedUndo() { return hasCharm('doOver'); }
 export function undoMove() {
   if (state.undoStack.length === 0) return false;
   if (!unlimitedUndo() && state.undos <= 0) return false;
+  state.redoStack.push(snapshot());            // remember where we were, to redo
+  if (state.redoStack.length > MAX_HISTORY) state.redoStack.shift();
   const snap = JSON.parse(state.undoStack.pop());
   Object.assign(state, snap);
   if (!unlimitedUndo()) state.undos--;
-  // Clear one-shot animation markers so nothing replays on the restored board.
+  clearOneShots();
+  save();
+  return true;
+}
+
+// Step forward again through a move you just undid. This REFUNDS the undo that
+// the matching undo spent, so undo -> redo leaves the counter where it started.
+export function redoMove() {
+  if (state.redoStack.length === 0) return false;
+  state.undoStack.push(snapshot());
+  if (state.undoStack.length > MAX_HISTORY) state.undoStack.shift();
+  const snap = JSON.parse(state.redoStack.pop());
+  Object.assign(state, snap);
+  if (!unlimitedUndo()) state.undos++;
+  clearOneShots();
+  save();
+  return true;
+}
+
+// Clear one-shot animation markers so nothing replays on a restored board.
+function clearOneShots() {
   state.lastCreated = null; state.bearMoves = []; state.mergeSlides = [];
   state.floatPoints = null; state.levelFlash = false; state.levelCelebrate = null;
   state.armed = null; state.bombBlast = null;
-  save();
-  return true;
 }
 
 // Place the held piece at (r,c). Returns true if the move was legal.
@@ -232,7 +256,8 @@ export function placePiece(r, c) {
 
   // Snapshot BEFORE mutating, so this move can be undone (bounded history).
   state.undoStack.push(snapshot());
-  if (state.undoStack.length > MAX_UNDO) state.undoStack.shift();
+  if (state.undoStack.length > MAX_HISTORY) state.undoStack.shift();
+  state.redoStack.length = 0;     // a fresh move forks history — nothing to redo
 
   const piece = state.current;
   const scoreBefore = state.score;

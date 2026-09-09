@@ -3,6 +3,29 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.62.0] - 2026-09-09 (v91)
+
+### Fixed
+- **Undo now goes back as far as your counter says.** The move history was capped
+  at 10 snapshots (`MAX_UNDO`), so however many undos you had banked, only the
+  last 10 moves still existed to return to. The cap is now 500 — measured at
+  ~710 bytes per snapshot on an 8x8, that is ~365 KB of a ~5 MB budget, and
+  saving at full depth costs ~0.3 ms. The number of undos you hold is now the
+  only limit.
+
+### Added
+- **Redo (↪), next to undo.** Steps forward again through anything you just
+  undid, and **refunds the undo it cost**, so undo → redo leaves the counter
+  exactly where it started. Its badge shows how many steps are available.
+  Making a new move — or bombing a tile — forks the timeline and clears it.
+
+### Notes
+- Undos earned from a level-up are NOT taken back when you undo past that level,
+  which is how a large stockpile builds up. Left as-is deliberately.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v91`.
+
 ## [0.61.0] - 2026-09-09 (v90)
 
 ### Added

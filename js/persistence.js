@@ -92,6 +92,7 @@ export function save() {
       goal: state.goal,
       undos: state.undos,
       undoStack: state.undoStack,
+      redoStack: state.redoStack,
       bombs: state.bombs,
       charmsOn: state.charmsOn,
       charms: state.charms,
@@ -155,6 +156,7 @@ export function load() {
     state.goal = data.goal || goalForLevel(state.level);
     state.undos = data.undos || 0;
     state.undoStack = Array.isArray(data.undoStack) ? data.undoStack : [];
+    state.redoStack = Array.isArray(data.redoStack) ? data.redoStack : [];
     state.bombs = data.bombs || 0;
     state.armed = null;
     state.bombBlast = null;

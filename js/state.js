@@ -27,6 +27,7 @@ export const state = {
   levelCelebrate: null, // one-shot {level}: fire the full-screen level-up celebration
   undos: 0,         // undos available (earned one per level completed)
   undoStack: [],    // snapshots of state before recent placements, for undo
+  redoStack: [],    // snapshots popped by undo, so each step can be redone
   bombs: 0,         // bombs available (earned on big merges) — hit rock/bear
   armed: null,      // transient: is a bomb aimed — null | 'bomb'
   bombBlast: null,  // one-shot {r,c}: a tile was just bombed, for the blast anim
@@ -94,6 +95,7 @@ export function resetGame() {
   state.levelCelebrate = null;
   state.undos = 0;
   state.undoStack = [];
+  state.redoStack = [];
   state.bombs = 0;
   state.armed = null;
   state.bombBlast = null;

@@ -31,6 +31,8 @@ export function cacheDom() {
   el.clock = document.getElementById('clock');
   el.undoBtn = document.getElementById('undo-btn');
   el.undoCount = document.getElementById('undo-count');
+  el.redoBtn = document.getElementById('redo-btn');
+  el.redoCount = document.getElementById('redo-count');
   el.bombBtn = document.getElementById('bomb-btn');
   el.bombCount = document.getElementById('bomb-count');
   el.hint = document.querySelector('#toolbar .hint');
@@ -431,6 +433,10 @@ function paintUndo() {
   const free = hasCharm('doOver');
   el.undoCount.textContent = free ? '∞' : state.undos;
   el.undoBtn.disabled = state.undoStack.length === 0 || (!free && state.undos <= 0);
+  if (el.redoBtn) {
+    el.redoCount.textContent = state.redoStack.length;
+    el.redoBtn.disabled = state.redoStack.length === 0;
+  }
 }
 
 // The bomb button: how many are banked, whether it's aimed, and — while aimed — a

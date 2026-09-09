@@ -2,7 +2,7 @@
 
 import { state } from './state.js';
 import { VERSION } from './config.js';
-import { placePiece, newGame, undoMove, armBomb, toggleBomb, bombAt, expireTimer, toggleCharm, startRun, reshuffleCharms, toggleCharmShowAll } from './game.js';
+import { placePiece, newGame, undoMove, redoMove, armBomb, toggleBomb, bombAt, expireTimer, toggleCharm, startRun, reshuffleCharms, toggleCharmShowAll } from './game.js';
 import { swapReserve } from './storehouse.js';
 import { buyItem } from './store.js';
 import { save, load } from './persistence.js';
@@ -188,6 +188,9 @@ function boot() {
   // Undo button: take back the last move (spends one earned undo).
   document.getElementById('undo-btn').addEventListener('pointerdown', () => {
     if (undoMove()) draw();
+  });
+  document.getElementById('redo-btn').addEventListener('pointerdown', () => {
+    if (redoMove()) draw();
   });
 
   // Bomb button: arm/disarm regular bomb-aim mode (also via long-press on the
