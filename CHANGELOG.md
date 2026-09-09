@@ -3,6 +3,31 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.63.0] - 2026-09-09 (v92)
+
+### Added
+- **📈 Rising Tide** (new toolbar toggle, **default OFF**). Normally the best piece
+  you are ever handed is a Tree. With Rising Tide on, the pool climbs with you:
+  you start being handed tiers **three below the highest thing you have BUILT**
+  this run (built = created by a merge, not scattered by the opening deal). Build
+  a Castle and Huts start arriving; a Floating Castle unlocks Houses; it keeps
+  going all the way up. Each newly unlocked tier is half as likely as the one
+  below it, so grass still dominates and the board doesn't flood — measured at
+  ~14% of spawns being Hut-or-better once several tiers are open.
+  - A blue chip under the goal bar names the current ceiling ("up to House"), so
+    you can see it climb while testing.
+  - Takes effect immediately, so it can be flipped mid-run.
+  - Tunable in `js/config.js`: `TIDE_GAP` (3), `TIDE_TOP_WEIGHT` (8), `TIDE_FALLOFF` (0.5).
+
+### Notes
+- **Rising Tide inflates score a lot.** Placing a tile awards its own points, so
+  being handed big tiles is free score — measured ~6,160 points per piece handed
+  to you at the deepest unlock, against 5 for a grass. Runs with it on will post
+  much higher scores to the same leaderboard as runs without it.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v92`.
+
 ## [0.62.0] - 2026-09-09 (v91)
 
 ### Fixed

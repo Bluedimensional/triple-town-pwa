@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v91';
+export const VERSION = 'v92';
 
 // The organic path edges are now baked into the path GEOMETRY (each outer edge
 // bulges outward — see buildPathShape in render.js), so there is NO runtime SVG
@@ -121,6 +121,17 @@ export const timeModeKey = (m) => (m ? '·' + m + 'm' : '');
 export const BOMB_EARN_MIN_POINTS = 2000;   // Castle / Cathedral tier and up
 export const BOMB_TARGETS = ['rock', 'bear'];
 export const MAX_BOMBS = 9;                 // cap kept in hand (keeps it occasional)
+
+// --- Rising Tide (spawn ramp) ------------------------------------------------
+// Normally the best piece you are ever handed is a Tree. With Rising Tide on, the
+// pool widens as you get better: you start being handed tiers a fixed GAP below
+// the highest thing you have ever BUILT this run (built = made by a merge, not
+// scattered by the opening deal). So a Mansion unlocks Huts, a Castle unlocks
+// Houses, and it keeps climbing. Each newly unlocked tier is rarer than the one
+// below it, so the low tiers still dominate and the board never floods.
+export const TIDE_GAP = 3;          // spawn ceiling = (best tier built) - GAP
+export const TIDE_TOP_WEIGHT = 8;   // weight of the LOWEST unlocked tier (vs grass 58)
+export const TIDE_FALLOFF = 0.5;    // each tier above is this much as likely again
 
 // --- Roguelike Charms --------------------------------------------------------
 // At the START of every run you pick 1 of 3 random charms that bends the rules

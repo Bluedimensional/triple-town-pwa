@@ -2,7 +2,7 @@
 
 import { state, hasCharm } from './state.js';
 import { MERGE, POINTS, COINS, BOMB_EARN_MIN_POINTS, MAX_BOMBS,
-  SURGE_BUSH_TARGETS, TURBO_STEP, tierAfter } from './config.js';
+  SURGE_BUSH_TARGETS, TURBO_STEP, tierAfter, BUILD_CHAIN } from './config.js';
 
 // The tier a base type turns into when it merges — normally MERGE[base].next, but
 // charms bend it: Turbo leaps two tiers up the chain, and Green Thumb sends grass
@@ -173,6 +173,9 @@ export function resolveMerges(r, c) {
     }
     state.board[r][c] = superResult ? superType(next) : next;
     state.lastCreated = { r, c };
+    // Watermark the best thing built this run — Rising Tide reads this.
+    const tier = BUILD_CHAIN.indexOf(next);
+    if (tier > state.bestTier) state.bestTier = tier;
 
     const pts = (POINTS[next] || 0) * (superResult ? 2 : 1);
     state.score += pts;

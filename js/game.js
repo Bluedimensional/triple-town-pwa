@@ -8,6 +8,7 @@ import {
   TIMED_PREFILL_WEIGHTS, TIMED_PREFILL_MIN, TIMED_PREFILL_MAX,
   goalForLevel, BOMB_TARGETS,
   CHARMS, CHARM_CHOICES, CHARM_PINNED, PHOENIX_CLEARS, CHARM_BY_ID,
+  BUILD_CHAIN, TIDE_GAP, TIDE_TOP_WEIGHT, TIDE_FALLOFF,
   comboMultiplier,
   SURGE_GOAL, SURGE_TURNS,
 } from './config.js';
@@ -46,6 +47,27 @@ function bearChance() {
   return Math.min(BEAR_MAX_CHANCE, BEAR_BASE_CHANCE + state.turns * BEAR_CHANCE_PER_TURN);
 }
 
+// The highest tile Rising Tide will currently hand out, or null when it is off
+// or nothing is unlocked yet. Exported so the HUD can name it.
+export function tideCeiling() {
+  if (!state.tideOn) return null;
+  const c = Math.min(state.bestTier - TIDE_GAP, BUILD_CHAIN.length - 1);
+  return c >= 3 ? BUILD_CHAIN[c] : null;      // 3 = Hut, the first tier above Tree
+}
+
+// The pool of ordinary pieces you can be handed. Rising Tide widens it upward as
+// `bestTier` climbs, each new tier rarer than the one below it.
+function spawnWeights() {
+  const top = tideCeiling();
+  if (!top) return SPAWN_WEIGHTS;
+  const ceiling = BUILD_CHAIN.indexOf(top);
+  const w = { ...SPAWN_WEIGHTS };
+  for (let t = 3; t <= ceiling; t++) {
+    w[BUILD_CHAIN[t]] = Math.max(1, Math.round(TIDE_TOP_WEIGHT * Math.pow(TIDE_FALLOFF, t - 3)));
+  }
+  return w;
+}
+
 // Decide the next piece and place it in hand.
 // countTurn:false is used by the storehouse draw so a swap doesn't ramp bears.
 export function spawnNext({ countTurn = true } = {}) {
@@ -55,10 +77,10 @@ export function spawnNext({ countTurn = true } = {}) {
     state.current = 'crystal';   // rare wildcard (density scaled per game)
   } else if (state.grassStreak >= MAX_GRASS_STREAK) {
     // Too many grass in a row — hand out a non-grass piece this time.
-    const { grass, ...rest } = SPAWN_WEIGHTS;
+    const { grass, ...rest } = spawnWeights();
     state.current = weightedPick(rest);
   } else {
-    state.current = weightedPick(SPAWN_WEIGHTS);
+    state.current = weightedPick(spawnWeights());
   }
   state.grassStreak = state.current === 'grass' ? state.grassStreak + 1 : 0;
   if (countTurn) state.turns++;
@@ -163,7 +185,7 @@ function snapshot() {
     crystalMult: state.crystalMult, bombs: state.bombs,
     charms: state.charms.slice(), combo: state.combo,
     surgeCharge: state.surgeCharge, surgeActive: state.surgeActive, surgeTurns: state.surgeTurns,
-    charmUsed: state.charmUsed,
+    charmUsed: state.charmUsed, bestTier: state.bestTier,
     over: state.over,
   });
 }

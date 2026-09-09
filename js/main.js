@@ -81,6 +81,13 @@ function markCrystal() {
   });
 }
 
+// Highlight the Rising Tide On/Off button matching the current setting.
+function markTide() {
+  document.querySelectorAll('#tide-controls .tide-btn').forEach((b) => {
+    b.classList.toggle('current', (b.dataset.tide === '1') === !!state.tideOn);
+  });
+}
+
 // Highlight the charms On/Off button matching the current setting.
 function markCharms() {
   document.querySelectorAll('#charm-controls .charm-btn').forEach((b) => {
@@ -149,6 +156,18 @@ function boot() {
     });
   });
   markCrystal();
+
+  // Rising Tide on/off. Takes effect IMMEDIATELY (it only widens the spawn pool),
+  // so it can be flipped mid-run to feel the difference.
+  document.querySelectorAll('#tide-controls .tide-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      state.tideOn = btn.dataset.tide === '1';
+      save();
+      markTide();
+      draw();
+    });
+  });
+  markTide();
 
   // Charms on/off. Takes effect on the NEXT new game (the current run keeps
   // whatever charm it started with).

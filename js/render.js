@@ -6,7 +6,7 @@
 import { state, unlockedStorage, hasCharm } from './state.js';
 import { NAMES, STORE_ITEMS, ORGANIC_PATH, BOARDS, MAX_STORAGE, boardKey, goalForLevel,
   TIME_MODES, timeModeLabel, CHARM_BY_ID, CHARMS, comboMultiplier,
-  SURGE_GOAL, SURGE_TURNS } from './config.js';
+  SURGE_GOAL, SURGE_TURNS, BUILD_CHAIN, TIDE_GAP } from './config.js';
 import { SPRITES } from './sprites.js';
 import { priceOf } from './store.js';
 import { previewMergeGroup } from './match.js';
@@ -775,16 +775,25 @@ function paintCharmChoice() {
 function paintActiveCharms() {
   if (!el.activeCharms) return;
   const ids = state.charms;
-  const on = ids.length > 0 && state.charmChoices.length === 0;
+  // Rising Tide's current spawn ceiling — the biggest tile it will hand you now.
+  const top = Math.min(state.bestTier - TIDE_GAP, BUILD_CHAIN.length - 1);
+  const tideTop = state.tideOn && top >= 3 ? BUILD_CHAIN[top] : null;
+  const on = (ids.length > 0 || state.tideOn) && state.charmChoices.length === 0;
   el.activeCharms.hidden = !on;
   if (!on) { el.activeCharmsKey = null; return; }
-  const key = ids.join('|');
+  const key = ids.join('|') + '#' + (state.tideOn ? (tideTop || 'armed') : '');
   if (el.activeCharmsKey === key) return;      // unchanged — skip the rebuild
   el.activeCharmsKey = key;
-  el.activeCharms.innerHTML = ids.map((id) => {
+  let html = ids.map((id) => {
     const c = CHARM_BY_ID[id];
     return c ? `<span class="ac-chip" title="${c.desc}"><span class="ac-icon">${c.icon}</span>${c.name}</span>` : '';
   }).join('');
+  if (state.tideOn) {
+    html += tideTop
+      ? `<span class="ac-chip ac-tide" title="Rising Tide: you can now be handed anything up to a ${NAMES[tideTop]}. It climbs as your best build does."><span class="ac-icon">📈</span>up to ${NAMES[tideTop]}</span>`
+      : `<span class="ac-chip ac-tide" title="Rising Tide is on. Build something bigger and the pieces you are handed start climbing too."><span class="ac-icon">📈</span>Rising Tide</span>`;
+  }
+  el.activeCharms.innerHTML = html;
 }
 
 // Combo badge: shows the multiplier the NEXT merge will earn while a chain of

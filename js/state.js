@@ -32,6 +32,8 @@ export const state = {
   armed: null,      // transient: is a bomb aimed — null | 'bomb'
   bombBlast: null,  // one-shot {r,c}: a tile was just bombed, for the blast anim
   charmsOn: true,   // SETTING: do new games open the charm chooser at all?
+  tideOn: false,    // SETTING: Rising Tide — hand out bigger pieces as you progress
+  bestTier: 0,      // highest BUILD_CHAIN index MERGED this run (drives Rising Tide)
   charms: [],       // this run's ACTIVE charm ids — they stack, so several can be on
   charmChoices: [], // the ids offered at run start; NON-EMPTY = the chooser is up
   charmShowAll: false, // chooser is expanded to the full roster, not just the 3
@@ -100,6 +102,7 @@ export function resetGame() {
   state.armed = null;
   state.bombBlast = null;
   state.charms = [];
+  state.bestTier = 0;
   state.charmChoices = [];
   state.charmShowAll = false;
   state.combo = 0;

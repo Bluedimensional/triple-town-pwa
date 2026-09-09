@@ -95,6 +95,8 @@ export function save() {
       redoStack: state.redoStack,
       bombs: state.bombs,
       charmsOn: state.charmsOn,
+      tideOn: state.tideOn,
+      bestTier: state.bestTier,
       charms: state.charms,
       charmChoices: state.charmChoices,
       combo: state.combo,
@@ -163,6 +165,8 @@ export function load() {
     // Roguelike charm: restore the run's charm and any pending choice. Old saves
     // (pre-charms) have neither → no charm, chooser not up, game plays normally.
     state.charmsOn = data.charmsOn !== false;   // default ON for older saves
+    state.tideOn = !!data.tideOn;               // default OFF for older saves
+    state.bestTier = data.bestTier || 0;
     // Charms stack (array). Older saves stored a single `charm` string — migrate it.
     state.charms = Array.isArray(data.charms) ? data.charms
       : (data.charm ? [data.charm] : []);
