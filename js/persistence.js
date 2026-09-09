@@ -96,6 +96,7 @@ export function save() {
       bombs: state.bombs,
       charmsOn: state.charmsOn,
       tideOn: state.tideOn,
+      chooserOn: state.chooserOn,
       bestTier: state.bestTier,
       charms: state.charms,
       charmChoices: state.charmChoices,
@@ -166,6 +167,8 @@ export function load() {
     // (pre-charms) have neither → no charm, chooser not up, game plays normally.
     state.charmsOn = data.charmsOn !== false;   // default ON for older saves
     state.tideOn = !!data.tideOn;               // default OFF for older saves
+    state.chooserOn = !!data.chooserOn;         // default OFF for older saves
+    state.crystalChoice = null;
     state.bestTier = data.bestTier || 0;
     // Charms stack (array). Older saves stored a single `charm` string — migrate it.
     state.charms = Array.isArray(data.charms) ? data.charms

@@ -42,6 +42,8 @@ export function cacheDom() {
   el.scoresTabs = document.getElementById('scores-tabs');
   el.scoresSnapshot = document.getElementById('scores-snapshot');
   el.overReason = document.querySelector('#gameover .over-reason');
+  el.crystalChoice = document.getElementById('crystal-choice');
+  el.crystalOpts = document.getElementById('crystal-opts');
   el.charmChoice = document.getElementById('charm-choice');
   el.charmOpts = document.getElementById('charm-opts');
   el.charmShuffle = document.getElementById('charm-shuffle');
@@ -769,6 +771,26 @@ function paintCharmChoice() {
   el.charmChoice.classList.add('show');
 }
 
+// When a placed crystal could complete more than one DIFFERENT merge, show the
+// options: just the RESULT pieces, no card behind them, over a light backdrop so
+// the board stays readable while you decide. Rebuilt only when the set changes.
+function paintCrystalChoice() {
+  const ch = state.crystalChoice;
+  if (!ch) {
+    el.crystalChoice.classList.remove('show');
+    el.crystalChoiceKey = null;
+    return;
+  }
+  const key = ch.options.map((o) => o.type).join('|');
+  if (el.crystalChoiceKey !== key) {
+    el.crystalChoiceKey = key;
+    el.crystalOpts.innerHTML = ch.options.map((o) =>
+      `<button class="cc-opt" data-type="${o.type}" aria-label="Make a ${NAMES[o.next]}" title="Make a ${NAMES[o.next]}">${sprite(o.next)}</button>`
+    ).join('');
+  }
+  el.crystalChoice.classList.add('show');
+}
+
 // The charms running this game, listed under the goal bar so it is always clear
 // what is bending the rules. Hidden when none are active, and while the chooser
 // is still up (the modal covers it and the selection is still changing).
@@ -893,6 +915,7 @@ export function render({ onBuy, onSwap }) {
   paintTheme();
   paintStorage(onSwap);
   paintStore(onBuy);
+  paintCrystalChoice();
   paintActiveCharms();
   paintCharmChoice();
   paintCombo();

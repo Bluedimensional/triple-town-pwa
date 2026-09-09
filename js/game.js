@@ -13,7 +13,7 @@ import {
   SURGE_GOAL, SURGE_TURNS,
 } from './config.js';
 import { recordScore, bestFor } from './persistence.js';
-import { resolveMerges, crystalResolve } from './match.js';
+import { resolveMerges, crystalResolve, crystalOptions } from './match.js';
 import { moveBears } from './bears.js';
 import { save } from './persistence.js';
 
@@ -199,7 +199,7 @@ function canHit(t) {
 
 // Arm the bomb (needs at least one banked). Returns whether it armed.
 export function armBomb(kind = 'bomb') {
-  if (state.over || state.bombs <= 0) return false;
+  if (state.over || state.crystalChoice || state.bombs <= 0) return false;
   state.armed = kind;
   return true;
 }
@@ -263,8 +263,39 @@ export function redoMove() {
   return true;
 }
 
+// Resolve a paused crystal choice: turn the crystal into the picked type, run the
+// merge, then finish the turn as usual.
+export function chooseCrystal(type) {
+  const ch = state.crystalChoice;
+  if (!ch) return false;
+  const { r, c, scoreBefore } = ch;
+  state.crystalChoice = null;
+  state.board[r][c] = type;
+  state.lastCreated = { r, c };
+  resolveMerges(r, c);
+  finishTurn(r, c, scoreBefore);
+  return true;
+}
+
+// Back out of a crystal choice: hand the crystal back so you can bomb, stash it,
+// or place it elsewhere. Restores the pre-placement snapshot pushed by placePiece,
+// so the placement is undone WITHOUT spending an undo.
+export function cancelCrystal() {
+  if (!state.crystalChoice) return false;
+  const snap = state.undoStack.pop();
+  state.crystalChoice = null;
+  state.armed = null;
+  if (snap) Object.assign(state, JSON.parse(snap));   // board, current, activePos, …
+  state.lastCreated = null;
+  state.mergeSlides = [];
+  state.redoStack.length = 0;      // that placement never happened — nothing to redo
+  save();
+  return true;
+}
+
 // Clear one-shot animation markers so nothing replays on a restored board.
 function clearOneShots() {
+  state.crystalChoice = null;
   state.lastCreated = null; state.bearMoves = []; state.mergeSlides = [];
   state.floatPoints = null; state.levelFlash = false; state.levelCelebrate = null;
   state.armed = null; state.bombBlast = null;
@@ -272,7 +303,7 @@ function clearOneShots() {
 
 // Place the held piece at (r,c). Returns true if the move was legal.
 export function placePiece(r, c) {
-  if (state.over) return false;
+  if (state.over || state.crystalChoice) return false;   // busy waiting on a choice
   if (state.current === null) return false;
   if (state.board[r][c] !== null) return false; // must place on an empty tile
 
@@ -310,9 +341,18 @@ export function placePiece(r, c) {
   }
 
   if (piece === 'crystal') {
-    // A crystal always becomes whichever type completes the HIGHEST-value merge
-    // (or a rock if it can't complete anything). No chooser — even when several
-    // different merges are possible, the best one is taken automatically.
+    // With the Crystal Choice setting ON, a crystal that could complete more than
+    // one DIFFERENT merge pauses the turn and asks which to make (chooseCrystal
+    // finishes it; tapping outside hands the crystal back). Otherwise — and always
+    // when only one merge is possible — it takes the highest-value one, or turns
+    // into a rock if it can't complete anything. No save here: a reload just
+    // re-hands the crystal rather than soft-locking mid-choice.
+    const opts = crystalOptions(r, c);
+    if (state.chooserOn && opts.length >= 2) {
+      state.crystalChoice = { r, c, options: opts, scoreBefore };
+      state.activePos = null;       // hide the held preview while the chooser is up
+      return true;
+    }
     crystalResolve(r, c);
   } else if (piece !== 'bear') {
     resolveMerges(r, c);            // bears never merge; everything else can cascade

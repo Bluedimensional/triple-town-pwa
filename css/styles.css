@@ -234,7 +234,7 @@ body[data-field="ice"]::before {
   letter-spacing: 0.05em;
   color: var(--ink-soft);
 }
-.size-btn, .crys-btn, .time-btn, .charm-btn, .tide-btn {
+.size-btn, .crys-btn, .time-btn, .charm-btn, .tide-btn, .pick-btn {
   background: rgba(255,255,255,0.12);
   color: var(--ink);
   border: 1px solid transparent;
@@ -244,16 +244,16 @@ body[data-field="ice"]::before {
   font-size: 13px;
   font-variant-numeric: tabular-nums;
 }
-.size-btn.current, .crys-btn.current, .time-btn.current, .charm-btn.current, .tide-btn.current { border-color: var(--accent); background: rgba(107,160,58,0.28); }
+.size-btn.current, .crys-btn.current, .time-btn.current, .charm-btn.current, .tide-btn.current, .pick-btn.current { border-color: var(--accent); background: rgba(107,160,58,0.28); }
 /* Crystal-density + timed-mode choosers (toolbar). */
-#crystal-controls, #time-controls, #charm-controls, #tide-controls {
+#crystal-controls, #time-controls, #charm-controls, #tide-controls, #pick-controls {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
 }
 #crystal-controls .crys-btn, #time-controls .time-btn, #charm-controls .charm-btn,
-#tide-controls .tide-btn { padding: 7px 9px; }
+#tide-controls .tide-btn, #pick-controls .pick-btn { padding: 7px 9px; }
 .size-btn.primary {
   background: var(--accent);
   color: #fff;
@@ -1009,6 +1009,38 @@ body[data-field="ice"]::before {
   35% { transform: scale(1.28) rotate(-3deg); }
   100% { transform: scale(1) rotate(0); }
 }
+
+/* ---- Crystal "which merge?" chooser ----------------------------------------
+   No card behind the options: the pieces float on a LIGHT backdrop so the board
+   stays readable while you decide, and their contrast comes from a drop shadow.
+   The id beats `.overlay`'s heavier dim. */
+#crystal-choice { background: rgba(8, 16, 4, 0.32); }
+.cc-opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(16px, 7vw, 40px);
+  justify-content: center;
+}
+.cc-opt {
+  width: clamp(84px, 26vw, 118px);
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.cc-opt svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.8))
+          drop-shadow(0 0 14px rgba(0, 0, 0, 0.7))
+          drop-shadow(0 0 3px rgba(255, 255, 255, 0.55));
+}
+.cc-opt:active { transform: scale(0.94); }
 
 /* ---- Active charms strip: what's bending the rules this game ---- */
 .active-charms {

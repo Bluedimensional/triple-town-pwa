@@ -2,7 +2,7 @@
 
 import { state } from './state.js';
 import { VERSION } from './config.js';
-import { placePiece, newGame, undoMove, redoMove, armBomb, toggleBomb, bombAt, expireTimer, toggleCharm, startRun, reshuffleCharms, toggleCharmShowAll } from './game.js';
+import { placePiece, newGame, undoMove, redoMove, armBomb, toggleBomb, bombAt, expireTimer, toggleCharm, startRun, reshuffleCharms, toggleCharmShowAll, chooseCrystal, cancelCrystal } from './game.js';
 import { swapReserve } from './storehouse.js';
 import { buyItem } from './store.js';
 import { save, load } from './persistence.js';
@@ -18,6 +18,7 @@ function draw() {
 // on anything else); otherwise it places the held piece there.
 function onCellTap(r, c) {
   if (state.over) return;
+  if (state.crystalChoice) return;         // the crystal chooser handles taps
   if (state.charmChoices.length) return;   // pick a charm first
   if (state.armed) { bombAt(r, c); draw(); return; }
   if (placePiece(r, c)) draw();
@@ -78,6 +79,13 @@ function markCurrentSize() {
 function markCrystal() {
   document.querySelectorAll('#crystal-controls .crys-btn').forEach((b) => {
     b.classList.toggle('current', Number(b.dataset.mult) === state.pendingCrystalMult);
+  });
+}
+
+// Highlight the Crystal-choice On/Off button matching the current setting.
+function markPick() {
+  document.querySelectorAll('#pick-controls .pick-btn').forEach((b) => {
+    b.classList.toggle('current', (b.dataset.pick === '1') === !!state.chooserOn);
   });
 }
 
@@ -156,6 +164,28 @@ function boot() {
     });
   });
   markCrystal();
+
+  // Crystal-choice overlay: tap an option to make that merge; tap the dim
+  // backdrop to back out (the crystal returns to your hand).
+  document.getElementById('crystal-opts').addEventListener('pointerdown', (e) => {
+    const btn = e.target.closest('.cc-opt');
+    if (!btn) return;
+    if (chooseCrystal(btn.dataset.type)) draw();
+  });
+  const crystalOverlay = document.getElementById('crystal-choice');
+  crystalOverlay.addEventListener('pointerdown', (e) => {
+    if (e.target === crystalOverlay) { cancelCrystal(); draw(); }
+  });
+
+  // Crystal choice on/off — applies immediately to the next crystal you place.
+  document.querySelectorAll('#pick-controls .pick-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      state.chooserOn = btn.dataset.pick === '1';
+      save();
+      markPick();
+    });
+  });
+  markPick();
 
   // Rising Tide on/off. Takes effect IMMEDIATELY (it only widens the spawn pool),
   // so it can be flipped mid-run to feel the difference.

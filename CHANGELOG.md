@@ -3,6 +3,24 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.64.0] - 2026-09-09 (v93)
+
+### Added
+- **🔀 Crystal choice** is back, as a toolbar toggle (**default OFF**). With it on,
+  a crystal that could complete more than one DIFFERENT merge pauses and asks
+  which to make; tapping outside hands the crystal back without spending an undo.
+  With it off, the crystal keeps taking the highest-value merge on its own (v88
+  behaviour). A crystal with only one option never asks either way.
+
+### Changed
+- **The chooser no longer covers the board.** The white card behind each option is
+  gone — the result pieces now float with only a drop shadow for contrast, over a
+  much lighter backdrop (32% vs the old 78%), so you can see the tiles underneath
+  while deciding, which is the whole point of choosing.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v93`.
+
 ## [0.63.0] - 2026-09-09 (v92)
 
 ### Added
