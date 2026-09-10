@@ -51,6 +51,7 @@ export function cacheDom() {
   el.charmStart = document.getElementById('charm-start');
   el.comboBadge = document.getElementById('combo-badge');
   el.activeCharms = document.getElementById('active-charms');
+  el.ladder = document.getElementById('ladder');
   el.surge = document.getElementById('surge');
   el.surgeFill = document.getElementById('surge-fill');
   el.surgeCount = document.getElementById('surge-count');
@@ -818,6 +819,28 @@ function paintActiveCharms() {
   el.activeCharms.innerHTML = html;
 }
 
+// The build order, always on screen so it is never a guess what comes before or
+// after a piece. Everything you have BUILT is lit; the rest stay dim silhouettes,
+// so the strip doubles as a progress bar. It scrolls, and keeps the piece you are
+// working toward in view. Tapping one names it (see main.js).
+function paintLadder() {
+  if (!el.ladder) return;
+  const key = BUILD_CHAIN.length + '#' + state.bestTier;
+  if (el.ladderKey === key) return;            // unchanged — skip the rebuild
+  el.ladderKey = key;
+  el.ladder.innerHTML = BUILD_CHAIN.map((t, i) => {
+    const cls = 'lad' + (i <= state.bestTier ? ' got' : '') + (i === state.bestTier ? ' now' : '');
+    return `<button class="${cls}" data-type="${t}" data-rank="${i + 1}" ` +
+      `title="${i + 1}. ${NAMES[t]}" aria-label="${i + 1}. ${NAMES[t]}">${sprite(t)}</button>`;
+  }).join('');
+  // Keep the NEXT tile you're chasing centred, so the strip reads as "you are here".
+  const target = el.ladder.children[Math.min(state.bestTier + 1, BUILD_CHAIN.length - 1)];
+  if (target) {
+    el.ladder.scrollLeft = Math.max(0,
+      target.offsetLeft - el.ladder.clientWidth / 2 + target.offsetWidth / 2);
+  }
+}
+
 // Combo badge: shows the multiplier the NEXT merge will earn while a chain of
 // consecutive merges is alive (state.combo >= 1). Hidden with no chain or at game
 // over. Pops (bump) whenever the chain length changes.
@@ -915,6 +938,7 @@ export function render({ onBuy, onSwap }) {
   paintTheme();
   paintStorage(onSwap);
   paintStore(onBuy);
+  paintLadder();
   paintCrystalChoice();
   paintActiveCharms();
   paintCharmChoice();

@@ -3,6 +3,21 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.66.0] - 2026-09-10 (v95)
+
+### Added
+- **Build-order strip along the bottom** — the whole merge chain, always visible,
+  so what comes before and after a piece is never a guess. Everything you have
+  built shows in colour; the rest stay dim silhouettes, so it doubles as a
+  progress bar. Your best piece so far is ringed, and the strip keeps the tile
+  you are working toward centred. Tap any tile to name it in the hint line
+  (phones have no hover, so the tooltip alone was useless there).
+- Board-size reserve raised 340px -> 384px to pay for the strip. It only binds on
+  short screens; on a tall phone the board is width-capped and does not shrink.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v95`.
+
 ## [0.65.0] - 2026-09-09 (v94)
 
 ### Fixed

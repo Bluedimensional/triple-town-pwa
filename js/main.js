@@ -1,7 +1,7 @@
 // main.js — bootstrap: wire input, kick off the game, register the service worker.
 
 import { state } from './state.js';
-import { VERSION } from './config.js';
+import { VERSION, NAMES } from './config.js';
 import { placePiece, newGame, undoMove, redoMove, armBomb, toggleBomb, bombAt, expireTimer, toggleCharm, startRun, reshuffleCharms, toggleCharmShowAll, chooseCrystal, cancelCrystal } from './game.js';
 import { swapReserve } from './storehouse.js';
 import { buyItem } from './store.js';
@@ -233,6 +233,15 @@ function boot() {
   overlay.addEventListener('pointerdown', (e) => { if (e.target === overlay) dismissOver(); });
   document.getElementById('over-close').addEventListener('pointerdown', (e) => { e.stopPropagation(); dismissOver(); });
   document.getElementById('over-view').addEventListener('pointerdown', (e) => { e.stopPropagation(); dismissOver(); });
+
+  // Build-order strip: tap a tile to name it in the hint line (phones have no
+  // hover, so the title attribute alone is useless there).
+  document.getElementById('ladder').addEventListener('pointerdown', (e) => {
+    const btn = e.target.closest('.lad');
+    if (!btn) return;
+    const hint = document.querySelector('#toolbar .hint');
+    if (hint) hint.textContent = btn.dataset.rank + '. ' + (NAMES[btn.dataset.type] || btn.dataset.type);
+  });
 
   // Settings drawer: the ⚙ button opens it; backdrop tap or Close hides it.
   document.getElementById('settings-btn').addEventListener('pointerdown', openSettings);

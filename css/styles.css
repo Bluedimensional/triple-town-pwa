@@ -594,9 +594,10 @@ body[data-field="ice"]::before {
      keeping cells square means width = cols/(rows+1) of the height budget.
      The subtracted figure is everything ELSE on screen: HUD + goal bar (which
      grows a row when several charms are active) + toolbar + store + gaps and
-     padding — measured at ~332px on a 375-wide phone, so 340 leaves a margin.
+     padding, plus the build-order strip — measured at ~374px on a 375-wide phone,
+     so 384 leaves a margin.
      Only binds on SHORT screens; on tall ones the 100% width caps first. */
-  width: min(100%, calc((100dvh - 340px) * var(--cols) / (var(--rows) + 1)));
+  width: min(100%, calc((100dvh - 384px) * var(--cols) / (var(--rows) + 1)));
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -1018,6 +1019,41 @@ body[data-field="ice"]::before {
   35% { transform: scale(1.28) rotate(-3deg); }
   100% { transform: scale(1) rotate(0); }
 }
+
+/* ---- Build-order strip ------------------------------------------------------
+   The whole merge chain, small, always visible. Lit = built, dim = not yet. */
+.ladder {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 4px;
+  background: var(--panel);
+  border: 1px solid var(--panel-line);
+  border-radius: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.ladder::-webkit-scrollbar { display: none; }
+.lad {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.3;
+  filter: grayscale(0.85);
+}
+.lad.got { opacity: 1; filter: none; }          /* you have built this one */
+.lad.now {                                       /* your best so far */
+  box-shadow: 0 0 0 2px var(--accent), 0 0 8px rgba(107, 160, 58, 0.7);
+  background: rgba(107, 160, 58, 0.22);
+}
+.lad svg { width: 100%; height: 100%; display: block; }
 
 /* ---- Settings drawer ------------------------------------------------------- */
 .settings-btn {
