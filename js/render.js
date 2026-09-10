@@ -828,17 +828,15 @@ function paintLadder() {
   const key = BUILD_CHAIN.length + '#' + state.bestTier;
   if (el.ladderKey === key) return;            // unchanged — skip the rebuild
   el.ladderKey = key;
+  // Exactly two rows, however long the chain gets: half the tiles per row, each
+  // sized to fill its column. That fits the whole chain on screen at once (no
+  // scrolling) and makes each tile bigger than a single row could.
+  el.ladder.style.setProperty('--lad-cols', Math.ceil(BUILD_CHAIN.length / 2));
   el.ladder.innerHTML = BUILD_CHAIN.map((t, i) => {
     const cls = 'lad' + (i <= state.bestTier ? ' got' : '') + (i === state.bestTier ? ' now' : '');
     return `<button class="${cls}" data-type="${t}" data-rank="${i + 1}" ` +
       `title="${i + 1}. ${NAMES[t]}" aria-label="${i + 1}. ${NAMES[t]}">${sprite(t)}</button>`;
   }).join('');
-  // Keep the NEXT tile you're chasing centred, so the strip reads as "you are here".
-  const target = el.ladder.children[Math.min(state.bestTier + 1, BUILD_CHAIN.length - 1)];
-  if (target) {
-    el.ladder.scrollLeft = Math.max(0,
-      target.offsetLeft - el.ladder.clientWidth / 2 + target.offsetWidth / 2);
-  }
 }
 
 // Combo badge: shows the multiplier the NEXT merge will earn while a chain of

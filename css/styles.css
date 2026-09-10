@@ -594,10 +594,10 @@ body[data-field="ice"]::before {
      keeping cells square means width = cols/(rows+1) of the height budget.
      The subtracted figure is everything ELSE on screen: HUD + goal bar (which
      grows a row when several charms are active) + toolbar + store + gaps and
-     padding, plus the build-order strip — measured at ~374px on a 375-wide phone,
-     so 384 leaves a margin.
+     padding, plus the two-row build-order strip — measured at ~408px on a
+     375-wide phone, so 420 leaves a margin.
      Only binds on SHORT screens; on tall ones the 100% width caps first. */
-  width: min(100%, calc((100dvh - 384px) * var(--cols) / (var(--rows) + 1)));
+  width: min(100%, calc((100dvh - 420px) * var(--cols) / (var(--rows) + 1)));
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -1023,23 +1023,17 @@ body[data-field="ice"]::before {
 /* ---- Build-order strip ------------------------------------------------------
    The whole merge chain, small, always visible. Lit = built, dim = not yet. */
 .ladder {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(var(--lad-cols, 12), 1fr);
   gap: 3px;
-  padding: 3px 4px;
+  padding: 4px;
   background: var(--panel);
   border: 1px solid var(--panel-line);
   border-radius: 10px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
 }
-.ladder::-webkit-scrollbar { display: none; }
 .lad {
-  flex: 0 0 auto;
-  width: 26px;
-  height: 26px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   padding: 0;
   border: none;
   border-radius: 7px;

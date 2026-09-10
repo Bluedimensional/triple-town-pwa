@@ -3,6 +3,22 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.68.0] - 2026-09-10 (v97)
+
+### Changed
+- **The build-order strip is now two rows instead of one.** Tiles grew from 26px
+  to 28px, and — the bigger win — all 24 now fit on screen at once, so the strip
+  no longer scrolls. Top row is 1-12, bottom row 13-24. It stays two rows however
+  long the chain gets: the column count is derived from the chain length, so
+  adding tiles later splits them evenly rather than spilling into a third row.
+- Board-size reserve raised 384px -> 420px to pay for the taller strip. Verified
+  with the worst case (four charms wrapping the chip row) on a 375x667 phone:
+  0 overflow, 21px spare, store fully visible. On a tall phone the board is
+  width-capped and barely changes (373px -> 370px).
+
+### Migration
+- Service-worker cache bumped to `tripletown-v97`.
+
 ## [0.67.0] - 2026-09-10 (v96)
 
 ### Added
