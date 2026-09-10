@@ -16,7 +16,10 @@ works offline, installs straight from the browser. No App Store, no build step.
   next tier at the tile you placed. Merges cascade.
 - **Build chain:** grass → bush → tree → hut → house → mansion → castle →
   floating castle → triple castle → mega castle → kingdom → metropolis →
-  sky utopia → **rocket town → mothership → world turtle** (it gets silly at the top).
+  sky utopia → rocket town → mothership → world turtle → **sky whale → ringed moon
+  → ring world → star forge → dyson bloom → nebula garden → spiral galaxy →
+  cosmic web** (24 tiers; it gets silly, then cosmic). A strip along the bottom
+  always shows the order.
 - **Bears** shuffle one space after every placement; trap one (no adjacent empty
   tile) and it becomes a tombstone. Tombstones chain: tombstone → church →
   cathedral → treasury.

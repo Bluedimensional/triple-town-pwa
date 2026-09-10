@@ -3,6 +3,30 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/); newest first.
 
+## [0.67.0] - 2026-09-10 (v96)
+
+### Added
+- **Eight new tiles past World Turtle**, taking the build chain from 16 to **24**.
+  World Turtle was the ceiling; the new ceiling is Cosmic Web.
+  **🐋 Sky Whale → 🌕 Ringed Moon → 💍 Ring World → ☀️ Star Forge → 🌸 Dyson Bloom
+  → 🌌 Nebula Garden → 🌀 Spiral Galaxy → 🕸️ Cosmic Web**
+- Two rules hold across the run so the order stays readable rather than arbitrary:
+  1. **Each tile inherits a visible element from the one before it** — the Turtle's
+     carried town moves onto the Whale's back, the Whale's arc hardens into the
+     Moon's ring, that ring wraps a star, the star grows a petalled shell, the
+     petals dissolve into nebula, the nebula spins into a spiral, and the spirals
+     become nodes on a web.
+  2. **Escalation is by SCALE OF THING** — creature, moon, ring, star, shell,
+     nebula, galaxy, web — so which comes later is guessable without the legend.
+
+### Notes
+- The Sky Whale was redrawn after review: at tile size its carried town was
+  invisible, which killed the whole visual link back to the World Turtle. Its
+  buildings now match the Turtle's scale and read at 60px.
+
+### Migration
+- Service-worker cache bumped to `tripletown-v96`.
+
 ## [0.66.0] - 2026-09-10 (v95)
 
 ### Added

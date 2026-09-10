@@ -3,7 +3,7 @@
 
 // Shown above the board so it's always clear which build is being tested.
 // Keep in sync with the service-worker CACHE name in sw.js.
-export const VERSION = 'v95';
+export const VERSION = 'v96';
 
 // The organic path edges are now baked into the path GEOMETRY (each outer edge
 // bulges outward — see buildPathShape in render.js), so there is NO runtime SVG
@@ -28,6 +28,8 @@ export const BUILD_CHAIN = [
   'grass', 'bush', 'tree', 'hut', 'house', 'mansion',
   'castle', 'floatingCastle', 'tripleCastle', 'megaCastle', 'kingdom',
   'metropolis', 'skyUtopia', 'rocketTown', 'mothership', 'worldTurtle',
+  'skyWhale', 'ringedMoon', 'ringWorld', 'starForge', 'dysonBloom', 'nebulaGarden',
+  'spiralGalaxy', 'cosmicWeb',
 ];
 export const TOMB_CHAIN = ['tombstone', 'church', 'cathedral', 'treasury', 'royalVault',
   'treasureHoard', 'goldPyramid', 'phoenix', 'divineSun'];
@@ -36,10 +38,12 @@ export const TOMB_CHAIN = ['tombstone', 'church', 'cathedral', 'treasury', 'roya
 // Every merge needs 3 connected (uniform — Floating Castle used to need 4, which
 // surprised players and made a crystal placed between two of them fizzle to a rock
 // instead of completing the trio; fixed to 3 in v56).
-// Both chains run deep so long games never dead-end. The build line keeps going
-// past Sky Utopia into the silly tiers (Rocket Town -> Mothership -> World Turtle,
-// the new ceiling) so a fast run can't stall; the bear/tomb line tops out at
-// Divine Sun (...Golden Pyramid -> Phoenix -> Divine Sun).
+// Both chains run deep so long games never dead-end. Past Sky Utopia the build
+// line turns silly (Rocket Town -> Mothership -> World Turtle) and then cosmic
+// (Sky Whale -> Ringed Moon -> Ring World -> Star Forge -> Dyson Bloom ->
+// Nebula Garden -> Spiral Galaxy -> Cosmic Web, the ceiling). Each of those
+// inherits a visible element from the one before it and escalates by SCALE, so
+// the order stays guessable; the bear/tomb line tops out at Divine Sun.
 export const MERGE = {
   grass:          { next: 'bush',           need: 3 },
   bush:           { next: 'tree',           need: 3 },
@@ -56,6 +60,14 @@ export const MERGE = {
   skyUtopia:      { next: 'rocketTown',     need: 3 },
   rocketTown:     { next: 'mothership',     need: 3 },
   mothership:     { next: 'worldTurtle',    need: 3 },
+  worldTurtle:    { next: 'skyWhale',       need: 3 },
+  skyWhale:       { next: 'ringedMoon',     need: 3 },
+  ringedMoon:     { next: 'ringWorld',      need: 3 },
+  ringWorld:      { next: 'starForge',      need: 3 },
+  starForge:      { next: 'dysonBloom',     need: 3 },
+  dysonBloom:     { next: 'nebulaGarden',   need: 3 },
+  nebulaGarden:   { next: 'spiralGalaxy',   need: 3 },
+  spiralGalaxy:   { next: 'cosmicWeb',      need: 3 },
   // Tombstone chain (the bear payoff).
   tombstone:      { next: 'church',         need: 3 },
   church:         { next: 'cathedral',      need: 3 },
@@ -73,6 +85,8 @@ export const POINTS = {
   castle: 2000, floatingCastle: 5000, tripleCastle: 12000,
   megaCastle: 30000, kingdom: 75000, metropolis: 180000, skyUtopia: 400000,
   rocketTown: 900000, mothership: 2000000, worldTurtle: 4500000,
+  skyWhale: 10000000, ringedMoon: 22000000, ringWorld: 50000000, starForge: 110000000,
+  dysonBloom: 250000000, nebulaGarden: 550000000, spiralGalaxy: 1200000000, cosmicWeb: 2700000000,
   tombstone: 10, church: 500, cathedral: 2000, treasury: 8000, royalVault: 20000,
   treasureHoard: 50000, goldPyramid: 120000, phoenix: 280000, divineSun: 600000,
   bear: 0, crystal: 0, rock: 0,
@@ -84,6 +98,8 @@ export const COINS = {
   castle: 40, floatingCastle: 100, tripleCastle: 300,
   megaCastle: 600, kingdom: 1500, metropolis: 3500, skyUtopia: 8000,
   rocketTown: 18000, mothership: 40000, worldTurtle: 90000,
+  skyWhale: 200000, ringedMoon: 450000, ringWorld: 1000000, starForge: 2200000,
+  dysonBloom: 5000000, nebulaGarden: 11000000, spiralGalaxy: 25000000, cosmicWeb: 55000000,
   church: 10, cathedral: 40, treasury: 150, royalVault: 400,
   treasureHoard: 1000, goldPyramid: 2500, phoenix: 6000, divineSun: 15000,
 };
@@ -242,6 +258,8 @@ export const ASSETS = {
   mansion: '🏘️', castle: '🏰', floatingCastle: '🏯', tripleCastle: '💎',
   megaCastle: '🏰', kingdom: '👑', metropolis: '🏙️', skyUtopia: '🌈',
   rocketTown: '🚀', mothership: '🛸', worldTurtle: '🐢',
+  skyWhale: '🐋', ringedMoon: '🌕', ringWorld: '💍', starForge: '☀️',
+  dysonBloom: '🌸', nebulaGarden: '🌌', spiralGalaxy: '🌀', cosmicWeb: '🕸️',
   bear: '🐻', tombstone: '🪦', church: '⛪', cathedral: '🕌', treasury: '💰',
   royalVault: '👑', treasureHoard: '💰', goldPyramid: '🔺', phoenix: '🔥', divineSun: '☀️',
   crystal: '🔷', rock: '🪨',
@@ -254,6 +272,9 @@ export const NAMES = {
   tripleCastle: 'Triple Castle', megaCastle: 'Mega Castle', kingdom: 'Kingdom',
   metropolis: 'Metropolis', skyUtopia: 'Sky Utopia',
   rocketTown: 'Rocket Town', mothership: 'Mothership', worldTurtle: 'World Turtle',
+  skyWhale: 'Sky Whale', ringedMoon: 'Ringed Moon', ringWorld: 'Ring World',
+  starForge: 'Star Forge', dysonBloom: 'Dyson Bloom', nebulaGarden: 'Nebula Garden',
+  spiralGalaxy: 'Spiral Galaxy', cosmicWeb: 'Cosmic Web',
   bear: 'Bear', tombstone: 'Tombstone',
   church: 'Church', cathedral: 'Cathedral', treasury: 'Treasury', royalVault: 'Royal Vault',
   treasureHoard: 'Treasure Hoard', goldPyramid: 'Golden Pyramid',
@@ -264,6 +285,8 @@ export const NAMES = {
 for (const t of ['bush', 'tree', 'hut', 'house', 'mansion', 'castle',
   'floatingCastle', 'tripleCastle', 'megaCastle', 'kingdom', 'metropolis', 'skyUtopia',
   'rocketTown', 'mothership', 'worldTurtle',
+  'skyWhale', 'ringedMoon', 'ringWorld', 'starForge', 'dysonBloom', 'nebulaGarden',
+  'spiralGalaxy', 'cosmicWeb',
   'church', 'cathedral', 'treasury', 'royalVault', 'treasureHoard', 'goldPyramid',
   'phoenix', 'divineSun']) {
   NAMES[t + 'Super'] = 'Super ' + NAMES[t];

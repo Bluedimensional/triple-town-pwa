@@ -521,6 +521,160 @@ const worldTurtle = svg(`
     <path d="M32 31 L38.5 23 L45 31 Z"/><path d="M44 25 L50.5 16 L57 25 Z"/><path d="M56 33 L62.5 26 L69 33 Z"/></g>`,
   { cy: 88, rx: 33, ry: 6 });
 
+// --- past the World Turtle: the cosmic run ------------------------------------
+// The chain has to stay READABLE this deep, so two rules hold across all of them:
+//   1. each tile inherits a visible element from the one before it (the turtle's
+//      carried town becomes the whale's, the whale's arc becomes the moon's ring,
+//      that ring wraps a star, the star grows a shell, and so on);
+//   2. the escalation is by SCALE OF THING — creature, moon, ring, star, shell,
+//      nebula, galaxy, web — so "which is later" is guessable without a legend.
+
+// Sky Whale — the town leaves the turtle for something that flies. The carried
+// town has to stay legible at tile size: that is the whole link back to the turtle.
+const skyWhale = svg(`
+  <defs><linearGradient id="swB" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#93dff2"/><stop offset="100%" stop-color="#22688f"/></linearGradient></defs>
+  <g fill="#eef7ff" opacity="0.45"><ellipse cx="20" cy="84" rx="15" ry="6"/><ellipse cx="66" cy="87" rx="18" ry="6"/></g>
+  <path d="M76 60 L96 44 L91 60 L96 78 Z" fill="#22688f" stroke="#0f3a55" stroke-width="2.5" stroke-linejoin="round"/>
+  <ellipse cx="45" cy="60" rx="36" ry="18" fill="url(#swB)" stroke="#0f3a55" stroke-width="3"/>
+  <path d="M38 74 Q50 88 64 72 Z" fill="#1b5b80" stroke="#0f3a55" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M13 65 Q32 72 52 68" fill="none" stroke="#c6edfa" stroke-width="2.4" opacity="0.75"/>
+  <circle cx="21" cy="54" r="3" fill="#0b2536"/>
+  <g stroke="#3a2b12" stroke-width="1.7">
+    <rect x="27" y="30" width="12" height="13" fill="#fbf4e6"/>
+    <rect x="42" y="24" width="13" height="19" fill="#e8d9b8"/>
+    <rect x="58" y="32" width="11" height="11" fill="#fbf4e6"/></g>
+  <g stroke="#492913" stroke-width="1.7" fill="#d0763e" stroke-linejoin="round">
+    <path d="M24 31 L33 21 L42 31 Z"/><path d="M39 25 L48.5 13 L58 25 Z"/><path d="M55 33 L63.5 24 L72 33 Z"/></g>`,
+  { cy: 92, rx: 32, ry: 5 });
+
+// Ringed Moon — the whale's arc hardens into a ring; the town is now city lights.
+const ringedMoon = svg(`
+  <defs><radialGradient id="rmB" cx="38%" cy="34%" r="72%">
+    <stop offset="0%" stop-color="#dfe8f4"/><stop offset="100%" stop-color="#6b7c93"/></radialGradient></defs>
+  <g fill="#fff2a8"><circle cx="14" cy="20" r="1.5"/><circle cx="86" cy="24" r="1.5"/><circle cx="80" cy="82" r="1.3"/></g>
+  <ellipse cx="50" cy="54" rx="44" ry="13" fill="none" stroke="#2f3b4d" stroke-width="6" transform="rotate(-18 50 54)"/>
+  <ellipse cx="50" cy="54" rx="44" ry="13" fill="none" stroke="#9fc4e0" stroke-width="2.6" transform="rotate(-18 50 54)"/>
+  <circle cx="50" cy="52" r="24" fill="url(#rmB)" stroke="#2f3b4d" stroke-width="3"/>
+  <g fill="#8593a8" opacity="0.75"><circle cx="42" cy="44" r="5"/><circle cx="58" cy="58" r="4"/><circle cx="40" cy="62" r="3"/></g>
+  <g fill="#ffe487"><circle cx="46" cy="52" r="1.6"/><circle cx="54" cy="47" r="1.4"/><circle cx="52" cy="60" r="1.4"/><circle cx="60" cy="50" r="1.3"/></g>`,
+  { cy: 86, rx: 26, ry: 5 });
+
+// Ring World — the ring becomes the home: a banded habitat around a small sun.
+const ringWorld = svg(`
+  <defs>
+    <linearGradient id="rwBand" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#4f9a4a"/><stop offset="45%" stop-color="#cbb977"/><stop offset="100%" stop-color="#3f86a8"/></linearGradient>
+    <radialGradient id="rwSun" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fffbe0"/><stop offset="100%" stop-color="#f0b23c"/></radialGradient>
+  </defs>
+  <g fill="#fff2a8"><circle cx="12" cy="26" r="1.5"/><circle cx="88" cy="22" r="1.5"/><circle cx="84" cy="76" r="1.3"/><circle cx="16" cy="72" r="1.3"/></g>
+  <g transform="rotate(-20 50 52)">
+    <ellipse cx="50" cy="52" rx="45" ry="17" fill="none" stroke="#22303f" stroke-width="12"/>
+    <ellipse cx="50" cy="52" rx="45" ry="17" fill="none" stroke="url(#rwBand)" stroke-width="8"/>
+    <g stroke="#22303f" stroke-width="1.6" opacity="0.55">
+      <line x1="5" y1="52" x2="14" y2="52"/><line x1="86" y1="52" x2="95" y2="52"/>
+      <line x1="50" y1="35" x2="50" y2="44"/><line x1="50" y1="60" x2="50" y2="69"/></g>
+  </g>
+  <circle cx="50" cy="52" r="11" fill="url(#rwSun)" stroke="#7a5410" stroke-width="2.4"/>`,
+  { cy: 88, rx: 30, ry: 5 });
+
+// Star Forge — the same ring, now an armature working a full star.
+const starForge = svg(`
+  <defs>
+    <radialGradient id="sfCore" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fffdf2"/><stop offset="55%" stop-color="#ffd75e"/><stop offset="100%" stop-color="#e8791f"/></radialGradient>
+    <radialGradient id="sfGlow" cx="50%" cy="50%" r="52%">
+      <stop offset="0%" stop-color="#ffd75e" stop-opacity="0.55"/><stop offset="100%" stop-color="#ffd75e" stop-opacity="0"/></radialGradient>
+  </defs>
+  <ellipse cx="50" cy="52" rx="49" ry="46" fill="url(#sfGlow)"/>
+  <circle cx="50" cy="52" r="25" fill="url(#sfCore)" stroke="#7a4410" stroke-width="3"/>
+  <g fill="#fff6c8" opacity="0.85"><circle cx="42" cy="44" r="4"/><circle cx="57" cy="58" r="3"/></g>
+  <g transform="rotate(-22 50 52)" fill="none" stroke="#3b3050" stroke-width="7" stroke-linecap="round">
+    <path d="M8 52 A42 42 0 0 1 92 52"/></g>
+  <g transform="rotate(-22 50 52)" fill="none" stroke="#b9a6e6" stroke-width="2.6" stroke-linecap="round">
+    <path d="M8 52 A42 42 0 0 1 92 52"/></g>
+  <g fill="#3b3050" stroke="#b9a6e6" stroke-width="1.6">
+    <rect x="4" y="46" width="11" height="12" rx="2"/><rect x="85" y="46" width="11" height="12" rx="2"/></g>`,
+  { cy: 90, rx: 28, ry: 5 });
+
+// Dyson Bloom — the armature opens into panelled petals wrapping the star.
+const dysonBloom = svg(`
+  <defs>
+    <radialGradient id="dbCore" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fffdf2"/><stop offset="60%" stop-color="#ffd75e"/><stop offset="100%" stop-color="#e8791f"/></radialGradient>
+    <linearGradient id="dbPet" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c6b0f2"/><stop offset="100%" stop-color="#5b4a92"/></linearGradient>
+  </defs>
+  <g fill="#fff2a8"><circle cx="10" cy="18" r="1.4"/><circle cx="90" cy="20" r="1.4"/><circle cx="50" cy="6" r="1.5"/></g>
+  <g fill="url(#dbPet)" stroke="#2e2450" stroke-width="2.6" stroke-linejoin="round">
+    <path d="M50 50 L34 14 Q50 6 66 14 Z"/>
+    <path d="M50 50 L86 34 Q92 50 86 66 Z"/>
+    <path d="M50 50 L66 86 Q50 94 34 86 Z"/>
+    <path d="M50 50 L14 66 Q8 50 14 34 Z"/></g>
+  <g fill="none" stroke="#2e2450" stroke-width="1.4" opacity="0.6">
+    <path d="M42 30 L58 30"/><path d="M70 42 L70 58"/><path d="M42 70 L58 70"/><path d="M30 42 L30 58"/></g>
+  <circle cx="50" cy="50" r="15" fill="url(#dbCore)" stroke="#7a4410" stroke-width="2.6"/>`,
+  { cy: 92, rx: 26, ry: 5 });
+
+// Nebula Garden — the petals dissolve into cloud, still lit from within.
+const nebulaGarden = svg(`
+  <defs>
+    <radialGradient id="ngA" cx="42%" cy="40%" r="62%">
+      <stop offset="0%" stop-color="#ffc7f2" stop-opacity="0.95"/><stop offset="100%" stop-color="#a63fb0" stop-opacity="0.15"/></radialGradient>
+    <radialGradient id="ngB" cx="60%" cy="62%" r="60%">
+      <stop offset="0%" stop-color="#bfd4ff" stop-opacity="0.9"/><stop offset="100%" stop-color="#4a3fa6" stop-opacity="0.12"/></radialGradient>
+  </defs>
+  <ellipse cx="44" cy="44" rx="40" ry="34" fill="url(#ngA)"/>
+  <ellipse cx="60" cy="62" rx="36" ry="30" fill="url(#ngB)"/>
+  <g fill="#fff6c8">
+    <circle cx="30" cy="34" r="2.4"/><circle cx="66" cy="30" r="2"/><circle cx="52" cy="52" r="2.8"/>
+    <circle cx="34" cy="66" r="2.2"/><circle cx="72" cy="66" r="2.4"/><circle cx="18" cy="52" r="1.6"/><circle cx="84" cy="46" r="1.6"/></g>
+  <g stroke="#fff6c8" stroke-width="1.6" stroke-linecap="round" opacity="0.85">
+    <path d="M52 45 L52 59"/><path d="M45 52 L59 52"/>
+    <path d="M30 28 L30 40"/><path d="M24 34 L36 34"/></g>`,
+  { cy: 90, rx: 30, ry: 5 });
+
+// Spiral Galaxy — the same cloud, finally spun into order around a core.
+const spiralGalaxy = svg(`
+  <defs>
+    <radialGradient id="sgCore" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fffdf0"/><stop offset="55%" stop-color="#ffd98a"/><stop offset="100%" stop-color="#d97ac0" stop-opacity="0.25"/></radialGradient>
+    <linearGradient id="sgArm" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffc7f2"/><stop offset="55%" stop-color="#b07de0"/><stop offset="100%" stop-color="#5f7ee6"/></linearGradient>
+  </defs>
+  <ellipse cx="50" cy="50" rx="48" ry="44" fill="url(#sgCore)" opacity="0.32"/>
+  <g fill="none" stroke="url(#sgArm)" stroke-width="9" stroke-linecap="round" opacity="0.95">
+    <path d="M56 42 C 74 26, 92 44, 84 62"/>
+    <path d="M44 58 C 26 74, 8 56, 16 38"/></g>
+  <g fill="none" stroke="#fff2a8" stroke-width="2" stroke-linecap="round" opacity="0.7">
+    <path d="M57 44 C 72 30, 87 45, 81 59"/>
+    <path d="M43 56 C 28 70, 13 55, 19 41"/></g>
+  <circle cx="50" cy="50" r="13" fill="url(#sgCore)" stroke="#8a5a10" stroke-width="2.2"/>
+  <g fill="#fff6c8"><circle cx="16" cy="20" r="1.6"/><circle cx="84" cy="22" r="1.6"/><circle cx="86" cy="78" r="1.4"/><circle cx="14" cy="76" r="1.4"/></g>`,
+  { cy: 92, rx: 30, ry: 5 });
+
+// Cosmic Web — galaxies become mere nodes, strung on filaments. The ceiling.
+const cosmicWeb = svg(`
+  <defs>
+    <radialGradient id="cwHalo" cx="50%" cy="50%" r="52%">
+      <stop offset="0%" stop-color="#cfe0ff" stop-opacity="0.34"/><stop offset="100%" stop-color="#cfe0ff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="cwNode" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fffdf0"/><stop offset="55%" stop-color="#ffd98a"/><stop offset="100%" stop-color="#b07de0"/></radialGradient>
+  </defs>
+  <ellipse cx="50" cy="50" rx="50" ry="48" fill="url(#cwHalo)"/>
+  <g stroke="#9fb4ff" stroke-width="2.4" stroke-linecap="round" opacity="0.85">
+    <path d="M22 26 L50 46"/><path d="M78 22 L50 46"/><path d="M18 70 L50 46"/>
+    <path d="M80 72 L50 46"/><path d="M22 26 L18 70"/><path d="M78 22 L80 72"/><path d="M18 70 L80 72"/></g>
+  <g stroke="#dfe9ff" stroke-width="1" stroke-linecap="round" opacity="0.55">
+    <path d="M22 26 L78 22"/><path d="M22 26 L80 72"/><path d="M78 22 L18 70"/></g>
+  <g fill="url(#cwNode)" stroke="#3a2f5e" stroke-width="2">
+    <circle cx="22" cy="26" r="9"/><circle cx="78" cy="22" r="8"/>
+    <circle cx="18" cy="70" r="8"/><circle cx="80" cy="72" r="9"/></g>
+  <circle cx="50" cy="46" r="13" fill="url(#cwNode)" stroke="#3a2f5e" stroke-width="2.6"/>
+  <g fill="#fff6c8"><circle cx="50" cy="10" r="1.6"/><circle cx="8" cy="48" r="1.4"/><circle cx="92" cy="48" r="1.4"/><circle cx="50" cy="88" r="1.5"/></g>`,
+  { cy: 94, rx: 32, ry: 4.5 });
+
 // --- tomb line, above Royal Vault --------------------------------------------
 
 // Treasure Hoard — the tier above Royal Vault: the treasure has burst its chest
@@ -618,6 +772,7 @@ const divineSun = svg(`
 export const SPRITES = {
   grass, bush, tree, hut, house, mansion, castle, floatingCastle, tripleCastle,
   megaCastle, kingdom, metropolis, skyUtopia, rocketTown, mothership, worldTurtle,
+  skyWhale, ringedMoon, ringWorld, starForge, dysonBloom, nebulaGarden, spiralGalaxy, cosmicWeb,
   bear, tombstone, church, cathedral, treasury, royalVault, treasureHoard, goldPyramid,
   phoenix, divineSun,
   plate, crystal, rock,
@@ -638,6 +793,8 @@ const SUPER_STAR =
 const SUPER_BASES = ['bush', 'tree', 'hut', 'house', 'mansion', 'castle',
   'floatingCastle', 'tripleCastle', 'megaCastle', 'kingdom', 'metropolis', 'skyUtopia',
   'rocketTown', 'mothership', 'worldTurtle',
+  'skyWhale', 'ringedMoon', 'ringWorld', 'starForge', 'dysonBloom', 'nebulaGarden',
+  'spiralGalaxy', 'cosmicWeb',
   'church', 'cathedral', 'treasury', 'royalVault', 'treasureHoard', 'goldPyramid',
   'phoenix', 'divineSun'];
 const PLANT_SUPERS = new Set(['bush', 'tree']);
